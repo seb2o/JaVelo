@@ -5,6 +5,7 @@ public final class Math2 {
 
     }
     public static int ceilDiv(int x, int y){
+        Preconditions.checkArgument (x >= 0 && y> 0);
         return (x+y-1)/y;
     }
 
@@ -56,7 +57,7 @@ public final class Math2 {
         double uY = pY-aY;
         double vX = bX-aX;
         double vY = bY-aY;
-        return dotProduct(uX,uY,vX,vY)/norm(uX,uY);
+        return dotProduct(uX,uY,vX,vY)/norm(vX,vY);
     }
 
 }
