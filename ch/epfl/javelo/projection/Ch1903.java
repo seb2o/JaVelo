@@ -1,10 +1,19 @@
 package ch.epfl.javelo.projection;
 
+/**
+ * @author Gonzalez Edgar (328095)
+ */
 public final class Ch1903 {
     private Ch1903(){
 
     }
 
+    /**
+     * Convertit des coordonnées de la norme WGS84 à CH1903.
+     * @param lon la coordonnée longitudinale dans la norme WGS84.
+     * @param lat la coordonnée latitudinale dans la norme WGS84.
+     * @return la coordonnée e
+     */
     public static double e(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
         double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
@@ -15,6 +24,12 @@ public final class Ch1903 {
                 -44.54*Math.pow(lon1,3));
     }
 
+    /**
+     * Convertit des coordonnées de la norme WGS84 à CH1903.
+     * @param lon la coordonnée longitudinale dans la norme WGS84.
+     * @param lat la coordonnée latitudinale dans la norme WGS84.
+     * @return la coordonnée n
+     */
     public static double n(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
         double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
@@ -26,6 +41,12 @@ public final class Ch1903 {
                 +119.79*Math.pow(lat1,3));
     }
 
+    /**
+     * Convertit des coordonnées de la norme CH1903 à WGS84.
+     * @param e la coordonnée selon l'axe EST dans la norme CH1903.
+     * @param n la coordonnée selon l'axe NORD dans la norme CH1903.
+     * @return la coordonnée longitudinale.
+     */
     public static double lon(double e, double n){
         double x = Math.pow(10,-6)*(e-2600000);
         double y = Math.pow(10,-6)*(n-1200000);
@@ -36,7 +57,12 @@ public final class Ch1903 {
                     - 0.0436*x*x*x;
         return Math.toRadians(lon0*100/36);
     }
-
+    /**
+     * Convertit des coordonnées de la norme CH1903 à WGS84.
+     * @param e la coordonnée selon l'axe EST dans la norme CH1903.
+     * @param n la coordonnée selon l'axe NORD dans la norme CH1903.
+     * @return la coordonnée latitudinale.
+     */
     public static double lat(double e, double n){
         double x = Math.pow(10,-6)*(e-2600000);
         double y = Math.pow(10,-6)*(n-1200000);
