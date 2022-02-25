@@ -1,15 +1,14 @@
 package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.Preconditions;
 
 /**
  * @author Gonzalez Edgar (328095)
  */
 public record PointCh(double e, double n) {
     public PointCh{
-        if (!SwissBounds.containsEN(e,n)){
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(SwissBounds.containsEN(e,n));
     }
 
     /**
