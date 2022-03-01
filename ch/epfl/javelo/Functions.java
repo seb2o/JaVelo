@@ -6,19 +6,28 @@ public final class Functions {
 
     private Functions(){};
 
-//    public static Constant constant(double y){
-//        return;
+    public static DoubleUnaryOperator constant(double y){
+        return new Constant(y);
+    }
+
+//    public static DoubleUnaryOperator sampled(float[] samples, double xMax){
+//
 //    }
 
     private static final class Constant implements DoubleUnaryOperator{
 
+        private double constantValue;
 
-        public Constant(double y){}
+        public Constant(double y){
+            constantValue = y;
+        }
 
         @Override
         public double applyAsDouble(double y) {
-            return y;
-        }
+            return this.constantValue;
+        }//todo what is the point of the argument of apply as double ?
+
+
     }
 
 }
