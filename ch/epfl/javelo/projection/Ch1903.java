@@ -12,7 +12,7 @@ public final class Ch1903 {
      * Convertit des coordonnées de la norme WGS84 à CH1903.
      * @param lon la coordonnée longitudinale dans la norme WGS84.
      * @param lat la coordonnée latitudinale dans la norme WGS84.
-     * @return la coordonnée e
+     * @return la coordonnée e en degrés.
      */
     public static double e(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
@@ -28,7 +28,7 @@ public final class Ch1903 {
      * Convertit des coordonnées de la norme WGS84 à CH1903.
      * @param lon la coordonnée longitudinale dans la norme WGS84.
      * @param lat la coordonnée latitudinale dans la norme WGS84.
-     * @return la coordonnée n
+     * @return la coordonnée n en degrés.
      */
     public static double n(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
