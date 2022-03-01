@@ -14,12 +14,12 @@ public final class Ch1903 {
      * @param lat la coordonnée latitudinale dans la norme WGS84.
      * @return la coordonnée e
      */
-    public static double e(double lon, double lat){//todo test failed here
+    public static double e(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
         double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
-        return Math.toRadians(2_600_072.37
-                +211_455.93*lat1
-                -10_938.51*lon1*lat1
+        return (2600072.37
+                +211455.93*lon1
+                -10938.51*lon1*lat1
                 -0.36*lon1*lat1*lat1
                 -44.54*Math.pow(lon1,3));
     }
@@ -30,12 +30,12 @@ public final class Ch1903 {
      * @param lat la coordonnée latitudinale dans la norme WGS84.
      * @return la coordonnée n
      */
-    public static double n(double lon, double lat){//todo test failed here
-        double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26_782.5);
-        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169_028.66);;
-        return Math.toRadians(1_200_147.07
-                +308_807.95*lat1
-                +3_745.25*lon1*lon1
+    public static double n(double lon, double lat){
+        double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
+        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
+        return (1200147.07
+                +308807.95*lat1
+                +3745.25*lon1*lon1
                 +76.63*lat1*lat1
                 -194.56*lon1*lon1*lat1
                 +119.79*Math.pow(lat1,3));

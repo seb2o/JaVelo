@@ -3,8 +3,8 @@ package ch.epfl.javelo;
 public class Main
 {
     public static void main(String[] args) {
-        int value = 2120947847;
+        int value = -2147483648;
         System.out.println(Integer.toBinaryString(value));
-        System.out.println(Integer.toBinaryString(Bits.extractUnsigned(value,5,3)));
+        System.out.println(Q28_4.ofInt(value));
     }
 }
