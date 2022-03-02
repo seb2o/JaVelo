@@ -9,12 +9,15 @@ public class PointWebMercatorTest {
 
     @Test
     void ofPointChWorksWithKnownValues(){
-        PointCh pointCh = new PointCh(2500000,1100000);
+        double e = Ch1903.e(Math.toRadians(6.5790772),Math.toRadians(46.5218976));
+        System.out.println(e);
+        double n = Ch1903.n(Math.toRadians(6.5790772),Math.toRadians(46.5218976));
+        PointCh pointCh = new PointCh(e,n);
         PointWebMercator pointWebMercator = PointWebMercator.ofPointCh(pointCh);
         double actualX = pointWebMercator.x();
         double actualY = pointWebMercator.y();
-        double expectedX = 684258.6180669012;
-        double expectedY = 5787419.57036233;
+        double expectedX = 0.518275214444;
+        double expectedY = 0.353664894749;
         assertEquals(expectedX,actualX,DELTA);
         assertEquals(expectedY,actualY,DELTA);
     }
