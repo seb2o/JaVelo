@@ -6,14 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BitsTest {
 
-    private int generatingBit = (int)Math.pow(2,31);
-    private int unsignedTestBit = generatingBit >>> 10;
 
+    int testBit = Integer.MIN_VALUE;
 
     @Test
     public void signedExtractionTest(){
-        var actual = Bits.extractUnsigned(generatingBit,29,1);
-        var expected = 0b0;
+        var actual = Bits.extractUnsigned(testBit,31,1);
+        var expected = -1;
         assertEquals(expected, actual);
     }
 }

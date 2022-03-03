@@ -2,7 +2,16 @@ package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Preconditions;
 
+/**
+ * @author Edgar Gonzales (32809)
+ */
 public record PointWebMercator(double x, double y) {
+
+    /**
+     * constructeur d'un point dans le système WebMarcator
+     * @param x coordonnée x du point. compris entre 0 et 1
+     * @param y coordonnée y du point. compris entre 0 et 1
+     */
     public PointWebMercator{
         Preconditions.checkArgument(x >=0 & x <= 1 & y >=0 & y <= 1 );
     }

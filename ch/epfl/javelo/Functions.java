@@ -23,7 +23,8 @@ public final class Functions {
         return t -> {
             for (int i = 0; i < len - 1; i++) {
                 if ((i + 1) * distance >= t) {
-                    return Math2.interpolate(samples[i], samples[i + 1], t);
+                    System.out.println((t - i*(len-1))*len);
+                    return Math2.interpolate(samples[i], samples[i + 1], (t - i*(len))*len);
                 }
             }
             if(t < 0){
