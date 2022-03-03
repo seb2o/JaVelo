@@ -5,7 +5,7 @@ public final class Q28_4 {
     private  Q28_4(){}
 
     public static int ofInt(int i) {
-        Preconditions.checkArgument(i<=Math.pow(2,28)-1);
+        Preconditions.checkArgument(i>= 0 && i<=Math.pow(2,28)-1);
         return i << 4;
     }
 
