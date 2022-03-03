@@ -11,7 +11,7 @@ public class BitsTest {
 
     @Test
     public void signedExtractionTest(){
-        var actual = Bits.extractUnsigned(testBit,31,1);
+        var actual = Bits.extractSigned(testBit,31,1);
         var expected = -1;
         assertEquals(expected, actual);
     }
