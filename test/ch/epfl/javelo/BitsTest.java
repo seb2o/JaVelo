@@ -12,7 +12,7 @@ public class BitsTest {
     @Test
     public void signedExtractionTest(){
         var actual = Bits.extractSigned(testBit,31,1);
-        var expected = -1;
+        var expected = 0b11111111111111111111111111111111;
         assertEquals(expected, actual);
     }
 }
