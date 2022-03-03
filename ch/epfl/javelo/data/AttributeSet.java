@@ -24,7 +24,7 @@ public record AttributeSet(long bits) {
         return bits == 1;
     }
 
-    private long maskOf(Attribute attribute){   //todo utiliser maskOf pour contais ? (voir conseil de programmation)
+    private long maskOf(Attribute attribute){   //todo utiliser maskOf pour contains ? (voir conseil de programmation)
         return 1L << attribute.ordinal();
     }
 
