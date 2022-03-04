@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class BitsTest {
 
-    int testBit = Integer.MIN_VALUE;
+    final int testBit = Integer.MIN_VALUE;
 
     @Test
     public void signedExtractionTestFirstBit(){

@@ -17,7 +17,7 @@ public final class Ch1903 {
      */
     public static double e(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
-        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
+        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);
         return (2600072.37
                 +211455.93*lon1
                 -10938.51*lon1*lat1
@@ -33,7 +33,7 @@ public final class Ch1903 {
      */
     public static double n(double lon, double lat){
         double lon1 = Math.pow(10,-4)*(3600*Math.toDegrees(lon)-26782.5);
-        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);;
+        double lat1 = Math.pow(10,-4)*(3600*Math.toDegrees(lat)-169028.66);
         return (1200147.07
                 +308807.95*lat1
                 +3745.25*lon1*lon1

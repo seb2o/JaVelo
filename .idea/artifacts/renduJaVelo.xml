@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="renduJaVelo">
+    <output-path>$PROJECT_DIR$/out/artifacts/renduJaVelo</output-path>
+    <root id="root">
+      <element id="archive" name="projet-cs108.zip">
+        <element id="directory" name="projet JaVelo">
+          <element id="directory" name="src" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
