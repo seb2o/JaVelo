@@ -12,7 +12,7 @@ public record AttributeSet(long bits) {
     public static AttributeSet of(Attribute ... attributes){
         long bits = 0;
         for (Attribute attribute:attributes) {
-            if ((maskOf(attribute) & bits) ==0) {//vérifie l'absence de redondance dans la liste d'attribut
+            if ((maskOf(attribute) & bits) == 0) {//vérifie l'absence de redondance dans la liste d'attribut
                 bits += (1L << attribute.ordinal());
             }
         }
