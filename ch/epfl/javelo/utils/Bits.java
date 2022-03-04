@@ -1,4 +1,6 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.utils;
+
+import ch.epfl.javelo.verification.Preconditions;
 
 /**
  * @author Edgar Gonzales (328095)
@@ -32,7 +34,8 @@ public final class Bits {
      */
     public static int extractUnsigned(int value, int start, int length){
         Preconditions.checkArgument(start >= 0 & start+length <= 31 & length > 0 & length != 32);
-        value = value >>> 32 - length;
+        value = value << (32 - (start + length));
+        value = value >>> (32 - length);
         return value;
     }
 }

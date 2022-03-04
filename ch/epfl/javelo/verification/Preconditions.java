@@ -1,4 +1,4 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.verification;
 
 /**
  * @author Gonzalez Edgar (328095)

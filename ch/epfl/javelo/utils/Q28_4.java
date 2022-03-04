@@ -1,4 +1,6 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.utils;
+
+import ch.epfl.javelo.verification.Preconditions;
 
 public final class Q28_4 {
 

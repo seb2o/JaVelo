@@ -1,6 +1,6 @@
 package ch.epfl.javelo.projection;
 
-import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.utils.Math2;
 
 /**
  * @author Gonzalez Edgar (328095)

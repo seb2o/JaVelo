@@ -1,6 +1,6 @@
 package ch.epfl.javelo.projection;
 
-import ch.epfl.javelo.Preconditions;
+import ch.epfl.javelo.verification.Preconditions;
 
 /**
  * @author Edgar Gonzales (32809)

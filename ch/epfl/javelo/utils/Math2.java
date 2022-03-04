@@ -1,4 +1,6 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.utils;
+
+import ch.epfl.javelo.verification.Preconditions;
 
 /**
  * @author Gonzalez Edgar (328095)

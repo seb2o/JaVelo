@@ -10,7 +10,6 @@ public class PointWebMercatorTest {
     @Test
     void ofPointChWorksWithKnownValues(){
         double e = Ch1903.e(Math.toRadians(6.5790772),Math.toRadians(46.5218976));
-        System.out.println(e);
         double n = Ch1903.n(Math.toRadians(6.5790772),Math.toRadians(46.5218976));
         PointCh pointCh = new PointCh(e,n);
         PointWebMercator pointWebMercator = PointWebMercator.ofPointCh(pointCh);

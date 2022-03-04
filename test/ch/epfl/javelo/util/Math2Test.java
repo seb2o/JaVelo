@@ -1,14 +1,11 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.util;
 
-import ch.epfl.test.TestRandomizer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import ch.epfl.javelo.utils.Math2;
+import ch.epfl.Randomizer.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
-import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
-import static ch.epfl.test.TestRandomizer.newRandom;
+import static ch.epfl.Randomizer.TestRandomizer.RANDOM_ITERATIONS;
+import static ch.epfl.Randomizer.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Math2Test {

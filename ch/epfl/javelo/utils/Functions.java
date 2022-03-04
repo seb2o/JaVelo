@@ -1,4 +1,6 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.utils;
+
+import ch.epfl.javelo.verification.Preconditions;
 
 import java.util.function.DoubleUnaryOperator;
 
@@ -6,8 +8,6 @@ public final class Functions {
 
     private Functions() {
     }
-
-    ;
 
     public static DoubleUnaryOperator constant(double y) {
         return t -> {
