@@ -1,7 +1,7 @@
 package ch.epfl.javelo.projection;
 
-import ch.epfl.javelo.utils.Math2;
-import ch.epfl.javelo.verification.Preconditions;
+import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.Preconditions;
 
 /**
  * @author Gonzalez Edgar (328095)

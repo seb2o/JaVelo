@@ -1,9 +1,7 @@
-package ch.epfl.javelo.utils;
-
-import ch.epfl.javelo.verification.Preconditions;
+package ch.epfl.javelo;
 
 /**
- * @author Edgar Gonzales (328095)
+ * @author Edgar Gonzalez (328095)
  */
 public final class Bits {
 

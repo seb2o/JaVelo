@@ -1,9 +1,9 @@
 package ch.epfl.javelo.data;
-import ch.epfl.javelo.verification.Preconditions;
+import ch.epfl.javelo.Preconditions;
 import java.util.StringJoiner;
 
 /**
- * @author Edgar Gonzales (328095)
+ * @author Edgar Gonzalez (328095)
  */
 public record AttributeSet(long bits) {
 

@@ -1,6 +1,6 @@
 package ch.epfl.javelo.util;
 
-import ch.epfl.javelo.utils.Math2;
+import ch.epfl.javelo.Math2;
 import ch.epfl.randomizer.TestRandomizer;
 import org.junit.jupiter.api.Test;
 

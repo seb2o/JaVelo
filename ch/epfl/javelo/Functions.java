@@ -1,11 +1,9 @@
-package ch.epfl.javelo.utils;
-
-import ch.epfl.javelo.verification.Preconditions;
+package ch.epfl.javelo;
 
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * @author Edgar Gonzales (328095)
+ * @author Edgar Gonzalez (328095)
  */
 public final class Functions {
 

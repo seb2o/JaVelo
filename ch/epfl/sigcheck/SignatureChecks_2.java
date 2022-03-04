@@ -1,32 +1,27 @@
-package ch.epfl.javelo.verification;
+package ch.epfl.sigcheck;
 
-// Attention : cette classe n'est *pas* un Randomizer JUnit, et son code n'est
+// Attention : cette classe n'est *pas* un test JUnit, et son code n'est
 // pas destiné à être exécuté. Son seul but est de vérifier, autant que
 // possible, que les noms et les types des différentes entités à définir
 // pour cette étape du projet sont corrects.
-
-import ch.epfl.javelo.utils.Bits;
-import ch.epfl.javelo.utils.Functions;
-import ch.epfl.javelo.utils.Math2;
-import ch.epfl.javelo.utils.Q28_4;
 
 final class SignatureChecks_2 {
     private SignatureChecks_2() {}
 
     void checkPreconditions() throws Exception {
-        Preconditions.checkArgument(v01);
+        ch.epfl.javelo.Preconditions.checkArgument(v01);
     }
 
     void checkMath2() throws Exception {
-        v02 = Math2.asinh(v02);
-        v03 = Math2.ceilDiv(v03, v03);
-        v03 = Math2.clamp(v03, v03, v03);
-        v02 = Math2.clamp(v02, v02, v02);
-        v02 = Math2.dotProduct(v02, v02, v02, v02);
-        v02 = Math2.interpolate(v02, v02, v02);
-        v02 = Math2.norm(v02, v02);
-        v02 = Math2.projectionLength(v02, v02, v02, v02, v02, v02);
-        v02 = Math2.squaredNorm(v02, v02);
+        v02 = ch.epfl.javelo.Math2.asinh(v02);
+        v03 = ch.epfl.javelo.Math2.ceilDiv(v03, v03);
+        v03 = ch.epfl.javelo.Math2.clamp(v03, v03, v03);
+        v02 = ch.epfl.javelo.Math2.clamp(v02, v02, v02);
+        v02 = ch.epfl.javelo.Math2.dotProduct(v02, v02, v02, v02);
+        v02 = ch.epfl.javelo.Math2.interpolate(v02, v02, v02);
+        v02 = ch.epfl.javelo.Math2.norm(v02, v02);
+        v02 = ch.epfl.javelo.Math2.projectionLength(v02, v02, v02, v02, v02, v02);
+        v02 = ch.epfl.javelo.Math2.squaredNorm(v02, v02);
     }
 
     void checkCh1903() throws Exception {
@@ -83,14 +78,14 @@ final class SignatureChecks_2 {
     }
 
     void checkBits() throws Exception {
-        v03 = Bits.extractSigned(v03, v03, v03);
-        v03 = Bits.extractUnsigned(v03, v03, v03);
+        v03 = ch.epfl.javelo.Bits.extractSigned(v03, v03, v03);
+        v03 = ch.epfl.javelo.Bits.extractUnsigned(v03, v03, v03);
     }
 
     void checkQ28_4() throws Exception {
-        v02 = Q28_4.asDouble(v03);
-        v08 = Q28_4.asFloat(v03);
-        v03 = Q28_4.ofInt(v03);
+        v02 = ch.epfl.javelo.Q28_4.asDouble(v03);
+        v08 = ch.epfl.javelo.Q28_4.asFloat(v03);
+        v03 = ch.epfl.javelo.Q28_4.ofInt(v03);
     }
 
     void checkAttributeSet() throws Exception {
@@ -105,16 +100,16 @@ final class SignatureChecks_2 {
     }
 
     void checkFunctions() throws Exception {
-        v13 = Functions.constant(v02);
-        v13 = Functions.sampled(v14, v02);
+        v13 = ch.epfl.javelo.Functions.constant(v02);
+        v13 = ch.epfl.javelo.Functions.sampled(v14, v02);
     }
 
     boolean v01;
     double v02;
     int v03;
     ch.epfl.javelo.projection.PointCh v04;
-    java.lang.Object v05;
-    java.lang.String v06;
+    Object v05;
+    String v06;
     ch.epfl.javelo.projection.PointWebMercator v07;
     float v08;
     ch.epfl.javelo.data.AttributeSet v09;

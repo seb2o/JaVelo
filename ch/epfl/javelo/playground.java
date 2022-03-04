@@ -1,7 +1,5 @@
 package ch.epfl.javelo;
 
-import ch.epfl.javelo.utils.Functions;
-
 public class playground
 {
     public static void main(String[] args) {
