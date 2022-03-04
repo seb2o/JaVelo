@@ -2,6 +2,7 @@ package ch.epfl.javelo;
 
 /**
  * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public final class Preconditions {
     private Preconditions(){

@@ -1,8 +1,9 @@
 package ch.epfl.javelo;
 
 /**
- * @author Edgar Gonzales (328095)
- * permet la représenation de nombres décimaux avec une précison de 1/16 stocké dans un int
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
+ * Permet la représenation de nombres décimaux avec une précison de 1/16 stocké dans un int
  */
 public final class Q28_4 {
 

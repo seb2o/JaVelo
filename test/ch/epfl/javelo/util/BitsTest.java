@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Test;
 import static ch.epfl.randomizer.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
+ */
 public class BitsTest {
 
     int testBit = Integer.MIN_VALUE;

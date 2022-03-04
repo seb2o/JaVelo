@@ -3,7 +3,8 @@ import ch.epfl.javelo.Preconditions;
 import java.util.StringJoiner;
 
 /**
- * @author Edgar Gonzalez (328095)
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public record AttributeSet(long bits) {
 

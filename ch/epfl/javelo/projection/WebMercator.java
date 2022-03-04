@@ -3,7 +3,8 @@ package ch.epfl.javelo.projection;
 import ch.epfl.javelo.Math2;
 
 /**
-  * @author Edgar Gonzales (328095)
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public final class WebMercator {
     private WebMercator() {

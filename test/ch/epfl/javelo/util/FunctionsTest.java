@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
+ */
 public class FunctionsTest {
     public static final double DELTA = 1e-7;
 

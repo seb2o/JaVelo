@@ -5,6 +5,7 @@ import ch.epfl.javelo.Preconditions;
 
 /**
  * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public record PointCh(double e, double n) {
     public PointCh{

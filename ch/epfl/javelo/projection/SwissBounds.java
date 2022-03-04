@@ -4,6 +4,7 @@ import ch.epfl.javelo.Math2;
 
 /**
  * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public final class SwissBounds {
     private SwissBounds(){

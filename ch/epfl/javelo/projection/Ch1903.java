@@ -2,6 +2,7 @@ package ch.epfl.javelo.projection;
 
 /**
  * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public final class Ch1903 {
     private Ch1903(){

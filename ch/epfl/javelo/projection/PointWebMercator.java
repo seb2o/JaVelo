@@ -3,7 +3,8 @@ package ch.epfl.javelo.projection;
 import ch.epfl.javelo.Preconditions;
 
 /**
- * @author Edgar Gonzales (32809)
+ * @author Gonzalez Edgar (328095)
+ * @author Boo Sebastien (345870)
  */
 public record PointWebMercator(double x, double y) {
 

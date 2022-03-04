@@ -108,8 +108,8 @@ final class SignatureChecks_2 {
     double v02;
     int v03;
     ch.epfl.javelo.projection.PointCh v04;
-    Object v05;
-    String v06;
+    java.lang.Object v05;
+    java.lang.String v06;
     ch.epfl.javelo.projection.PointWebMercator v07;
     float v08;
     ch.epfl.javelo.data.AttributeSet v09;
