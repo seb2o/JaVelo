@@ -1,7 +1,7 @@
 package ch.epfl.javelo.util;
 import ch.epfl.javelo.utils.Bits;
 import org.junit.jupiter.api.Test;
-import static ch.epfl.Randomizer.TestRandomizer.newRandom;
+import static ch.epfl.randomizer.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BitsTest {

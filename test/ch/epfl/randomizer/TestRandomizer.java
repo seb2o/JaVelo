@@ -1,4 +1,4 @@
-package ch.epfl.Randomizer;
+package ch.epfl.randomizer;
 
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
