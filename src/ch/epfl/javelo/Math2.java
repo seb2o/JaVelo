@@ -15,7 +15,7 @@ public final class Math2 {
      */
     public static int ceilDiv(int x, int y){
         Preconditions.checkArgument (x >= 0 && y> 0);
-        return (x+y-1)/y;
+        return (x+y-1) / y;
     }
 
     /**

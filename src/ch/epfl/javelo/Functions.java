@@ -16,9 +16,7 @@ public final class Functions {
      * @return une fonction constante de valeure y pour n'importe quel argument
      */
     public static DoubleUnaryOperator constant(double y) {
-        return t -> {
-            return y;
-        };
+        return t -> y;
     }
 
 
