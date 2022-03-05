@@ -16,8 +16,8 @@ public record GraphSectors(ByteBuffer buffer) {
     public static final double SECTOR_E_SIZE = (SwissBounds.WIDTH)/128;
     public static final double SECTOR_N_SIZE = (SwissBounds.HEIGHT)/128; //(128x128) secteurs.
     private static final int OFFSET_FIRST_NODE_ID = 0;
-    private static final int OFFSET_NUMBER_OF_NODES = OFFSET_FIRST_NODE_ID + 4;
-    private static final int SECTOR_BYTES = OFFSET_NUMBER_OF_NODES + 2;
+    private static final int OFFSET_NUMBER_OF_NODES = OFFSET_FIRST_NODE_ID + Integer.BYTES;
+    private static final int SECTOR_BYTES = OFFSET_NUMBER_OF_NODES + Short.BYTES;
 
     public ArrayList<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
 
@@ -66,7 +66,7 @@ public record GraphSectors(ByteBuffer buffer) {
     }
 
     public int numberOfNode(int sectorId){
-        return buffer.getShort(sectorId * SECTOR_BYTES + OFFSET_NUMBER_OF_NODES);
+        return Short.toUnsignedInt( buffer.getShort(sectorId * SECTOR_BYTES + OFFSET_NUMBER_OF_NODES));
     }
 
 
