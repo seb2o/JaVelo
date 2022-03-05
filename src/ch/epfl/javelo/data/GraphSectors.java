@@ -15,33 +15,61 @@ import java.util.ArrayList;
 public record GraphSectors(ByteBuffer buffer) {
     public static final double SECTOR_E_SIZE = (SwissBounds.WIDTH)/128;
     public static final double SECTOR_N_SIZE = (SwissBounds.HEIGHT)/128; //(128x128) secteurs.
+    private static final int OFFSET_FIRST_NODE_ID = 0;
+    private static final int OFFSET_NUMBER_OF_NODES = OFFSET_FIRST_NODE_ID + 4;
+    private static final int SECTOR_BYTES = OFFSET_NUMBER_OF_NODES + 2;
 
     public ArrayList<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
 
         ArrayList<Sector> sectors = new ArrayList<>();
 
-        double eMinCorner = center.e() - distance;
-        double eMaxCorner = center.e() + distance;
-        double nMinCorner = center.n() - distance;
-        double nMaxCorner = center.n() + distance;
+        double eMin = center.e() - distance;
+        double eMax = center.e() + distance;
+        double nMin = center.n() - distance;
+        double nMax = center.n() + distance;
 
-        return null; //todo à completer
-    }
+        ArrayList<Integer> sectorsId = new ArrayList<>();
 
+        int bottomLeftId = pointChSectorId(new PointCh(eMin,nMin));
+        int bottomRightId = pointChSectorId(new PointCh(eMax,nMin));
+        int topLeftId = pointChSectorId(new PointCh(eMin,nMax));
 
-    record Sector(int startNodeId,int endNodeId){
-
-        private int pointChSectorId(PointCh point){
-            double eToBorder = point.e() - SwissBounds.MIN_E;
-            double nToBorder = point.n() - SwissBounds.MIN_N;
-
-            int eIndex = Math.min( (int) Math.floor(eToBorder / SECTOR_E_SIZE), 127);
-            //Remarque : utilisation de la fonction min ici, car pour le cas extrème où eToBorder vaut Swissbounds.WIDTH, on aurait 128.
-            // (on veut une valeur entre 0 et 127 pour le prochain calcul.)
-            int nIndex = Math.min( (int) Math.floor(nToBorder / SECTOR_N_SIZE), 127);
-
-            return eIndex + 128 * nIndex;
+        int c = 0;
+        for (int n = bottomLeftId; n <= topLeftId ; n+=128) {
+            for (int e = bottomLeftId; e <= bottomRightId; e++) {
+                sectorsId.add(e + 128*c);
+            }
+            c++;
         }
+
+        for (int id : sectorsId) {
+            sectors.add(new Sector(startNodeId(id), startNodeId(id) + numberOfNode(id)));
+        }
+
+        return sectors;
     }
+
+    public int pointChSectorId(PointCh point){
+        double eToBorder = point.e() - SwissBounds.MIN_E;
+        double nToBorder = point.n() - SwissBounds.MIN_N;
+
+        int eIndex = Math.min( (int) Math.floor(eToBorder / SECTOR_E_SIZE), 127);
+        //Remarque : utilisation de la fonction min ici, car pour le cas extrème où eToBorder vaut Swissbounds.WIDTH, on aurait 128.
+        // (on veut une valeur entre 0 et 127 pour le prochain calcul.)
+        int nIndex = Math.min( (int) Math.floor(nToBorder / SECTOR_N_SIZE), 127);
+
+        return eIndex + 128 * nIndex;
+    }
+
+    public int startNodeId(int sectorId){
+        return buffer.getInt(sectorId * SECTOR_BYTES + OFFSET_FIRST_NODE_ID);
+    }
+
+    public int numberOfNode(int sectorId){
+        return buffer.getShort(sectorId * SECTOR_BYTES + OFFSET_NUMBER_OF_NODES);
+    }
+
+
+    record Sector(int startNodeId,int endNodeId){}
 }
 
