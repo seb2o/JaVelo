@@ -22,11 +22,11 @@ public record GraphNodes(IntBuffer buffer) {
         return buffer().capacity() / NODE_INTS;
     }
 
-    double nodeE(int nodeId){
+    public double nodeE(int nodeId){
         return Q28_4.asDouble(buffer.get(NODE_INTS * nodeId + OFFSET_E)); //todo je pense que le Q28.4.asDouble est ce qu'on doit utiliser ici
     }
 
-    double nodeN(int nodeId){
+    public double nodeN(int nodeId){
         return Q28_4.asDouble(buffer.get(NODE_INTS * nodeId + OFFSET_N));
     }
 

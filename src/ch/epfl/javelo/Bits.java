@@ -17,7 +17,7 @@ public final class Bits {
      * @return la valeure signée du vecteur de bit extrait
      */
     public static int extractSigned(int value, int start, int length){
-        Preconditions.checkArgument(start >= 0 & length >= 0 & start+length <= 32);
+        Preconditions.checkArgument(start >= 0 & length > 0 & start+length <= 32);
         value = value << (32 - (start + length));
         value = value >> (32 - length);
         return value;
@@ -32,7 +32,7 @@ public final class Bits {
      * @return la valeure toujours positive du vecteur de bit extrait
      */
     public static int extractUnsigned(int value, int start, int length){
-        Preconditions.checkArgument(start >= 0 & start+length <= 31 & length > 0 & length != 32);
+        Preconditions.checkArgument(start >= 0 & start+length <= 32 & length > 0 & length != 32);
         value = value << (32 - (start + length));
         value = value >>> (32 - length);
         return value;

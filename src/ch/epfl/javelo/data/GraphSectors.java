@@ -71,6 +71,6 @@ public record GraphSectors(ByteBuffer buffer) {
     }
 
 
-    record Sector(int startNodeId,int endNodeId){}
+    public record Sector(int startNodeId,int endNodeId){}
 }
 
