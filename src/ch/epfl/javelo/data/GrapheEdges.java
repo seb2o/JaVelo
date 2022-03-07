@@ -43,13 +43,18 @@ public record GrapheEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuf
 
     boolean hasProfile(int edgeId){
         int profile = Bits.extractUnsigned(profileIds.get(edgeId),30,2);
-        return profile == 0;
+        return profile != 0;
     }
 
     float[] profileSamples(int edgeId){
-        int firstProfileId = Bits.extractUnsigned(profileIds.get(edgeId),0,30);
-        int numberOfProfiles = 1 + (int) Math.floor(this.length(edgeId) / 2);
+        int firstProfileId = Bits.extractUnsigned(profileIds.get(edgeId),0,30); //TODO faires tous les cas de compression
+        int numberOfProfiles = 1 + (int) Math.ceil(this.length(edgeId) / 2);
         float[] profileSamples = new float[numberOfProfiles];
+
+        if(!hasProfile(edgeId)){
+            return profileSamples;
+        }
+
         for (int i = 0; i < numberOfProfiles; i++) {
             profileSamples[i] = firstProfileId + i;
         }

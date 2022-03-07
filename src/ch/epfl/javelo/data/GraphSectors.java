@@ -6,6 +6,7 @@ import ch.epfl.javelo.projection.SwissBounds;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Gonzalez Edgar (328095)
@@ -19,7 +20,7 @@ public record GraphSectors(ByteBuffer buffer) {
     private static final int OFFSET_NUMBER_OF_NODES = OFFSET_FIRST_NODE_ID + Integer.BYTES;
     private static final int SECTOR_BYTES = OFFSET_NUMBER_OF_NODES + Short.BYTES;
 
-    public ArrayList<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
+    public List<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
 
         ArrayList<Sector> sectors = new ArrayList<>();
 

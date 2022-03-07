@@ -3,6 +3,7 @@ import ch.epfl.javelo.Functions;
 import ch.epfl.randomizer.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -58,5 +59,6 @@ public class FunctionsTest {
         var value1  = Functions.sampled(samples,xMax).applyAsDouble(extremMaxValue);
         assertEquals(-15, value0, DELTA);
         assertEquals(9, value1, DELTA);
+
     }
 }
