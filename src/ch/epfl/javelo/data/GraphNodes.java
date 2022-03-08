@@ -23,7 +23,7 @@ public record GraphNodes(IntBuffer buffer) {
     }
 
     public double nodeE(int nodeId){
-        return Q28_4.asDouble(buffer.get(NODE_INTS * nodeId + OFFSET_E)); //todo je pense que le Q28.4.asDouble est ce qu'on doit utiliser ici
+        return Q28_4.asDouble(buffer.get(NODE_INTS * nodeId + OFFSET_E));
     }
 
     public double nodeN(int nodeId){
@@ -35,7 +35,7 @@ public record GraphNodes(IntBuffer buffer) {
     }
 
     public int edgeId(int nodeId, int edgeIndex){
-        assert 0 <= edgeIndex && edgeIndex < outDegree(nodeId); //todo pk assert et pas préconditions ? penser à faire -ea
-        return Bits.extractUnsigned((buffer.get(NODE_INTS * nodeId + OFFSET_OUT_EDGES)),0,28) + edgeIndex; //todo erreur dans le pdf (edgeIndex-ième arete)
+        assert 0 <= edgeIndex && edgeIndex < outDegree(nodeId);
+        return Bits.extractUnsigned((buffer.get(NODE_INTS * nodeId + OFFSET_OUT_EDGES)),0,28) + edgeIndex;
     }
 }

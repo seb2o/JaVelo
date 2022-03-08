@@ -50,7 +50,7 @@ public record GraphSectors(ByteBuffer buffer) {
         return sectors;
     }
 
-    public int pointChSectorId(PointCh point){
+    public int pointChSectorId(PointCh point){//todo a tester en plus
         double eToBorder = point.e() - SwissBounds.MIN_E;
         double nToBorder = point.n() - SwissBounds.MIN_N;
 

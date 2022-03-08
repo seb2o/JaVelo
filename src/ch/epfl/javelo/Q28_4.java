@@ -25,7 +25,7 @@ public final class Q28_4 {
      * @return la valeure stockée dans le paramètre représentée en type double
      */
     public static double asDouble(int i){
-        return Math.scalb(i,-4);
+        return Math.scalb((double)i,-4);
     }
 
     /**
@@ -34,7 +34,7 @@ public final class Q28_4 {
      * @return la valeure stockée dans le paramètre représentée en type float
      */
     public static float asFloat(int i){
-        return Math.scalb(i,-4);
+        return Math.scalb((float)i,-4);
     }
 
 }
