@@ -24,10 +24,10 @@ public record GraphSectors(ByteBuffer buffer) {
 
         ArrayList<Sector> sectors = new ArrayList<>();
 
-        double eMin = center.e() - distance;
-        double eMax = center.e() + distance;
-        double nMin = center.n() - distance;
-        double nMax = center.n() + distance;
+        double eMin = Math.max(center.e() - distance,SwissBounds.MIN_E);
+        double eMax = Math.min(center.e() + distance,SwissBounds.MAX_E);
+        double nMin = Math.max(center.n() - distance, SwissBounds.MIN_N);
+        double nMax = Math.min(center.n() + distance,SwissBounds.MAX_N);
 
         ArrayList<Integer> sectorsId = new ArrayList<>();
 
