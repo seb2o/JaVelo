@@ -22,16 +22,31 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     private static final int EDGE_BYTES = OFFSET_EDGE_ATTRIBUTES_ID + Short.BYTES;
 
 
+    /**
+     * retourne vrai si l'arête d'identité donnée va dans le sens inverse de la voie OSM dont elle provient
+     * @param edgeId l'identité de l'arête étudiée
+     * @return booléen indiquant si l'arête va dans le sens de sa voie osm
+     */
     public boolean isInverted(int edgeId){
         return edgesBuffer.getInt(EDGE_BYTES * edgeId + OFFSET_EDGE_DIRECTION_AND_END_NODE_ID) < 0;
     }
 
+    /**
+     * retourne l'identité du nœud destination de l'arête d'identité donnée
+     * @param edgeId l'identité de l'arête étudiée
+     * @return l'identité du nœud destination de l'arête d'identité donnée
+     */
     public int targetNodeId(int edgeId){
         int id = edgesBuffer.getInt(EDGE_BYTES * edgeId + OFFSET_EDGE_DIRECTION_AND_END_NODE_ID);
         if(isInverted(edgeId)){return ~id;}
         else{return id;}
     }
 
+    /**
+     * retourne la longueure de l'arête d'identité donnée, en mètres
+     * @param edgeId l'identité de l'arête étudiée
+     * @return longueure de l'arête d'identité donnée, en mètres
+     */
     public double length(int edgeId){
         return Q28_4.asDouble(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_LENGTH));
         //La conversion depuis le format Q28.4 convient pour le format Q12.4 car il y a autant de bits après la virgule, et moins avant la virgule (12<28).
@@ -48,6 +63,11 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         return profile != 0;
     }
 
+    /**
+     *  qui retourne le tableau des échantillons du profil de l'arête d'identité donnée, vide si l'arête ne possède pas de profil
+     * @param edgeId l'identité de l'arête étudiée
+     * @return tableau des échantillons du profil de l'arête d'identité donnée, vide si pas de profil
+     */
     public float[] profileSamples(int edgeId){
 
         if(!hasProfile(edgeId)){
@@ -92,6 +112,11 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         return profileSamples;
     }
 
+    /**
+     *retourne l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
+     * @param edgeId l'identité de l'arête étudiée
+     * @return l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
+     */
     public int attributesIndex(int edgeId){
         return edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_ATTRIBUTES_ID);
     }

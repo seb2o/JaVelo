@@ -1,9 +1,7 @@
 package ch.epfl.javelo.data;
 
-import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +18,22 @@ public record GraphSectors(ByteBuffer buffer) {
     private static final int OFFSET_NUMBER_OF_NODES = OFFSET_FIRST_NODE_ID + Integer.BYTES;
     private static final int SECTOR_BYTES = OFFSET_NUMBER_OF_NODES + Short.BYTES;
 
+    /**
+     * retourne la liste de tous les secteurs superposés avec le carré centré au point donné, de côté distance*2;
+     * @param center le centre du carré a considérer
+     * @param distance la distance au centre du carré des cotés du carré
+     * @return liste de tous les secteurs superposés avec le carré centré au point donné, de côté distance*2;
+     */
     public List<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
 
         ArrayList<Sector> sectors = new ArrayList<>();
+        ArrayList<Integer> sectorsId = new ArrayList<>();
 
+        //coins du carré où sont recherchés les secteurs. ramené aux limites de la suisse si ils dépassent
         double eMin = Math.max(center.e() - distance,SwissBounds.MIN_E);
         double eMax = Math.min(center.e() + distance,SwissBounds.MAX_E);
         double nMin = Math.max(center.n() - distance, SwissBounds.MIN_N);
         double nMax = Math.min(center.n() + distance,SwissBounds.MAX_N);
-
-        ArrayList<Integer> sectorsId = new ArrayList<>();
-
         int bottomLeftId = pointChSectorId(new PointCh(eMin,nMin));
         int bottomRightId = pointChSectorId(new PointCh(eMax,nMin));
         int topLeftId = pointChSectorId(new PointCh(eMin,nMax));
@@ -50,7 +53,8 @@ public record GraphSectors(ByteBuffer buffer) {
         return sectors;
     }
 
-    public int pointChSectorId(PointCh point){//todo a tester en plus
+    //methode interne permettant de trouver l'identité du secteur d'un point ch1903
+    private int pointChSectorId(PointCh point){
         double eToBorder = point.e() - SwissBounds.MIN_E;
         double nToBorder = point.n() - SwissBounds.MIN_N;
 
@@ -62,14 +66,15 @@ public record GraphSectors(ByteBuffer buffer) {
         return eIndex + 128 * nIndex;
     }
 
-    public int startNodeId(int sectorId){
+    //methode interne retourant l'identité du premier noeud d'un secteur
+    private int startNodeId(int sectorId){
         return buffer.getInt(sectorId * SECTOR_BYTES + OFFSET_FIRST_NODE_ID);
     }
 
-    public int numberOfNode(int sectorId){
+    //methode interne retournant le nombre de noeuds d'un secteur donné
+    private int numberOfNode(int sectorId){
         return Short.toUnsignedInt( buffer.getShort(sectorId * SECTOR_BYTES + OFFSET_NUMBER_OF_NODES));
     }
-
 
     public record Sector(int startNodeId,int endNodeId){}
 }
