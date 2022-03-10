@@ -27,9 +27,9 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     }
 
     public int targetNodeId(int edgeId){
-        int id = Bits.extractSigned(edgesBuffer.getInt(EDGE_BYTES * edgeId + OFFSET_EDGE_DIRECTION_AND_END_NODE_ID),0,31);
-        if(!isInverted(edgeId)){return id;}
-        else{return ~id;}
+        int id = edgesBuffer.getInt(EDGE_BYTES * edgeId + OFFSET_EDGE_DIRECTION_AND_END_NODE_ID);
+        if(isInverted(edgeId)){return ~id;}
+        else{return id;}
     }
 
     public double length(int edgeId){
@@ -59,7 +59,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         int compressionLevel = Bits.extractUnsigned(profileIds.get(edgeId),30,2);
 
         int numberOfProfiles = 1 + (int) Math.ceil(this.length(edgeId) / 2);
-
         float[] profileSamples = new float[numberOfProfiles];
         profileSamples[0] = Q28_4.asFloat(elevations.get(firstProfileId));
 
@@ -80,7 +79,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                     profileSamples[i] = profileSamples[i - 1] + Q28_4.asFloat( Bits.extractSigned(elevations.get(firstProfileId + 1 + (i-1)/4),16 - 4 * (((i-1) % 4) + 1), 4 ));
                 }
             }
-        };
+        }
 
 
         if(isInverted(edgeId)){

@@ -69,7 +69,7 @@ public class GraphSectorTest {
         }
         GraphSectors gs = new GraphSectors(b);
 
-        var actual = gs.sectorsInArea(new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N), 2730*128);
+        var actual = gs.sectorsInArea(new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N), 2730*129);
         var expected = new ArrayList<GraphSectors.Sector>();
         for (int i = 0; i < 128*128; i++) {
             expected.add(new GraphSectors.Sector(i, i+2));
