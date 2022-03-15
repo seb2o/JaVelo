@@ -113,7 +113,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     }
 
     /**
-     *retourne l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
+     * retourne l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
      * @param edgeId l'identité de l'arête étudiée
      * @return l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
      */
