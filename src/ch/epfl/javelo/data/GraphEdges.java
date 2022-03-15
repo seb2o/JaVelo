@@ -48,13 +48,13 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return longueure de l'arête d'identité donnée, en mètres
      */
     public double length(int edgeId){
-        return Q28_4.asDouble(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_LENGTH));
+        return Q28_4.asDouble(Short.toUnsignedInt(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_LENGTH)));
         //La conversion depuis le format Q28.4 convient pour le format Q12.4 car il y a autant de bits après la virgule, et moins avant la virgule (12<28).
     }
 
     //retourné au format Q12.4
     public double elevationGain(int edgeId){
-        return Q28_4.asDouble(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_HEIGHT_DIFF));
+        return Q28_4.asDouble(Short.toUnsignedInt(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_HEIGHT_DIFF)));
         //La conversion depuis le format Q28.4 convient pour le format Q12.4 car il y a autant de bits après la virgule, et moins avant la virgule (12<28).
     }
 
@@ -80,12 +80,12 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
 
         int numberOfProfiles = 1 + (int) Math.ceil(this.length(edgeId) / 2);
         float[] profileSamples = new float[numberOfProfiles];
-        profileSamples[0] = Q28_4.asFloat(elevations.get(firstProfileId));
+        profileSamples[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstProfileId)));
 
         switch (compressionLevel) {
             case 1 -> {
                 for (int i = 1; i < numberOfProfiles; i++) {
-                    profileSamples[i] = Q28_4.asFloat(elevations.get(firstProfileId + i));
+                    profileSamples[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstProfileId + i)));
                 }
             }
             case 2 -> {
@@ -118,7 +118,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return l'identité de l'ensemble d'attributs attaché à l'arête d'identité donnée.
      */
     public int attributesIndex(int edgeId){
-        return edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_ATTRIBUTES_ID);
+        return Short.toUnsignedInt(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_ATTRIBUTES_ID));
     }
 
 
