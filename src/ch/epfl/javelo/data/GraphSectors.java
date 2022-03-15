@@ -24,7 +24,7 @@ public record GraphSectors(ByteBuffer buffer) {
      * @param distance la distance au centre du carré des cotés du carré
      * @return liste de tous les secteurs superposés avec le carré centré au point donné, de côté distance*2;
      */
-    public List<Sector> sectorsInArea(PointCh center, double distance){ //todo arrayList ou List?
+    public List<Sector> sectorsInArea(PointCh center, double distance){
 
         ArrayList<Sector> sectors = new ArrayList<>();
         ArrayList<Integer> sectorsId = new ArrayList<>();
