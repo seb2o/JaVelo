@@ -20,10 +20,10 @@ Pour qu'une classe soit immuable, il faut qu'elle satisfasse les conditions suiv
  */
 public class Graph {
 
-    final GraphNodes nodes;
-    final GraphSectors sectors;
-    final GraphEdges edges;
-    final List<AttributeSet> attributeSets;
+    private final GraphNodes nodes;
+    private final GraphSectors sectors;
+    private final GraphEdges edges;
+    private final List<AttributeSet> attributeSets;
 
     public Graph(GraphNodes nodes, GraphSectors sectors, GraphEdges edges, List<AttributeSet> attributeSets) {
         this.nodes = nodes;
