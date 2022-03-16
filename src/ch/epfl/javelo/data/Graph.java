@@ -29,7 +29,7 @@ public class Graph {
         this.nodes = nodes;
         this.sectors = sectors;
         this.edges = edges;
-        this.attributeSets = attributeSets; //todo copie en profondeur à faire car immuable ? Ajouter une méthode clone aux classes ?
+        this.attributeSets = attributeSets;
     }
 
     public static Graph loadFrom(Path basePath) throws IOException {
@@ -85,7 +85,7 @@ public class Graph {
                 }
             }
 
-        return new Graph(nodes,sectors,edges,attributeSets);
+            return new Graph(nodes,sectors,edges,attributeSets);
         }
 
     public int nodeCount(){
@@ -148,6 +148,6 @@ public class Graph {
         if (!edges.hasProfile(edgeId)){
             return Functions.constant(Double.NaN);
         }
-        return Functions.sampled(edges.profileSamples(edgeId), edges.length(edgeId)); //todo la façon de choisir xMax est pas précisée dans le pdf mais ça me semble logique de faire ça comme ça.
+        return Functions.sampled(edges.profileSamples(edgeId), edges.length(edgeId));
     }
 }
