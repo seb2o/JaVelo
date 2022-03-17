@@ -29,14 +29,14 @@ public record PointCh(double e, double n) {
     }
 
     /**
-     * @return la coordonnée longitudinale dans la norme WGS84.
+     * @return la coordonnée longitudinale dans la norme WGS84, en radians
      */
     public double lon(){
         return Ch1903.lon(e,n);
     }
 
     /**
-     * @return la coordonnée latitudinale dans la norme WGS84.
+     * @return la coordonnée latitudinale dans la norme WGS84, en radians
      */
     public double lat(){
         return Ch1903.lat(e,n);

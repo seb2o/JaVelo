@@ -14,19 +14,19 @@ public final class SwissBounds {
     /**
      * La valeur minimale pouvant caractériser un point en suisse selon l'axe EST selon la norme CH1903.
      */
-    public static final double MIN_E = 2485000;
+    public static final double MIN_E = 2_485_000;
     /**
      * La valeur maximale pouvant caractériser un point en suisse selon l'axe EST selon la norme CH1903.
      */
-    public static final double MAX_E = 2834000;
+    public static final double MAX_E = 2_834_000;
     /**
      * La valeur minimale pouvant caractériser un point en suisse selon l'axe NORD selon la norme CH1903.
      */
-    public static final double MIN_N = 1075000;
+    public static final double MIN_N = 1_075_000;
     /**
      * La valeur maximale pouvant caractériser un point en suisse selon l'axe NORD selon la norme CH1903.
      */
-    public static final double MAX_N = 1296000;
+    public static final double MAX_N = 1_296_000;
     /**
      * La largeur en mètres de la Suisse.
      */
