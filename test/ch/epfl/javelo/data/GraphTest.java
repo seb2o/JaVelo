@@ -14,8 +14,9 @@ import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 
+import static ch.epfl.randomizer.TestRandomizer.newRandom;
 import static javax.swing.UIManager.get;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class GraphTest {
@@ -33,8 +34,6 @@ public class GraphTest {
         var expectedLat =  46.6455770;
         var actualLat = Math.toDegrees(graph.nodePoint(0).lat());
         var actualLon = Math.toDegrees(graph.nodePoint(0).lon());
-        System.out.println(actualLat);
-        System.out.println(actualLon);
         assertEquals(expectedLat,actualLat,1e-5);
         assertEquals(expectedLon,actualLon, 1e-5);
     }
@@ -103,13 +102,67 @@ public class GraphTest {
     public void edgeTargetNodeIdTest() throws IOException {
         Graph graph = Graph.loadFrom(Path.of("lausanne/"));
         var actual = graph.edgeTargetNodeId(0);
-        System.out.println(actual);
-    }
-    @Test
-    public void isInverted() throws IOException {
-        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
-        var actual = graph.edgeTargetNodeId(0);
-        System.out.println(actual);
+        assertEquals(1,actual);
     }
 
+    @Test
+    public void isInvertedTest1() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        var actual = graph.edgeIsInverted(0);
+        assertFalse(actual);
+    }
+
+    @Test
+    public void isInvertedTest2() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        var actual = graph.edgeIsInverted(1);
+        assertTrue(actual);
+    }
+
+    @Test
+    public void edgeAttributeTest() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        assertEquals(new AttributeSet((1L << 17 ) | (1L << 1 )),graph.edgeAttributes(0));
+
+    }
+
+    @Test
+    public void edgeLenghtTest() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        var actual = graph.edgeLength(0);
+        assertEquals(95.125,actual,1e-6);
+    }
+
+    @Test
+    public void elevationTest() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        var actual = graph.edgeElevationGain(0);
+        var expected = 2.75;
+        assertEquals(expected,actual);
+    }
+
+    @Test
+    public void edgeProfileTest0() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        assertEquals(Double.NaN,graph.edgeProfile(3558).applyAsDouble(newRandom().nextDouble()));
+    }
+    @Test
+    public void edgeProfileTest1() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        System.out.println(graph.edgeProfile(65).applyAsDouble(1));
+    }
+    @Test
+    public void edgeProfileTest2() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        assertEquals(576.625,graph.edgeProfile(50).applyAsDouble(0));
+        //todo ici décalage de 1 metre par rapport a la hauteur attendue que j'ai calulée :
+        //todo  edge id = 50, l'id du premier elevation est stocké a la ligne index 12 décalé de 2 ints (8 char hexadecimaux/int)
+        //todo valeure obtenue 93 base 16 = 147 base 10 .
+        //todo 147 valeure stockée dans elevations.bin ligne 144/8 + 3 shorts ( 4 char hex/short) = 240A = 9226/16 metres
+    }
+    @Test
+    public void edgeProfileTest3() throws IOException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
+        graph.edgeProfile(1);
+    }
 }

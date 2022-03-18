@@ -177,18 +177,39 @@ public class Graph {
         return edges.isInverted(edgeId);
     }
 
+    /**
+     * retourne l'ensemble des attributs OSM attachés à l'arête d'identité donnée
+     * @param edgeId l'identité de l'arete concernée
+     * @return l'ensemble des attributs OSM attachés à l'arête d'identité donnée
+     */
     public AttributeSet edgeAttributes(int edgeId){
-        return attributeSets.get(edges.attributesIndex(edgeId)); //todo pas sûr de moi mais je pense que c'est ça.
+        return attributeSets.get(edges.attributesIndex(edgeId));
     }
 
+    /**
+     * retourne la longueur, en mètres, de l'arête d'identité donnée
+     * @param edgeId l'identité de l'arete concernée
+     * @return la longueur, en mètres, de l'arête d'identité donnée
+     */
     public double edgeLength(int edgeId){
         return edges.length(edgeId);
     }
 
+    /**
+     * retourne le dénivelé positif total de l'arête d'identité donnée
+     * @param edgeId l'identité de l'arete recherchée
+     * @return le dénivelé positif de l'arete
+     */
     public double edgeElevationGain(int edgeId){
         return edges.elevationGain(edgeId);
     }
 
+    /**
+     * retourne le profil en long de l'arête d'identité donnée, sous la forme d'une fonction;
+     * si l'arête ne possède pas de profil, la fonction retournée retourne Double.NaN pour tout arguement.
+     * @param edgeId l'identité de l'arete dont on veut obtenir le profil
+     * @return une fonction qui retourne la hauteur d'un point en fonction de sa distance par rapport au début de l'arete
+     */
     public DoubleUnaryOperator edgeProfile(int edgeId){
         if (!edges.hasProfile(edgeId)){
             return Functions.constant(Double.NaN);

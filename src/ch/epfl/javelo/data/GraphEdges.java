@@ -52,19 +52,28 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         //La conversion depuis le format Q28.4 convient pour le format Q12.4 car il y a autant de bits après la virgule, et moins avant la virgule (12<28).
     }
 
-    //retourné au format Q12.4
+    /**
+     * retourne le dénivelé positif, en mètres, de l'arête d'identité donnée
+     * @param edgeId l'id de l'arete concernée
+     * @return le dénivelé positif de l'arete
+     */
     public double elevationGain(int edgeId){
         return Q28_4.asDouble(Short.toUnsignedInt(edgesBuffer.getShort(EDGE_BYTES * edgeId + OFFSET_EDGE_HEIGHT_DIFF)));
         //La conversion depuis le format Q28.4 convient pour le format Q12.4 car il y a autant de bits après la virgule, et moins avant la virgule (12<28).
     }
 
+    /**
+     * retourne vrai si l'arête d'identité donnée possède un profil
+     * @param edgeId l'identité de l'arete concernée
+     * @return vrai si l'arete possède un profil, faux sinon
+     */
     public boolean hasProfile(int edgeId){
         int profile = Bits.extractUnsigned(profileIds.get(edgeId),30,2);
         return profile != 0;
     }
 
     /**
-     *  qui retourne le tableau des échantillons du profil de l'arête d'identité donnée, vide si l'arête ne possède pas de profil
+     *  retourne le tableau des échantillons du profil de l'arête d'identité donnée, vide si l'arête ne possède pas de profil
      * @param edgeId l'identité de l'arête étudiée
      * @return tableau des échantillons du profil de l'arête d'identité donnée, vide si pas de profil
      */
