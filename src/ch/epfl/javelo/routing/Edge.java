@@ -25,7 +25,7 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
     public PointCh pointAt(double position){
         double e = Math2.interpolate(fromPoint.e(),toPoint.e(),position/length);
         double n = Math2.interpolate(fromPoint.n(),toPoint.n(),position/length);
-        return new PointCh(e,n); //Todo mon idée, si ça se trouve ya un moyen bcp plus simple de faire ca.
+        return new PointCh(e,n);
     }
 
     public double elevationAt(double position){
