@@ -25,12 +25,12 @@ public class playground {
                     .map(FileChannel.MapMode.READ_ONLY, 0, nodeOsm.size())
                     .asLongBuffer();
         }
-        PointCh pt = new PointCh(graph.nodePoint(0).e(),graph.nodePoint(0).n());
-        System.out.println(Math.toDegrees(pt.lat()));
-        System.out.println(Math.toDegrees(pt.lon()));
-        System.out.println(pt);
-        System.out.println(pt);
-        System.out.println(nodesOsmBuffer.get(0));
+//        PointCh pt = new PointCh(graph.nodePoint(0).e(),graph.nodePoint(0).n());
+//        System.out.println(Math.toDegrees(pt.lat()));
+//        System.out.println(Math.toDegrees(pt.lon()));
+//        System.out.println(pt);
+//        System.out.println(pt);
+        System.out.println(nodesOsmBuffer.get(211939));
 
 
 
