@@ -23,7 +23,7 @@ public class GraphTest {
     @Test
     public void nodeCountTest() throws IOException {
         Graph graph = Graph.loadFrom(Path.of("lausanne/"));
-        assertEquals(212_179,graph.nodeCount());
+        assertEquals(212_679,graph.nodeCount());
     }
 
     @Test
