@@ -157,7 +157,7 @@ public class GraphTest {
         assertEquals(576.625,graph.edgeProfile(50).applyAsDouble(0));
         //todo ici décalage de 1 metre par rapport a la hauteur attendue que j'ai calulée :
         //todo  edge id = 50, l'id du premier elevation est stocké a la ligne index 12 décalé de 2 ints (8 char hexadecimaux/int)
-        //todo valeure obtenue 93 base 16 = 147 base 10 .
+        //todo valeure obtenue 93 base 16 = 147 base 10.
         //todo 147 valeure stockée dans elevations.bin ligne 144/8 + 3 shorts ( 4 char hex/short) = 240A = 9226/16 met
     }
     @Test
