@@ -12,7 +12,7 @@ public final class WebMercator {
     }
 
     /** retourne la coordonnée x dans la projection mercator d'un point WGS de longitude donnée
-     * @param lon la longitude du point dans le système WGS
+     * @param lon la longitude du point dans le système WGS, en radians
      * @return coordonnée x du point de longitude donnée dans le système mercator
      */
     public static double x(double lon){
@@ -20,7 +20,7 @@ public final class WebMercator {
     }
 
     /** retourne la coordonnée x dans la projection mercator d'un point WGS de latitude donnée
-     * @param lat la latitude du point dans le système WGS
+     * @param lat la latitude du point dans le système WGS, en radians
      * @return coordonnée x du point de latitude donnée dans le système mercator
      */
     public static double y(double lat){
@@ -28,7 +28,7 @@ public final class WebMercator {
     }
 
     /**
-     * retourne la longitude dans le système WGS d'un point de coordonée x dans le système mercator
+     * retourne la longitude dans le système WGS d'un point de coordonée x dans le système mercator, en radians
      * @param x la coordonnée x du point dans le système mercator
      * @return la longitude du point dans le système WGS
      */
@@ -37,7 +37,7 @@ public final class WebMercator {
     }
 
     /**
-     * retourne la latitude dans le système WGS d'un point de coordonée x dans le système mercator
+     * retourne la latitude dans le système WGS d'un point de coordonée x dans le système mercator, en radians
      * @param y la coordonnée x du point dans le système mercator
      * @return la latitude du point dans le système WGS
      */

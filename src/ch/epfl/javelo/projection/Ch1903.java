@@ -46,7 +46,7 @@ public final class Ch1903 {
      * Convertit des coordonnées de la norme CH1903 à WGS84.
      * @param e la coordonnée selon l'axe EST dans la norme CH1903.
      * @param n la coordonnée selon l'axe NORD dans la norme CH1903.
-     * @return la coordonnée longitudinale.
+     * @return la coordonnée longitudinale, en radians
      */
     public static double lon(double e, double n){
         double x = Math.pow(10,-6)*(e-2600000);
@@ -62,7 +62,7 @@ public final class Ch1903 {
      * Convertit des coordonnées de la norme CH1903 à WGS84.
      * @param e la coordonnée selon l'axe EST dans la norme CH1903.
      * @param n la coordonnée selon l'axe NORD dans la norme CH1903.
-     * @return la coordonnée latitudinale.
+     * @return la coordonnée latitudinale, en radians
      */
     public static double lat(double e, double n){
         double x = Math.pow(10,-6)*(e-2600000);

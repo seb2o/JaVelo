@@ -60,7 +60,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * retourne la longitude dans le système WGS de l'instance
+     * retourne la longitude dans le système WGS de l'instance, en radians
      * @return la longitude dans le système WGS de l'instance
      */
     public double lon(){
@@ -68,7 +68,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * retourne la latitude dans le système WGS de l'instance
+     * retourne la latitude dans le système WGS de l'instance, en radians
      * @return la latitude dans le système WGS de l'instance
      */
     public double lat(){
