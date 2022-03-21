@@ -30,7 +30,7 @@ public class playground {
 //        System.out.println(Math.toDegrees(pt.lon()));
 //        System.out.println(pt);
 //        System.out.println(pt);
-        System.out.println(631010.35f);
+        System.out.println(nodesOsmBuffer.get(211939));
 
 
 
