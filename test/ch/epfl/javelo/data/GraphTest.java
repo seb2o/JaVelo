@@ -16,7 +16,8 @@ import java.nio.file.Path;
 
 import static ch.epfl.randomizer.TestRandomizer.newRandom;
 import static javax.swing.UIManager.get;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class GraphTest {
@@ -34,6 +35,8 @@ public class GraphTest {
         var expectedLat =  46.6455770;
         var actualLat = Math.toDegrees(graph.nodePoint(0).lat());
         var actualLon = Math.toDegrees(graph.nodePoint(0).lon());
+        System.out.println(actualLat);
+        System.out.println(actualLon);
         assertEquals(expectedLat,actualLat,1e-5);
         assertEquals(expectedLon,actualLon, 1e-5);
     }
@@ -104,14 +107,6 @@ public class GraphTest {
         var actual = graph.edgeTargetNodeId(0);
         assertEquals(1,actual);
     }
-
-    @Test
-    public void isInvertedTest1() throws IOException {
-        Graph graph = Graph.loadFrom(Path.of("lausanne/"));
-        var actual = graph.edgeIsInverted(0);
-        assertFalse(actual);
-    }
-
     @Test
     public void isInvertedTest2() throws IOException {
         Graph graph = Graph.loadFrom(Path.of("lausanne/"));
