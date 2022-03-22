@@ -53,7 +53,7 @@ public class ElevationProfile {
      * @return  le dénivelé positif total du profil, en mètres
      */
     public double totalAscent(){
-        float totalAscent = 0;
+        double totalAscent = 0;
         for (int i = 1; i < elevationSamples.length; i++) {
             double difference = elevationSamples[i] - elevationSamples[i-1];
             if(difference > 0) {
@@ -67,14 +67,14 @@ public class ElevationProfile {
      * @return le dénivelé négatif total du profil, en mètres
      */
     public double totalDescent(){
-        float totalDescent = 0;
+        double totalDescent = 0;
         for (int i = 1; i < elevationSamples.length; i++) {
             double difference = elevationSamples[i] - elevationSamples[i-1];
             if(difference < 0) {
                 totalDescent += difference;
             }
         }
-        return  -totalDescent;
+        return  Math.abs(totalDescent);
     }
 
     /**

@@ -22,16 +22,6 @@ class EdgeTest {
     Edge test3 = getEdge3();
 
 
-    @Test
-    void of() {
-        Graph graph = graph();
-
-        //Edge test = new Edge(,,,,,graph.edgeProfile(5));
-
-        PointCh a = new PointCh(SwissBounds.MIN_E,SwissBounds.MIN_N), b = new PointCh(SwissBounds.MIN_E+5,SwissBounds.MIN_N+5);
-        Edge expected = new Edge(1,2,a,b,5*Math.sqrt(2),Functions.constant(5));
-        assertEquals(expected, Edge.of(graph, 5, 5, 6));
-    }
 
 
     @Test

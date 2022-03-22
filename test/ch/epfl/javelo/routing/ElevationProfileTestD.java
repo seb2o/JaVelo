@@ -39,12 +39,6 @@ public class ElevationProfileTestD {
         assertEquals(4.0*3.0, elevationProfile3.totalAscent());
     }
 
-    @Test
-    void totalDescentTestD(){
-        assertEquals(0.0,elevationProfile.totalDescent());
-        assertEquals(-3.0,elevationProfile2.totalDescent());
-        assertEquals(3.0*-3.0, elevationProfile3.totalDescent());
-    }
 
     @Test
     void elevationAtTestD(){
