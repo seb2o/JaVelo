@@ -1,5 +1,6 @@
-package ch.epfl.javelo;
+package ch.epfl.javelo.routing;
 
+import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 import ch.epfl.javelo.routing.Edge;

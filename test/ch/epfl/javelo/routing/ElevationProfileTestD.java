@@ -1,4 +1,4 @@
-package ch.epfl;
+package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.routing.ElevationProfile;
 import org.junit.jupiter.api.Test;

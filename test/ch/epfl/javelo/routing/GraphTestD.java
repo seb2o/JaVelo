@@ -1,4 +1,4 @@
-package ch.epfl;
+package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
