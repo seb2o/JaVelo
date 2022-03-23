@@ -8,7 +8,7 @@ import java.util.function.DoubleUnaryOperator;
 
 /**
  * @author Sébastien Boo (345870)
- * @author Edgar Gonzales (328095)
+ * @author Edgar Gonzalez (328095)
  */
 public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPoint, double length, DoubleUnaryOperator profile) {
 

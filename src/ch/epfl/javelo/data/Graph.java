@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * @author Edgar Gonzales
- * @author Sébastien Boo
+ * @author Edgar Gonzalez (345870)
+ * @author Sébastien Boo (328095)
  */
 public class Graph {
 
@@ -97,7 +97,6 @@ public class Graph {
     }
 
     /**
-     * retourne le nombre total de noeuds dans le graphe
      * @return le nombre total de noeuds dans le graphe
      */
     public int nodeCount(){
@@ -105,7 +104,6 @@ public class Graph {
     }
 
     /**
-     * retourne la position du noeud d'identité donnée
      * @param nodeId l'identité du noeud dont la position est recherchée
      * @return la position du noeud d'identité donnée
      */
@@ -114,8 +112,7 @@ public class Graph {
     }
 
     /**
-     * retourne le nombre d'arêtes sortant du noeud d'identité donnée
-     * @param nodeId l'identité du noeud dont le nombre d'aretes est recherchée
+     * @param nodeId l'identité du noeud dont le nombre d'aretes est recherché
      * @return  le nombre d'arêtes sortant du noeud d'identité donnée
      */
     public int nodeOutDegree(int nodeId){
@@ -123,7 +120,6 @@ public class Graph {
     }
 
     /**
-     * retourne l'identité de la edgeIndex-ième arête sortant du nœud d'identité nodeId
      * @param nodeId l'identité du noeud dont l'identité de la ième arete est recherchée
      * @param edgeIndex la position danas le tableau des aretes sortantes de l'arete recherchée
      * @return l'identité de la edgeIndex-ième arête sortant du nœud d'identité nodeId
@@ -160,7 +156,6 @@ public class Graph {
     }
 
     /**
-     * retourne l'identité du noeud destination de l'arête d'identité donnée
      * @param edgeId l'identité de l'arete dont on cherche le noeud d'arrivée
      * @return l'identité du noeud destination de l'arête d'identité donnée
      */
@@ -178,7 +173,6 @@ public class Graph {
     }
 
     /**
-     * retourne l'ensemble des attributs OSM attachés à l'arête d'identité donnée
      * @param edgeId l'identité de l'arete concernée
      * @return l'ensemble des attributs OSM attachés à l'arête d'identité donnée
      */
@@ -187,7 +181,6 @@ public class Graph {
     }
 
     /**
-     * retourne la longueur, en mètres, de l'arête d'identité donnée
      * @param edgeId l'identité de l'arete concernée
      * @return la longueur, en mètres, de l'arête d'identité donnée
      */

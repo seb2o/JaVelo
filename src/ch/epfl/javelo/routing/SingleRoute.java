@@ -11,48 +11,47 @@ import java.util.List;
 public final class SingleRoute implements Route{
     private final List<Edge> edges;
     private final double[] lengthList;
+    private double totalLength;
 
     public SingleRoute(List<Edge> edges){
         Preconditions.checkArgument(!edges.isEmpty());
-        this.edges = List.copyOf(edges); //todo copie profonde ? Nécessite méthode .clone pour Edge car pas immuable.
+        this.edges = List.copyOf(edges); //Pas besoin de copie profonde car Edge est immuable car Graph l'est aussi.
         this.lengthList = new double[edges.size() + 1];
         this.lengthList[0] = 0;
 
         for (int i = 1; i < this.lengthList.length; i++) {
             this.lengthList[i] = this.lengthList[i-1] + edges.get(i-1).length();
         }
+
+        this.totalLength = 0;
+        for (Edge edge : edges) {
+            this.totalLength += edge.length();
+        }
     }
 
     @Override
     public int indexOfSegmentAt(double position) {
-        if(position < 0){
-            return 0;
-        }
-
-        double totalLength = 0;
-
-        for (int i = 0; i < edges.size(); i++ ) {
-            totalLength += edges.get(i).length();
-            if (totalLength >= position){
-                return i;
+        position = Math2.clamp(0, position, this.length());
+        double totalDistance = 0;
+        int index = 0;
+        for (Edge segment : edges) {
+            totalDistance += segment.length();
+            if (totalDistance > position){
+                return index;
             }
+            index++;
         }
-        //Retourne l'index le plus grand si la position dépasse la longueur max.
-        return edges.size() - 1;
+        return -1; //Cette valeur ne devrait jamais être retournée grâce au clamp.
     }
 
     @Override
     public double length() {
-        double totalLength = 0;
-        for (Edge edge : edges) {
-            totalLength += edge.length();
-        }
         return totalLength;
     }
 
     @Override
     public List<Edge> edges() {
-        return List.copyOf(edges); //todo même pb que pour le constructeur ?
+        return List.copyOf(edges);
     }
 
     @Override
