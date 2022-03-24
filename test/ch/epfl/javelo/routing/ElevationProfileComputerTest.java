@@ -50,6 +50,7 @@ public class ElevationProfileComputerTest {
         float[] samples = new float[nSamples];
         for (int i = 0; i < nSamples ; i++) {
             samples[i] = newRandom().nextFloat();
+            System.out.print(samples[i]+"; ");
         }
         DoubleUnaryOperator profile = Functions.sampled(samples, edgeLength);
         var expected =  profile.applyAsDouble(position);

@@ -72,11 +72,12 @@ public final class SingleRoute implements Route{
         if(index >= 0){ //Si l'index correspond à un noeud.
             relativePosition = 0;
             if(index == lengthList.length - 1){ // Si c'est le dernier noeud, on prend la position à la fin de la dernière arête
-                relativePosition = edges().get(edges.size()).length();
+                relativePosition = edges().get(edges.size()-1).length();
+                index--;
             }
         }
         else{
-            index = -(index + 1); //Donne l'index de l'arête correspondante.
+            index = -(index + 2); //Donne l'index de l'arête correspondante.
             relativePosition = position - lengthList[index];
         }
 
@@ -91,7 +92,8 @@ public final class SingleRoute implements Route{
         if(index >= 0){ //Si l'index correspond à un noeud.
             relativePosition = 0;
             if(index == lengthList.length - 1){ // Si c'est le dernier noeud, on prend la position à la fin de la dernière arête
-                relativePosition = edges().get(edges.size()).length();
+                relativePosition = edges().get(edges.size()-1).length();
+                index--;
             }
         }
         else{
@@ -106,18 +108,26 @@ public final class SingleRoute implements Route{
         position = Math2.clamp(0,position,length());
         double relativePosition;
         int index = Arrays.binarySearch(lengthList, position);
+        System.out.println(index);
         if(index >= 0){ //Si l'index correspond à un noeud.
             if(index == lengthList.length - 1){ // Si c'est le dernier noeud, on prend la position à la fin de la dernière arête
+                index--;
                 return edges.get(index).toNodeId();
             }
             return edges.get(index).fromNodeId();
         }
         else{
             index = -(index + 2); //Donne l'index de l'arête correspondante.
+            System.out.println(index);
             relativePosition = position - lengthList[index];
         }
-        if(relativePosition / edges.get(index).length() > .5){
-            ++index; //On prend le noeud d'après si la position est à plus de la moitié de l'arête.
+        System.out.println(index);
+        if((relativePosition / edges.get(index).length() > .5)){
+            index++;
+            if (index == lengthList.length - 1){
+                return edges.get(index - 1).toNodeId();
+            }
+            //On prend le noeud d'après si la position est à plus de la moitié de l'arête.
         }
         return edges.get(index).fromNodeId();
     }
