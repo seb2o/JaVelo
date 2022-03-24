@@ -31,8 +31,6 @@ public class GraphTest {
         var expectedLat =  46.6455770;
         var actualLat = Math.toDegrees(graph.nodePoint(0).lat());
         var actualLon = Math.toDegrees(graph.nodePoint(0).lon());
-        System.out.println(actualLat);
-        System.out.println(actualLon);
         assertEquals(expectedLat,actualLat,1e-5);
         assertEquals(expectedLon,actualLon, 1e-5);
     }
@@ -140,7 +138,7 @@ public class GraphTest {
     @Test
     public void edgeProfileTest1() throws IOException {
         Graph graph = Graph.loadFrom(Path.of("lausanne/"));
-        System.out.println(graph.edgeProfile(65).applyAsDouble(1));
+        graph.edgeProfile(65).applyAsDouble(1);
     }
 
     @Test

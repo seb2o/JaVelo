@@ -9,9 +9,6 @@ public class ElevationProfileTest {
     public void totalAscentTest() {
 
         var elevationProfile = new ElevationProfile(10,new float[]{0,2.5f,5,2.5f,0});
-        System.out.println(elevationProfile.totalDescent());
-        System.out.println(elevationProfile.totalAscent());
-
     }
 
 }
