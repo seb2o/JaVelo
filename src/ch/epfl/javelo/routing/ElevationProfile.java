@@ -1,6 +1,7 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Functions;
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
 import java.util.DoubleSummaryStatistics;
@@ -83,6 +84,7 @@ public class ElevationProfile {
      * le premier échantillon est retourné lorsque la position est négative, le dernier lorsqu'elle est supérieure à la longueur
      */
     public double elevationAt(double position){
+        position = Math2.clamp(0,position,length);
         DoubleUnaryOperator function = Functions.sampled(elevationSamples, length);
         return function.applyAsDouble(position);
     }

@@ -66,6 +66,7 @@ public final class MultiRoute implements Route{
 
     @Override
     public PointCh pointAt(double position) {
+        position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
         int index = this.indexOfSegmentAt(position);
         for (int i = 0; i < index; i++) {
@@ -76,6 +77,7 @@ public final class MultiRoute implements Route{
 
     @Override
     public double elevationAt(double position) {
+        position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
         int index = this.indexOfSegmentAt(position);
         for (int i = 0; i < index; i++) {
@@ -86,6 +88,7 @@ public final class MultiRoute implements Route{
 
     @Override
     public int nodeClosestTo(double position) {
+        position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
         int index = this.indexOfSegmentAt(position);
         for (int i = 0; i < index; i++) {
