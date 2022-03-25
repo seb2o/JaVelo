@@ -6,6 +6,7 @@ import ch.epfl.javelo.projection.PointCh;
  * @author Sébastien Boo (345870)
  * @author Edgar Gonzales (328095)
  */
+
 public record RoutePoint(PointCh point, double position, double distanceToReference) {
     public static final RoutePoint NONE = new RoutePoint(null, Double.NaN, Double.POSITIVE_INFINITY);
 

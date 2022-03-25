@@ -138,7 +138,7 @@ public final class SingleRoute implements Route{
         double squaredDistanceToReference = Double.POSITIVE_INFINITY;
         int index = 0;
         for (int i = 0; i < edges.size(); i++) {
-            double loopPosition = edges.get(i).positionClosestTo(point);
+            double loopPosition = Math2.clamp(0,edges.get(i).positionClosestTo(point),edges.get(i).length());
             PointCh pointOnEdge = edges.get(i).pointAt(loopPosition);
             double loopDistance = point.squaredDistanceTo(pointOnEdge);
 
@@ -148,11 +148,12 @@ public final class SingleRoute implements Route{
                 index = i;
             }
         }
+
         double totalPosition = 0;
         for (int i = 0; i < index; i++) {
             totalPosition += edges.get(i).length();
         }
-        return new RoutePoint(point, totalPosition + position, Math.sqrt(squaredDistanceToReference));
+        return new RoutePoint(edges.get(index).pointAt(position), totalPosition + position, Math.sqrt(squaredDistanceToReference));
     }
 
 
