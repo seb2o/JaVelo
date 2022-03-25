@@ -36,7 +36,7 @@ public final class SingleRoute implements Route{
         int index = 0;
         for (Edge segment : edges) {
             totalDistance += segment.length();
-            if (totalDistance > position){
+            if (totalDistance >= position){
                 return index;
             }
             index++;
