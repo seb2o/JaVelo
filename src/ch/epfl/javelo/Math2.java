@@ -19,6 +19,7 @@ public final class Math2 {
     }
 
     /**
+     * special cases : if any of the input is NaN, return NaN
      * @return la coordonnée y du point se trouvant sur la droite passant par (0,y0) et (1,y1) et de coordonnée x donnée
      */
     public static double interpolate(double y0, double y1, double x){

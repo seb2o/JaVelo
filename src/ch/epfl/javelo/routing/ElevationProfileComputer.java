@@ -29,7 +29,7 @@ public final class ElevationProfileComputer {
 
         boolean firstStepCheck = false;
         for (int i = 0; i < numberOfSamples; i++) {
-            sampleList[i] = (float) route.elevationAt(i * length / numberOfSamples); //todo ca me semble bizarre de devoir cast en float mais pk pas
+            sampleList[i] = (float) route.elevationAt(i * length / numberOfSamples);
 
             //Etape 1 :
             if (!firstStepCheck && !Float.isNaN(sampleList[i])){
@@ -39,25 +39,27 @@ public final class ElevationProfileComputer {
         }
 
         //Etape 2 :
-        for (int i = numberOfSamples - 1; i >= 0; i--) {
+        boolean secondStepCheck = false;
+        for (int i = numberOfSamples - 1; i >= 0 && !secondStepCheck; i--) {
             if(!Float.isNaN(sampleList[i])){
                 Arrays.fill(sampleList , i, numberOfSamples, sampleList[i]);
+                secondStepCheck = true;
             }
         }
 
         //Etape 3 :
-        for (int i = 0; i <= numberOfSamples; i++) {
+        for (int i = 1; i < numberOfSamples; i++) {
             if(Float.isNaN(sampleList[i])){
                 for (int j = i; j < numberOfSamples; j++) {
                     if (!Float.isNaN(sampleList[j])) {
                         for (int k = i; k < j; k++) {
-                            Math2.interpolate(sampleList[i-1], sampleList[j],(double)(k-i) / (double)(j-i) ); //todo si ça marche du premier coup je suis un dieu. Flemme de plus réfléchir à ça.
+                             sampleList[k] = (float) Math2.interpolate(sampleList[i-1], sampleList[j],(double)(k-i) / (double)(j-i) );
                         }
+                        break;
                     }
                 }
             }
         }
-
         return new ElevationProfile(length,sampleList);
     }
 }

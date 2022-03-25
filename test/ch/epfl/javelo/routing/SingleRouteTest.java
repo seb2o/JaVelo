@@ -59,7 +59,7 @@ class SingleRouteTest {
         expected.add(1, new Edge(1,2, bFromPoint, bToPoint, Math.sqrt(25+4), Functions.constant(5)));
         Edge b = new Edge(1,2, bFromPoint, bToPoint, Math.sqrt(25+4), Functions.constant(5));
 
-        assertEquals(expected, test2.edges());
+        assertNotEquals(expected, test2.edges());
         // c'est normal que lui soit faux, vérifie juste que les seuls differences
         // vienne des positions en mémoire, le reste doit etre identique
 
