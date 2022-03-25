@@ -5,12 +5,22 @@ import ch.epfl.javelo.Preconditions;
 
 import java.util.Arrays;
 
+/**
+ * @author Sébastien Boo (345870)
+ * @author Edgar Gonzalez (328095)
+ */
 public final class ElevationProfileComputer {
 
-    private ElevationProfileComputer() {
+    //classe ininstanciable
+    private ElevationProfileComputer() {}
 
-    }
 
+    /**
+     * retourne le profil en long d'une route.
+     * @param route la route dont le profil est a calculer
+     * @param maxStepLength l'écart maximum entre deux échantillons du profil.
+     * @return le profil en long de la route
+     */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength){
         Preconditions.checkArgument(maxStepLength > 0);
         double length = route.length();

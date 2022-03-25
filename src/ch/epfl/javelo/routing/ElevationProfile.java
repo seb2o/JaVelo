@@ -21,7 +21,7 @@ public class ElevationProfile {
     }
 
     /**
-     * @return la longueure de l'instance de l'itinéraire
+     * @return la longueure de l'instance
      */
     public double length(){
         return length;
