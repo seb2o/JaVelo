@@ -29,6 +29,7 @@ public class RouteComputer {
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
+        var iter = 0;
         record WeightedNode(int nodeId, float distance) implements Comparable<WeightedNode> {
             @Override
             public int compareTo(WeightedNode that) {
@@ -53,6 +54,7 @@ public class RouteComputer {
         inExploration.add(new WeightedNode(startNodeId, 0f));
 
         while (!inExploration.isEmpty()) {
+            ++iter;
             int N1 = inExploration.remove().nodeId;
             if (distance[N1] != Float.NEGATIVE_INFINITY) {
                 if (N1 == endNodeId) {
@@ -71,7 +73,8 @@ public class RouteComputer {
                             }
                         }
                     }
-                    Collections.reverse(route); //Todo : le reverse change rien au chemin affiché mais peut etre pas au chemin "réel".
+                    System.out.println(iter);
+                    Collections.reverse(route);
                     return new SingleRoute(route);
                 }
                 List<Integer> edgeIds = new ArrayList<>();
@@ -80,11 +83,11 @@ public class RouteComputer {
                 }
                 for (Integer edgeId : edgeIds) {
                     int N2 = graph.edgeTargetNodeId(edgeId);
-                    float d = distance[N1] + (float) (graph.edgeLength(edgeId) * costFunction.costFactor(N2, edgeId)); //Todo : cast ici en float ou après ?
+                    float d = distance[N1] + (float) (graph.edgeLength(edgeId) * costFunction.costFactor(N2, edgeId));
                     if (d < distance[N2]) {
                         distance[N2] = d;
                         predecessor[N2] = N1;
-                        inExploration.add(new WeightedNode(N2, d + (float)graph.nodePoint(N2).distanceTo(graph.nodePoint(endNodeId))));
+                        inExploration.add(new WeightedNode(N2, (float) (d + graph.nodePoint(N2).distanceTo(graph.nodePoint(endNodeId)))));//todo usage of squaredDistanceTO ?
                     }
                 }
             distance[N1] = Float.NEGATIVE_INFINITY;

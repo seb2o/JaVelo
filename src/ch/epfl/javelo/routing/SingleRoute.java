@@ -31,17 +31,7 @@ public final class SingleRoute implements Route{
 
     @Override
     public int indexOfSegmentAt(double position) {
-        position = Math2.clamp(0, position, this.length());
-        double totalDistance = 0;
-        int index = 0;
-        for (Edge segment : edges) {
-            totalDistance += segment.length();
-            if (totalDistance >= position){
-                return index;
-            }
-            index++;
-        }
-        return -1; //Cette valeur ne devrait jamais être retournée grâce au clamp.
+        return 0;
     }
 
     @Override

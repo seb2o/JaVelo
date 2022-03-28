@@ -29,9 +29,14 @@ public final class ElevationProfileComputer {
         boolean firstStepCheck = false;
         boolean secondStepCheck = false;
 
+        System.out.println(length);
+        System.out.println(numberOfSamples);
+        System.out.println((float) length / (float) numberOfSamples );
+
+
         for (int i = 0; i < numberOfSamples; i++) {
 
-            sampleList[i] = (float) route.elevationAt(i * length / (float)numberOfSamples);
+            sampleList[i] = (float) route.elevationAt(length * ((double)i / (double)numberOfSamples));//todo arrondi
 
             //Etape 1 :
             if (!firstStepCheck && !Float.isNaN(sampleList[i])){
@@ -63,12 +68,6 @@ public final class ElevationProfileComputer {
             if(Float.isNaN(sampleList[i])){
                 for (int j = i; j < numberOfSamples; j++) {
                     if (!Float.isNaN(sampleList[j])) {
-                        System.out.print("step for last know value index = ");
-                        System.out.print(i-1);
-                        System.out.print(" : ");
-                        System.out.print((double)1 / (double)(j-i+1));
-                        System.out.print(" of lenght : ");
-                        System.out.println(j-i+1);
                         for (int k = i-1; k < j; k++) {
                             sampleList[k] = (float)Math2.interpolate(
                                      sampleList[i-1],
