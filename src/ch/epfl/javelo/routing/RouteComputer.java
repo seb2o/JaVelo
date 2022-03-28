@@ -78,7 +78,7 @@ public class RouteComputer {
             }
             for (Integer edgeId : edgeIds) {
                 int N2 = graph.edgeTargetNodeId(edgeId);
-                if(distance[N2] == Float.NEGATIVE_INFINITY){
+                if(distance[N2] != Float.NEGATIVE_INFINITY){
                     System.out.println("NOT");
                     float d = distance[N1] + (float) (graph.edgeLength(edgeId) * costFunction.costFactor(N2,edgeId)); //Todo : cast ici en float ou après ?
                     if(d < distance[N2]){
@@ -88,7 +88,7 @@ public class RouteComputer {
                     }
                 }
             }
-            distance[N1] = Float.NEGATIVE_INFINITY;
+//            distance[N1] = Float.NEGATIVE_INFINITY;
         }
         return null;
     }
