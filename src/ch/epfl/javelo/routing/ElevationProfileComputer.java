@@ -26,13 +26,12 @@ public final class ElevationProfileComputer {
         double length = route.length();
         int numberOfSamples = (int)Math.ceil(length / maxStepLength) + 1;
         float[] sampleList = new float[numberOfSamples];
-
         boolean firstStepCheck = false;
         boolean secondStepCheck = false;
 
         for (int i = 0; i < numberOfSamples; i++) {
 
-            sampleList[i] = (float) route.elevationAt(i * length / numberOfSamples);
+            sampleList[i] = (float) route.elevationAt(i * length / (float)numberOfSamples);
 
             //Etape 1 :
             if (!firstStepCheck && !Float.isNaN(sampleList[i])){
@@ -40,17 +39,6 @@ public final class ElevationProfileComputer {
                 firstStepCheck = true;
             }
         }
-
-        for (float d : sampleList ) {
-            System.out.println(d);
-        }
-        System.out.println("printed first step list");
-        System.out.println("printed first step list");
-        System.out.println("printed first step list");
-        System.out.println("printed first step list");
-        System.out.println("printed first step list");
-        System.out.println("printed first step list");
-
 
         if (!firstStepCheck) {
             Arrays.fill(sampleList,0,numberOfSamples-1,0);
@@ -69,26 +57,24 @@ public final class ElevationProfileComputer {
             }
         }
 
-        for (float d : sampleList ) {
-            System.out.println(d);
-        }
-        System.out.println("printed second step list");
-        System.out.println("printed second step list");
-        System.out.println("printed second step list");
-        System.out.println("printed second step list");
-        System.out.println("printed second step list");
-        System.out.println("printed second step list");
 
         //Etape 3 :
         for (int i = 1; i < numberOfSamples; i++) {
             if(Float.isNaN(sampleList[i])){
                 for (int j = i; j < numberOfSamples; j++) {
                     if (!Float.isNaN(sampleList[j])) {
+                        System.out.print("step for last know value index = ");
+                        System.out.print(i-1);
+                        System.out.print(" : ");
+                        System.out.print((double)1 / (double)(j-i+1));
+                        System.out.print(" of lenght : ");
+                        System.out.println(j-i+1);
                         for (int k = i-1; k < j; k++) {
-                             sampleList[k] = (float)Math2.interpolate(
+                            sampleList[k] = (float)Math2.interpolate(
                                      sampleList[i-1],
                                      sampleList[j],
-                                     (double)(k-i+1) / (double)(j-i+1) );
+                                     (double)(k-i+1) / (double)(j-i+1)
+                             );
                         }
                         break;
                     }
@@ -96,18 +82,9 @@ public final class ElevationProfileComputer {
             }
         }
 
-        for (float d : sampleList ) {
-            System.out.println(d);
-        }
-        System.out.println("printed third step list");
-        System.out.println("printed third step list");
-        System.out.println("printed third step list");
-        System.out.println("printed third step list");
-        System.out.println("printed third step list");
-        System.out.println("printed third step list");
-
-
-
+//        for (double d : sampleList ) {
+//            System.out.println(d);
+//        }
 
         return new ElevationProfile(length,sampleList);
     }
