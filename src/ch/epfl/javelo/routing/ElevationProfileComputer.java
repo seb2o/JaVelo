@@ -28,7 +28,10 @@ public final class ElevationProfileComputer {
         float[] sampleList = new float[numberOfSamples];
 
         boolean firstStepCheck = false;
+        boolean secondStepCheck = false;
+
         for (int i = 0; i < numberOfSamples; i++) {
+
             sampleList[i] = (float) route.elevationAt(i * length / numberOfSamples);
 
             //Etape 1 :
@@ -38,28 +41,74 @@ public final class ElevationProfileComputer {
             }
         }
 
+        for (float d : sampleList ) {
+            System.out.println(d);
+        }
+        System.out.println("printed first step list");
+        System.out.println("printed first step list");
+        System.out.println("printed first step list");
+        System.out.println("printed first step list");
+        System.out.println("printed first step list");
+        System.out.println("printed first step list");
+
+
+        if (!firstStepCheck) {
+            Arrays.fill(sampleList,0,numberOfSamples-1,0);
+        }
+
+
         //Etape 2 :
-        boolean secondStepCheck = false;
-        for (int i = numberOfSamples - 1; i >= 0 && !secondStepCheck; i--) {
+        if (!Double.isNaN(route.elevationAt(route.length()))) {
+            sampleList[numberOfSamples-1] = (float)route.elevationAt(route.length());
+            secondStepCheck = true;
+        }
+        for (int i = numberOfSamples - 2; i >= 0 && !secondStepCheck; i--) {
             if(!Float.isNaN(sampleList[i])){
                 Arrays.fill(sampleList , i, numberOfSamples, sampleList[i]);
                 secondStepCheck = true;
             }
         }
 
+        for (float d : sampleList ) {
+            System.out.println(d);
+        }
+        System.out.println("printed second step list");
+        System.out.println("printed second step list");
+        System.out.println("printed second step list");
+        System.out.println("printed second step list");
+        System.out.println("printed second step list");
+        System.out.println("printed second step list");
+
         //Etape 3 :
         for (int i = 1; i < numberOfSamples; i++) {
             if(Float.isNaN(sampleList[i])){
                 for (int j = i; j < numberOfSamples; j++) {
                     if (!Float.isNaN(sampleList[j])) {
-                        for (int k = i; k < j; k++) {
-                             sampleList[k] = (float) Math2.interpolate(sampleList[i-1], sampleList[j],(double)(k-i) / (double)(j-i) );
+                        for (int k = i-1; k < j; k++) {
+                             sampleList[k] = (float)Math2.interpolate(
+                                     sampleList[i-1],
+                                     sampleList[j],
+                                     (double)(k-i+1) / (double)(j-i+1) );
                         }
                         break;
                     }
                 }
             }
         }
+
+        for (float d : sampleList ) {
+            System.out.println(d);
+        }
+        System.out.println("printed third step list");
+        System.out.println("printed third step list");
+        System.out.println("printed third step list");
+        System.out.println("printed third step list");
+        System.out.println("printed third step list");
+        System.out.println("printed third step list");
+
+
+
+
         return new ElevationProfile(length,sampleList);
     }
 }

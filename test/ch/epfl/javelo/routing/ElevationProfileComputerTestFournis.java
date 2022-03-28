@@ -83,12 +83,14 @@ class ElevationProfileComputerTestFournis {
         };
         var route = new FakeRoute(1, edgeProfile);
         var profile = elevationProfile(route, 1);
-//        assertEquals(endElevation - startElevation, profile.totalAscent(), 1);
+        assertEquals(endElevation - startElevation, profile.totalAscent(), 1);
         assertEquals(0, profile.totalDescent());
         assertEquals(startElevation, profile.minElevation());
-//        assertEquals(endElevation, profile.maxElevation());
+        assertEquals(endElevation, profile.maxElevation());
         for (double p = 0; p < route.length(); p += 1) {
             var elevation = startElevation + (endElevation - startElevation) * (p / FakeRoute.EDGE_LENGTH);
+            System.out.print("p : ");
+            System.out.println(p);
             assertEquals(elevation, profile.elevationAt(p), 1e-2);
         }
     }
