@@ -29,14 +29,9 @@ public final class ElevationProfileComputer {
         boolean firstStepCheck = false;
         boolean secondStepCheck = false;
 
-        System.out.println(length);
-        System.out.println(numberOfSamples);
-        System.out.println((float) length / (float) numberOfSamples );
-
-
         for (int i = 0; i < numberOfSamples; i++) {
 
-            sampleList[i] = (float) route.elevationAt(length * ((double)i / (double)numberOfSamples));//todo arrondi
+            sampleList[i] = (float) route.elevationAt((double)(i * length / (double)(numberOfSamples-1)));
 
             //Etape 1 :
             if (!firstStepCheck && !Float.isNaN(sampleList[i])){
@@ -52,7 +47,7 @@ public final class ElevationProfileComputer {
 
         //Etape 2 :
         if (!Double.isNaN(route.elevationAt(route.length()))) {
-            sampleList[numberOfSamples-1] = (float)route.elevationAt(route.length());
+            sampleList[numberOfSamples-1] = (float) route.elevationAt(route.length());
             secondStepCheck = true;
         }
         for (int i = numberOfSamples - 2; i >= 0 && !secondStepCheck; i--) {
@@ -69,10 +64,10 @@ public final class ElevationProfileComputer {
                 for (int j = i; j < numberOfSamples; j++) {
                     if (!Float.isNaN(sampleList[j])) {
                         for (int k = i-1; k < j; k++) {
-                            sampleList[k] = (float)Math2.interpolate(
+                            sampleList[k] = (float) Math2.interpolate(
                                      sampleList[i-1],
                                      sampleList[j],
-                                     (double)(k-i+1) / (double)(j-i+1)
+                                     (double)(k-(i-1)) / (double)(j-(i-1))
                              );
                         }
                         break;
@@ -81,9 +76,7 @@ public final class ElevationProfileComputer {
             }
         }
 
-//        for (double d : sampleList ) {
-//            System.out.println(d);
-//        }
+
 
         return new ElevationProfile(length,sampleList);
     }

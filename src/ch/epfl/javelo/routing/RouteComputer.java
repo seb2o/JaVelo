@@ -4,20 +4,17 @@ import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 //IMMUABLE
-public class RouteComputer {
+public final class RouteComputer {
 
     private final Graph graph;
     private final CostFunction costFunction;
 
     public RouteComputer(Graph graph, CostFunction costFunction){
-        this.graph = graph; //Immuable.
-        this.costFunction = costFunction;
+        this.graph = graph; //Immuable
+        this.costFunction = costFunction;//Immuable
     }
 
     /**
@@ -29,7 +26,8 @@ public class RouteComputer {
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
-        var iter = 0;
+
+
         record WeightedNode(int nodeId, float distance) implements Comparable<WeightedNode> {
             @Override
             public int compareTo(WeightedNode that) {
@@ -37,60 +35,73 @@ public class RouteComputer {
                 return Float.compare(this.distance, that.distance);
             }
         }
+
         Preconditions.checkArgument(startNodeId != endNodeId);
 
         int nodeCount = graph.nodeCount();
-        float[] distance = new float[nodeCount];
+        double[] distance = new double[nodeCount];
         int[] predecessor = new int[nodeCount];
-
-        for (int i = 0; i < nodeCount; i++) {
-            distance[i] = Float.POSITIVE_INFINITY;
-            predecessor[i] = 0; //Todo : par défaut déjà 0 ?
-        }
-        distance[startNodeId] = 0;
-        predecessor[startNodeId] = -1;
-
         PriorityQueue<WeightedNode> inExploration = new PriorityQueue<>();
+
+        Arrays.fill(distance, Double.POSITIVE_INFINITY);
         inExploration.add(new WeightedNode(startNodeId, 0f));
+        distance[startNodeId] = 0;
+        predecessor[startNodeId] = -1;//pas de prédécesseur pour le noeud de départ
+
+
 
         while (!inExploration.isEmpty()) {
-            ++iter;
             int N1 = inExploration.remove().nodeId;
+
             if (distance[N1] != Float.NEGATIVE_INFINITY) {
+
                 if (N1 == endNodeId) {
 
+                    /*construction de la liste des aretes de la route par le parcours dans le sens inverse des noeuds de
+                    la route:  recherche des aretes sortantes du dernier noeud sans arete jusqu'à que l'une ,
+                    qui existe forcément puisqu'elle a été empruntée pendant la création de la liste des nodes,
+                    pointe vers le noeud d'avant, qui devient alors le dernier noeud sans arete*/
                     List<Edge> route = new ArrayList<>();
-
                     int currentNode = N1;
-                    while (predecessor[currentNode] != -1) {
+                    boolean edgeHasBeenFound;
 
-                        for (int i = 0; i < graph.nodeOutDegree(currentNode); i++) {
+                    while (predecessor[currentNode] != -1) {//tant que le noeud actuel est différent du noeud de départ
+                        edgeHasBeenFound = false;
+                        for (int i = 0; i < graph.nodeOutDegree(currentNode) && !edgeHasBeenFound; i++) {
                             int edgeId = graph.nodeOutEdgeId(currentNode, i);
-                            if (predecessor[currentNode] == graph.edgeTargetNodeId(edgeId)) {
+                            if (predecessor[currentNode] == graph.edgeTargetNodeId(edgeId)) {//si l'edge considérée
+                                //pointe sur le noeud précédent, on sait que c'est une edge de la route a constuire
+                                edgeHasBeenFound = true;
                                 route.add(Edge.of(graph, edgeId, predecessor[currentNode], currentNode));
-                                currentNode = predecessor[currentNode];
-                                break;
+                                currentNode = predecessor[currentNode];//on peut passer au node d'après, nécéssairement
+                                //atteint par l'edge ajoutée à la route.
                             }
                         }
                     }
-                    System.out.println(iter);
-                    Collections.reverse(route);
+                    Collections.reverse(route);//la route est construite a partir de son arrivée, il faut la reverse
+                    //pour l'avoir dans le bon sens
                     return new SingleRoute(route);
                 }
+
                 List<Integer> edgeIds = new ArrayList<>();
                 for (int i = 0; i < graph.nodeOutDegree(N1); i++) {
                     edgeIds.add(graph.nodeOutEdgeId(N1, i));
                 }
                 for (Integer edgeId : edgeIds) {
                     int N2 = graph.edgeTargetNodeId(edgeId);
-                    float d = distance[N1] + (float) (graph.edgeLength(edgeId) * costFunction.costFactor(N2, edgeId));
+                    double d = distance[N1] + (graph.edgeLength(edgeId) * costFunction.costFactor(N2, edgeId));
                     if (d < distance[N2]) {
                         distance[N2] = d;
                         predecessor[N2] = N1;
-                        inExploration.add(new WeightedNode(N2, (float) (d + graph.nodePoint(N2).distanceTo(graph.nodePoint(endNodeId)))));//todo usage of squaredDistanceTO ?
+                        inExploration.add(
+                                new WeightedNode(
+                                        N2,
+                                        (float)(d + graph.nodePoint(N2).distanceTo(graph.nodePoint(endNodeId)))
+                                )
+                        );
                     }
                 }
-            distance[N1] = Float.NEGATIVE_INFINITY;
+             distance[N1] = Float.NEGATIVE_INFINITY;
             }
         }
         return null;

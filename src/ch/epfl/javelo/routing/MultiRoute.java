@@ -7,21 +7,22 @@ import ch.epfl.javelo.projection.PointCh;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class MultiRoute implements Route{
-
-    private List<Route> segments = new ArrayList<>();
-    private double totalLength;
-    private List<Edge> edges;
+    private final List<Route> segments;
+    private final double totalLength;
+    private final List<Edge> edges;
 
     public MultiRoute(List<Route> segments){
         Preconditions.checkArgument(!segments.isEmpty());
         this.segments = List.copyOf(segments);
-        this.totalLength = 0;
+        int tLenght = 0;
         for (Route segment : this.segments) {
-            this.totalLength += segment.length();
+            tLenght += segment.length();
         }
+        this.totalLength = tLenght;
         this.edges = new ArrayList<>();
         for (Route segment : segments) {
             this.edges.addAll(segment.edges());
