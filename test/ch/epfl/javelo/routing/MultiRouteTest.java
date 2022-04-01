@@ -115,7 +115,7 @@ public class MultiRouteTest {
     MultiRoute multiRouteCreator2(List<Route> routes) {
         List<Route> routesStepList = new ArrayList<>();
         routesStepList.add(new MultiRoute(routes.subList(0, routes.size() / 2)));
-        routesStepList.add(new MultiRoute(routes.subList(routes.size() / 2, routes.size() - 1)));
+        routesStepList.add(new MultiRoute(routes.subList(routes.size() / 2, routes.size())));
         return new MultiRoute(routesStepList);
     }
 
@@ -128,7 +128,7 @@ public class MultiRouteTest {
     MultiRoute multiRouteCreator3(List<Route> routes) {
         List<Route> routesStepList = new ArrayList<>();
         routesStepList.add(routes.get(0));
-        routesStepList.add(new MultiRoute(Collections.singletonList(new MultiRoute(routes.subList(1, routes.size() - 2)))));
+        routesStepList.add(new MultiRoute(Collections.singletonList(new MultiRoute(routes.subList(1, routes.size() - 1)))));
         routesStepList.add(routes.get(routes.size()-1));
         return new MultiRoute(routesStepList);
     }
@@ -141,8 +141,8 @@ public class MultiRouteTest {
     MultiRoute multiRouteCreator4(List<Route> routes) {
         List<Route> routesStepList = new ArrayList<>();
         routesStepList.add(new MultiRoute(routes.subList(0,2)));
-        routesStepList.addAll(routes.subList(1, routes.size() - 3));
-        routesStepList.add(new MultiRoute(routes.subList(routes.size()-3,routes.size()-1)));
+        routesStepList.addAll(routes.subList(2, routes.size() - 2));
+        routesStepList.add(new MultiRoute(routes.subList(routes.size()-2, routes.size())));
         return new MultiRoute(routesStepList);
     }
 
@@ -218,10 +218,16 @@ public class MultiRouteTest {
         List<Edge> edgesFromRoutes = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             System.out.printf("test number %d \n",i);
+            edgesFromRoutes = new ArrayList<>();
             currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
             currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
             for (Route r : currentRoutes) {
                 edgesFromRoutes.addAll(r.edges());
+
+            }
+            for (int j = 0; j < edgesFromRoutes.size(); j++) {
+                System.out.printf("edge number : %d , from single route : %s\n",j,edgesFromRoutes.get(j));
+                System.out.printf("edge number : %d , from multi  route : %s\n\n",j,currentMultiRoute.edges().get(j));
             }
             assertArrayEquals(edgesFromRoutes.toArray(),currentMultiRoute.edges().toArray());
         }
