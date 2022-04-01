@@ -18,7 +18,7 @@ public final class MultiRoute implements Route{
     public MultiRoute(List<Route> segments){
         Preconditions.checkArgument(!segments.isEmpty());
         this.segments = List.copyOf(segments);
-        int tLenght = 0;
+        double tLenght = 0;
         for (Route segment : this.segments) {
             tLenght += segment.length();
         }
@@ -34,12 +34,13 @@ public final class MultiRoute implements Route{
         position = Math2.clamp(0, position, this.length());
         int index = 0;
         for (Route route : segments) {
+            if (position < route.length()) {
+                return index + route.indexOfSegmentAt(position);
+            }
             index += route.indexOfSegmentAt(position) + 1;
             position -= route.length();
-            if(position <= 0){
-                return index;
-            }
         }
+
         return index;
     }
 
@@ -50,7 +51,7 @@ public final class MultiRoute implements Route{
 
     @Override
     public List<Edge> edges() {
-        return edges;
+        return List.copyOf(edges);
     }
 
     @Override
@@ -102,11 +103,12 @@ public final class MultiRoute implements Route{
     public RoutePoint pointClosestTo(PointCh point) {
         double position = Double.NaN;
         double squaredDistanceToReference = Double.POSITIVE_INFINITY;
+        ;
         int index = 0;
         for (int i = 0; i < edges.size(); i++) {
-            double loopPosition = edges.get(i).positionClosestTo(point);
+            double loopPosition = Math2.clamp(0,edges.get(i).positionClosestTo(point),edges.get(i).length());
             PointCh pointOnEdge = edges.get(i).pointAt(loopPosition);
-            double loopDistance = point.squaredDistanceTo(pointOnEdge); //Todo : plutôt faire comme ça ou comme pour la première méthode ? Question sur piazza/assistants.
+            double loopDistance = point.squaredDistanceTo(pointOnEdge);
 
             if (loopDistance < squaredDistanceToReference) {
                 squaredDistanceToReference = loopDistance;
@@ -118,6 +120,6 @@ public final class MultiRoute implements Route{
         for (int i = 0; i < index; i++) {
             totalPosition += edges.get(i).length();
         }
-        return new RoutePoint(point, totalPosition + position, Math.sqrt(squaredDistanceToReference));
+        return new RoutePoint(edges.get(index).pointAt(position), totalPosition + position, Math.sqrt(squaredDistanceToReference));
     }
 }

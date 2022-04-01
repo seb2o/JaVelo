@@ -88,7 +88,7 @@ class SingleRouteTestFournis {
         var edgesCount = 4;
         var route = new SingleRoute(sawToothEdges(edgesCount));
 
-        // Outside the range of the route
+        // Outside the range of the multiRoute
         assertEquals(sawToothPoint(0), route.pointAt(-1e6));
         assertEquals(sawToothPoint(edgesCount), route.pointAt(+1e6));
 
@@ -142,7 +142,7 @@ class SingleRouteTestFournis {
         var rng = newRandom();
         var route = new SingleRoute(verticalEdges(1));
 
-        // Points below the route
+        // Points below the multiRoute
         var origin = new PointCh(ORIGIN_E, ORIGIN_N);
         for (int i = 0; i < RANDOM_ITERATIONS; i += 1) {
             var dN = rng.nextDouble(-10_000, -1);
@@ -154,7 +154,7 @@ class SingleRouteTestFournis {
             assertEquals(Math.hypot(dE, dN), pct.distanceToReference(), 1e-4);
         }
 
-        // Points above the route
+        // Points above the multiRoute
         var end = new PointCh(ORIGIN_E, ORIGIN_N + EDGE_LENGTH);
         for (int i = 0; i < RANDOM_ITERATIONS; i += 1) {
             var dN = rng.nextDouble(1, 10_000);

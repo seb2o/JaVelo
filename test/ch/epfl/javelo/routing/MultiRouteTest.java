@@ -1,31 +1,25 @@
 package ch.epfl.javelo.routing;
 
-import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static ch.epfl.test.TestRandomizer.newRandom;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiRouteTest {
 
 
-    record MultiRouteWithAttributes(
-            MultiRoute route,
-            int numberOfSegments,
-            double totalLenght,
-            double[] lenghtOfIntermediatesSegments,
-            PointCh[] edgePoints,
-            Edge[] edges
-            ){}
+    record MultiRouteWithHisRoutes(MultiRoute multiRoute, List<Route> singleRoutes){}
 
      Random r = new Random();
 
@@ -50,7 +44,6 @@ public class MultiRouteTest {
 
         for (int i = 0; i < numberOfEdge; i++) {
 
-            System.out.printf("east offset : %f ; north offset : %f \n", nextPointEastOffset,nextPointNorthOffset);
 
             previousPointEastCoord += nextPointEastOffset;
             previousPointNorthCoord += nextPointNorthOffset;
@@ -97,42 +90,42 @@ public class MultiRouteTest {
 
 
     /**
-     * retourne une multiroute composée simplement d'une liste de single route
+     * retourne une multiroute composée simplement d'une liste de single multiRoute
      * @param routes
      * @return
      */
-    Route multirouteCreator0(List<Route> routes) {
+    MultiRoute multiRouteCreator0(List<Route> routes) {
         return new MultiRoute(routes);
     }
 
     /**
-     *  cree une multiroute contenant une multiroute contenant une liste de single route
+     *  cree une multiroute contenant une multiroute contenant une liste de single multiRoute
      * @param routes
      * @return
      */
-    Route multiRouteCreator1(List<Route> routes) {
+    MultiRoute multiRouteCreator1(List<Route> routes) {
         return new MultiRoute(Collections.singletonList(new MultiRoute(routes)));
     }
 
     /**
-     * cree une multiroute contenant deux multiroute contenant des single route
+     * cree une multiroute contenant deux multiroute contenant des single multiRoute
      * @param routes
      * @return
      */
-    Route multiRouteCreator2(List<Route> routes) {
+    MultiRoute multiRouteCreator2(List<Route> routes) {
         List<Route> routesStepList = new ArrayList<>();
-        routesStepList.add(new MultiRoute(routes.subList(routes.size() / 2, routes.size() - 1)));
+        routesStepList.add(new MultiRoute(routes.subList(0, routes.size() / 2)));
         routesStepList.add(new MultiRoute(routes.subList(routes.size() / 2, routes.size() - 1)));
         return new MultiRoute(routesStepList);
     }
 
     /**
-     * cree une multiroute commencznt et finissant par une single route et contenant une multiroute composéee d'une
-     *  multi route composée de singles route au milieu.
+     * cree une multiroute commencznt et finissant par une single multiRoute et contenant une multiroute composéee d'une
+     *  multi multiRoute composée de singles multiRoute au milieu.
      * @param routes
      * @return
      */
-    Route multiRouteCreator3(List<Route> routes) {
+    MultiRoute multiRouteCreator3(List<Route> routes) {
         List<Route> routesStepList = new ArrayList<>();
         routesStepList.add(routes.get(0));
         routesStepList.add(new MultiRoute(Collections.singletonList(new MultiRoute(routes.subList(1, routes.size() - 2)))));
@@ -140,11 +133,39 @@ public class MultiRouteTest {
         return new MultiRoute(routesStepList);
     }
 
-    //todo creer multiroute commencant par multi route avec single route au millieu,
-    //todo commencant par mr et fnissant par sr , et vice versa
-    //todo puis regrouper les 4 methodes de création de multiroute en une seule crréant 4 multiroute
-    //todo a partir d'edges différentes et retournant 4 multiRoute associées avec leurs liste de routes et leurs liste d'edge
-    //todo creer un record stockant multiroute, liste de ses segments et liste d'edges.
+    /**
+     * creer une multiroute avec une multiroute en debut et fin et des single multiRoute au milieu
+     * @param routes
+     * @return
+     */
+    MultiRoute multiRouteCreator4(List<Route> routes) {
+        List<Route> routesStepList = new ArrayList<>();
+        routesStepList.add(new MultiRoute(routes.subList(0,2)));
+        routesStepList.addAll(routes.subList(1, routes.size() - 3));
+        routesStepList.add(new MultiRoute(routes.subList(routes.size()-3,routes.size()-1)));
+        return new MultiRoute(routesStepList);
+    }
+
+
+    List<MultiRouteWithHisRoutes> multiRoutesCasesGenerator() {
+        List<MultiRouteWithHisRoutes> routes = new ArrayList<>();
+        List<Route>[] sr = new List[5];
+        for (int i = 0; i < 5; i++) {
+            sr[i] = singleRouteListCreator(r.nextInt(4,10),r.nextInt(5,20));
+        }
+        routes.add(new MultiRouteWithHisRoutes(multiRouteCreator0(sr[0]),sr[0]));
+        routes.add(new MultiRouteWithHisRoutes(multiRouteCreator1(sr[1]),sr[1]));
+        routes.add(new MultiRouteWithHisRoutes(multiRouteCreator2(sr[2]),sr[2]));
+        routes.add(new MultiRouteWithHisRoutes(multiRouteCreator3(sr[3]),sr[3]));
+        routes.add(new MultiRouteWithHisRoutes(multiRouteCreator4(sr[4]),sr[4]));
+        //todo ajouter cas ou une seule multiRoute
+
+        return routes;
+
+    }
+
+
+
 
 
     @Test
@@ -155,19 +176,55 @@ public class MultiRouteTest {
     }
 
 
-    @Test// retourne l'index du segment de l'itinéraire contenant la position donnée
+    @Test // retourne l'index du segment de l'itinéraire contenant la position donnée
     void indexOfSegmentAtTest() {
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        for (int i = 0; i < 5; i++) {
+            System.out.printf("Index of Segment at current test : %d \n",i);
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+            assertEquals(0,currentMultiRoute.indexOfSegmentAt(0));
+            assertEquals(currentRoutes.size()==1 ? 0 : 1 ,currentMultiRoute.indexOfSegmentAt(currentRoutes.get(0).length()+0.1));
+        }
 
     }
 
     @Test
     void lengthTest() {
 
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+
+        for (int i = 0; i < 5; i++) {
+            double currentMultiRouteEdgesLenght = 0;
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+            for (Edge e : currentMultiRoute.edges()  ) {
+                currentMultiRouteEdgesLenght+=e.length();
+            }
+            assertEquals(currentMultiRouteEdgesLenght,currentMultiRoute.length(),1e-3);
+
+        }
     }
 
-    @Test//retourne les aretes de l'itinéraire
-    public void edgesTest(){
-
+    @Test
+    public void edgesTest() throws IOException {
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        List<Edge> edgesFromRoutes = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            System.out.printf("test number %d \n",i);
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+            for (Route r : currentRoutes) {
+                edgesFromRoutes.addAll(r.edges());
+            }
+            assertArrayEquals(edgesFromRoutes.toArray(),currentMultiRoute.edges().toArray());
+        }
     }
 
     @Test//retourne sans doublons les points situées aux aretes de l'itinéraire
