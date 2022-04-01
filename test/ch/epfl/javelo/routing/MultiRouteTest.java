@@ -3,12 +3,13 @@ package ch.epfl.javelo.routing;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+
+
 import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -202,8 +203,10 @@ public class MultiRouteTest {
             double currentMultiRouteEdgesLenght = 0;
             currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
             currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
-            for (Edge e : currentMultiRoute.edges()  ) {
-                currentMultiRouteEdgesLenght+=e.length();
+            for (Route r : currentRoutes  ) {
+                for (Edge e : r.edges()  ) {
+                    currentMultiRouteEdgesLenght+=e.length();
+                };
             }
             assertEquals(currentMultiRouteEdgesLenght,currentMultiRoute.length(),1e-3);
 
@@ -215,7 +218,7 @@ public class MultiRouteTest {
         List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
         MultiRoute currentMultiRoute;
         List<Route> currentRoutes;
-        List<Edge> edgesFromRoutes = new ArrayList<>();
+        List<Edge> edgesFromRoutes;
         for (int i = 0; i < 5; i++) {
             System.out.printf("test number %d \n",i);
             edgesFromRoutes = new ArrayList<>();
@@ -225,10 +228,6 @@ public class MultiRouteTest {
                 edgesFromRoutes.addAll(r.edges());
 
             }
-            for (int j = 0; j < edgesFromRoutes.size(); j++) {
-                System.out.printf("edge number : %d , from single route : %s\n",j,edgesFromRoutes.get(j));
-                System.out.printf("edge number : %d , from multi  route : %s\n\n",j,currentMultiRoute.edges().get(j));
-            }
             assertArrayEquals(edgesFromRoutes.toArray(),currentMultiRoute.edges().toArray());
         }
     }
@@ -236,16 +235,58 @@ public class MultiRouteTest {
     @Test//retourne sans doublons les points situées aux aretes de l'itinéraire
     public void pointsTest(){
 
+        List<PointCh> pointsFromRoute;
+
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        for (int i = 0; i < 5; i++) {
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+
+            pointsFromRoute = new ArrayList<>();
+            for (Route r : currentRoutes) {
+                pointsFromRoute.addAll(r.points().subList(0,r.points().size()-1));
+            }
+            pointsFromRoute.add(currentRoutes.get(currentRoutes.size() - 1).points().get(currentRoutes.get(currentRoutes.size() - 1).points().size() - 1));
+            assertArrayEquals(pointsFromRoute.toArray(),currentMultiRoute.points().toArray());
+        }
+
     }
 
     @Test//retourne le point se trouvant à la position donnée le long de l'itinéraire
     public void pointAtTest(){
 
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        for (int i = 0; i < 5; i++) {
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+
+            assertEquals(currentRoutes.get(0).pointAt(0),currentMultiRoute.pointAt(0));
+            assertEquals(currentRoutes.get(currentRoutes.size()-1).pointAt(Double.MAX_VALUE),currentMultiRoute.pointAt(currentMultiRoute.length()));
+            assertEquals(currentRoutes.get(1).pointAt(currentRoutes.get(1).length()+Math.nextDown(0.0)),currentMultiRoute.pointAt(currentRoutes.get(0).length()+currentRoutes.get(1).length()+Math.nextDown(0.0)));
+        }
+
     }
 
-    @Test// retourne l'altitude à la position donnée le long de l'itinéraire,
+    @Test @Disabled
+// retourne l'altitude à la position donnée le long de l'itinéraire,
     // qui peut valoir NaN si l'arête contenant cette position n'a pas de profil
     public void elevationAtTest(){
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        for (int i = 0; i < 5; i++) {
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+
+            assertEquals(currentRoutes.get(0).elevationAt(0),currentMultiRoute.elevationAt(0));
+            assertEquals(currentRoutes.get(currentRoutes.size()-1).elevationAt(Double.MAX_VALUE),currentMultiRoute.elevationAt(currentMultiRoute.length()),1e-3);
+            System.out.printf("elevation at the beginning of the second route : %f \n",currentRoutes.get(0).length()+currentRoutes.get(1).length());
+            assertEquals(currentRoutes.get(1).elevationAt(currentRoutes.get(1).length()),currentMultiRoute.elevationAt(currentRoutes.get(0).length()+currentRoutes.get(1).length()),1e-3);
+        }
 
     }
 
@@ -256,6 +297,16 @@ public class MultiRouteTest {
 
     @Test//retourne le point de l'itinéraire se trouvant le plus proche du point de référence donné
     public void pointClosestToTest(){
+        List<MultiRouteWithHisRoutes> multiRoutesWithRoutes = multiRoutesCasesGenerator();
+        MultiRoute currentMultiRoute;
+        List<Route> currentRoutes;
+        for (int i = 0; i < 5; i++) {
+            currentMultiRoute = multiRoutesWithRoutes.get(i).multiRoute;
+            currentRoutes = multiRoutesWithRoutes.get(i).singleRoutes;
+
+
+        }
+
 
     }
 

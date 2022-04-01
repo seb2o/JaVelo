@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static ch.epfl.javelo.routing.ElevationProfileComputer.elevationProfile;
+
 public final class MultiRoute implements Route{
     private final List<Route> segments;
     private final double totalLength;
@@ -70,7 +72,7 @@ public final class MultiRoute implements Route{
     public PointCh pointAt(double position) {
         position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
-        int index = this.indexOfSegmentAt(position);
+        int index = this.indexOfExternalSegmentAt(position);
         for (int i = 0; i < index; i++) {
             relativePosition -= segments.get(i).length();
         }
@@ -81,18 +83,18 @@ public final class MultiRoute implements Route{
     public double elevationAt(double position) {
         position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
-        int index = this.indexOfSegmentAt(position);
+        int index = this.indexOfExternalSegmentAt(position);
         for (int i = 0; i < index; i++) {
             relativePosition -= segments.get(i).length();
         }
-        return segments.get(index).elevationAt(relativePosition);
+        return  segments.get(index).elevationAt(relativePosition);
     }
 
     @Override
     public int nodeClosestTo(double position) {
         position = Math2.clamp(0,position,totalLength);
         double relativePosition = position;
-        int index = this.indexOfSegmentAt(position);
+        int index = this.indexOfExternalSegmentAt(position);
         for (int i = 0; i < index; i++) {
             relativePosition -= segments.get(i).length();
         }
@@ -103,7 +105,6 @@ public final class MultiRoute implements Route{
     public RoutePoint pointClosestTo(PointCh point) {
         double position = Double.NaN;
         double squaredDistanceToReference = Double.POSITIVE_INFINITY;
-        ;
         int index = 0;
         for (int i = 0; i < edges.size(); i++) {
             double loopPosition = Math2.clamp(0,edges.get(i).positionClosestTo(point),edges.get(i).length());
@@ -122,4 +123,17 @@ public final class MultiRoute implements Route{
         }
         return new RoutePoint(edges.get(index).pointAt(position), totalPosition + position, Math.sqrt(squaredDistanceToReference));
     }
+
+    private int indexOfExternalSegmentAt(double position) {
+        position = Math2.clamp(0,position,totalLength);
+        double previousSegmentsLenght = 0;
+        for (int i = 0; i < segments.size(); i++) {
+            previousSegmentsLenght+=segments.get(i).length();
+            if (position < previousSegmentsLenght) {
+                return i;
+            }
+        }
+        return segments.size()-1;
+    }
+
 }

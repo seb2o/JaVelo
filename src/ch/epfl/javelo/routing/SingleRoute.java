@@ -98,7 +98,6 @@ public final class SingleRoute implements Route{
         position = Math2.clamp(0,position,length());
         double relativePosition;
         int index = Arrays.binarySearch(lengthList, position);
-        System.out.println(index);
         if(index >= 0){ //Si l'index correspond à un noeud.
             if(index == lengthList.length - 1){ // Si c'est le dernier noeud, on prend la position à la fin de la dernière arête
                 index--;
@@ -108,10 +107,8 @@ public final class SingleRoute implements Route{
         }
         else{
             index = -(index + 2); //Donne l'index de l'arête correspondante.
-            System.out.println(index);
             relativePosition = position - lengthList[index];
         }
-        System.out.println(index);
         if((relativePosition / edges.get(index).length() > .5)){
             index++;
             if (index == lengthList.length - 1){

@@ -89,8 +89,7 @@ class ElevationProfileComputerTestFournis {
         assertEquals(endElevation, profile.maxElevation());
         for (double p = 0; p < route.length(); p += 1) {
             var elevation = startElevation + (endElevation - startElevation) * (p / FakeRoute.EDGE_LENGTH);
-            System.out.print("p : ");
-            System.out.println(p);
+
             assertEquals(elevation, profile.elevationAt(p), 1e-2);
         }
     }
