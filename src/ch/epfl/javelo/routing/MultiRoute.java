@@ -43,7 +43,7 @@ public final class MultiRoute implements Route{
             position -= route.length();
         }
 
-        return index;
+        return index-1;
     }
 
     @Override
