@@ -10,10 +10,8 @@ public final class Preconditions {
     }
 
     /**
-     * Vérifie une condition.
-     *
+     * permet de vérifier une condition, en général la validité d'un argument d'une fonction
      * @param shouldBeTrue la condition à vérifier.
-     *
      * @throws IllegalArgumentException si la condition n'est pas vérifiée.
      */
     public static void checkArgument(boolean shouldBeTrue){

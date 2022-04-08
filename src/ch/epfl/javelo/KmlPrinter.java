@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+//classe utulisée a des fins de tests (affichage de l'itinéraire)
 public final class KmlPrinter {
     private static final String KML_HEADER =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

@@ -31,21 +31,23 @@ public final class ElevationProfileComputer {
 
         for (int i = 0; i < numberOfSamples; i++) {
 
-            sampleList[i] = (float) route.elevationAt((double)(i * length / (double)(numberOfSamples-1)));
+            //création des samples brut (avec des nan) à partir du profil
+            sampleList[i] = (float) route.elevationAt(i * length / (double)(numberOfSamples-1));
 
-            //Etape 1 :
+            //Etape 1 : remplissage des valeurs nan en début de tableau (avant la première valeure définie du profil
             if (!firstStepCheck && !Float.isNaN(sampleList[i])){
                 Arrays.fill(sampleList,0,i,sampleList[i]);
                 firstStepCheck = true;
             }
         }
 
+        //si que des nan, on défini la hauteur constante a 0
         if (!firstStepCheck) {
             Arrays.fill(sampleList,0,numberOfSamples-1,0);
         }
 
 
-        //Etape 2 :
+        //Etape 2 : remplissage des valeurs nan en queue de tableau (après la dernière valeure définie du profil
         if (!Double.isNaN(route.elevationAt(route.length()))) {
             sampleList[numberOfSamples-1] = (float) route.elevationAt(route.length());
             secondStepCheck = true;
@@ -58,7 +60,12 @@ public final class ElevationProfileComputer {
         }
 
 
-        //Etape 3 :
+        //Etape 3 : interpolation des trous de nan
+        /*parcours de la liste des valeurs, mémorisation de la dernière position connue avant des nan
+         * et de la première valeure connue après ces nan puis remplacement des nan par interpolation
+         * entre ces deux valeures connues
+         */
+
         for (int i = 1; i < numberOfSamples; i++) {
             if(Float.isNaN(sampleList[i])){
                 for (int j = i; j < numberOfSamples; j++) {

@@ -10,6 +10,7 @@ public final class Math2 {
     }
 
     /**
+     * special cases : if any of the input is NaN, return NaN
      * @return la partie entière par excès de la division de x par y
      * @throws IllegalArgumentException si x est négatif ou si y est négatif ou nul
      */

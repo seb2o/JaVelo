@@ -79,6 +79,7 @@ public class ElevationProfile {
     }
 
     /**
+     * méthode permettant de calculer la hauteur d'un point d'une arête
      * @param position la postition du point dont l'altitude est recherchée
      * @return l'altitude du profil à la position donnée.
      * le premier échantillon est retourné lorsque la position est négative, le dernier lorsqu'elle est supérieure à la longueur

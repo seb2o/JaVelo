@@ -12,11 +12,18 @@ import java.util.List;
 
 import static ch.epfl.javelo.routing.ElevationProfileComputer.elevationProfile;
 
+/**
+ * @author Edgar Gonzalez (328095)
+ * @author Sébastien Boo (345870)
+ */
 public final class MultiRoute implements Route{
     private final List<Route> segments;
     private final double totalLength;
     private final List<Edge> edges;
 
+    /**
+     * @param segments une liste de route (peut etre single ou multi route)
+     */
     public MultiRoute(List<Route> segments){
         Preconditions.checkArgument(!segments.isEmpty());
         this.segments = List.copyOf(segments);
@@ -124,6 +131,9 @@ public final class MultiRoute implements Route{
         return new RoutePoint(edges.get(index).pointAt(position), totalPosition + position, Math.sqrt(squaredDistanceToReference));
     }
 
+    /**
+     * méthode interne qui permet de calculer a quel route interne appartient une position
+     */
     private int indexOfExternalSegmentAt(double position) {
         position = Math2.clamp(0,position,totalLength);
         double previousSegmentsLenght = 0;

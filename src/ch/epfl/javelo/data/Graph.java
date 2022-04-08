@@ -64,32 +64,32 @@ public class Graph {
              FileChannel profilesIdsChannel = FileChannel.open(profilesIdsPath);
              FileChannel elevationsChannel = FileChannel.open(elevationsPath)) {
 
-            nodes = new GraphNodes(nodesChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, nodesChannel.size())
-                    .asIntBuffer());
+                nodes = new GraphNodes(nodesChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, nodesChannel.size())
+                        .asIntBuffer());
 
-            sectors = new GraphSectors(sectorsChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, sectorsChannel.size()));
+                sectors = new GraphSectors(sectorsChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, sectorsChannel.size()));
 
-            edges = new GraphEdges(
-                    edgesChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, edgesChannel.size()),
-                    profilesIdsChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, profilesIdsChannel.size())
-                    .asIntBuffer(),
-                    elevationsChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, elevationsChannel.size())
-                    .asShortBuffer());
+                edges = new GraphEdges(
+                        edgesChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, edgesChannel.size()),
+                        profilesIdsChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, profilesIdsChannel.size())
+                        .asIntBuffer(),
+                        elevationsChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, elevationsChannel.size())
+                        .asShortBuffer());
 
-            LongBuffer attributeSetsBuffer = attributesSetChannel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, attributesSetChannel.size())
-                    .asLongBuffer();
+                LongBuffer attributeSetsBuffer = attributesSetChannel
+                        .map(FileChannel.MapMode.READ_ONLY, 0, attributesSetChannel.size())
+                        .asLongBuffer();
 
-            attributeSets = new ArrayList<>();
+                attributeSets = new ArrayList<>();
 
-            for (int i = 0; i < attributeSetsBuffer.capacity(); i++) {
-                attributeSets.add(new AttributeSet(attributeSetsBuffer.get(i)));
-            }
+                for (int i = 0; i < attributeSetsBuffer.capacity(); i++) {
+                    attributeSets.add(new AttributeSet(attributeSetsBuffer.get(i)));
+                }
         }
 
         return new Graph(nodes,sectors,edges,attributeSets);
@@ -97,7 +97,7 @@ public class Graph {
     }
 
     /**
-     * @return le nombre total de noeuds dans le graphe
+     * @return le nombre total de noeuds dans l'instance de graphe
      */
     public int nodeCount(){
         return nodes.count();

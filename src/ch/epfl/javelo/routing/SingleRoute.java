@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Edgar Gonzalez (328095)
+ * @author Sébastien Boo (345870)
+ */
 public final class SingleRoute implements Route{
     private final List<Edge> edges;
     private final double[] lengthList;
