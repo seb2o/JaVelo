@@ -8,8 +8,6 @@ import javafx.geometry.Point2D;
  * @author Sébastien Boo (345870)
  */
 public record MapViewParameters(int zoomLevel, double originX, double originY) {
-//todo attribut constant hors des parametres du record ?
-    //todo methodes pointAt, viewX et viewY en pixels  ?
     //todo vérifier les zoom levels ?
     /**
      * permet d'obtenir les coordonnées du coin haut-gauche de la map
@@ -41,8 +39,8 @@ public record MapViewParameters(int zoomLevel, double originX, double originY) {
      * @return le pointWebMercator correspondant a celui des coordonnées spécifiées pour l'image
      */
     public PointWebMercator pointAt(double x, double y) {
-        double pixelsWidth = 1 << (8 + this.zoomLevel());
-        return PointWebMercator.of(this.zoomLevel(), x/pixelsWidth+this.originX(), y/pixelsWidth+this.originY());
+
+        return PointWebMercator.of(this.zoomLevel(), x+this.originX(), y+this.originY());
     }
 
     /**
@@ -51,8 +49,7 @@ public record MapViewParameters(int zoomLevel, double originX, double originY) {
      * @return le nombre de pixels vers la droite de l'image du point p
      */
     public double viewX(PointWebMercator p) {
-        double pixelsWidth = 1 << (8 + this.zoomLevel());
-        return (p.xAtZoomLevel(this.zoomLevel())-this.originX())*pixelsWidth;
+        return p.xAtZoomLevel(this.zoomLevel())-this.originX();
     }
 
     /**
@@ -61,7 +58,6 @@ public record MapViewParameters(int zoomLevel, double originX, double originY) {
      * @return le nombre de pixels vers le bas de l'image du point p
      */
     public double viewY(PointWebMercator p) {
-        double pixelsWidth = 1 << (8 + this.zoomLevel());
-        return (p.yAtZoomLevel(this.zoomLevel())-this.originY())*pixelsWidth;
+        return (p.yAtZoomLevel(this.zoomLevel())-this.originY());
     }
 }
