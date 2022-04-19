@@ -159,7 +159,6 @@ public class MultiRouteTest {
         routes.add(new MultiRouteWithHisRoutes(multiRouteCreator2(sr[2]),sr[2]));
         routes.add(new MultiRouteWithHisRoutes(multiRouteCreator3(sr[3]),sr[3]));
         routes.add(new MultiRouteWithHisRoutes(multiRouteCreator4(sr[4]),sr[4]));
-        //todo ajouter cas ou une seule multiRoute
 
         return routes;
 
