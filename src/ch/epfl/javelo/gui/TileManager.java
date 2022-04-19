@@ -2,12 +2,10 @@ package ch.epfl.javelo.gui;
 
 import javafx.scene.image.Image;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -44,11 +42,7 @@ public final class TileManager {
 
         //si la tuile est stockée sur le disque, on la stocke en cache et on la retourne
         try (FileInputStream f = new FileInputStream(imagePath.toString())) {
-            Iterator<Map.Entry<TileId, Image>> i = cache.entrySet().iterator();
-            if (i.hasNext()) {i.remove();}
-            tileImage = new Image(f);
-            cache.put(tile,tileImage);
-            return tileImage;
+            return cacheAndReturnTile(tile,f);
         }
         catch (IOException e) {//si erreur, alors le fichier n'existe pas dans la base de données
             try {
@@ -60,6 +54,25 @@ public final class TileManager {
                 URLConnection c = u.openConnection();
                 c.setRequestProperty("User-Agent", "JaVelo");
                 InputStream i = c.getInputStream();
+                tileImage = cacheAndReturnTile(tile,i);
+
+                if (Files.exists(xDirectory)) {
+                    //lire l'image, la transférer à un output stream qui crée
+                    //le fichier image dans imagePath
+                }
+
+                else if (Files.exists(zoomDirectory)) {
+                    //créer le dossier du zoomLevel
+                    //lire l'image, la transférer à un output stream qui crée
+                    //le fichier image dans imagePath
+                }
+                else {
+                    //creer
+                }
+
+                i.close();
+                return tileImage;
+
             } catch (IOException ex) { //si erreur, alors souci de programmation
                 throw new Error(ex);
             }
@@ -72,7 +85,19 @@ public final class TileManager {
         //todo if not, create the missing elements and add the image
         //todo then add it to the memory cache, normally it will remove the less used entry
 
-        return null;
+    }
+
+    //méthode interne pour gérer la mise à jour du cache
+    private Image cacheAndReturnTile(TileId id, Image i) {
+        Iterator<Map.Entry<TileId, Image>> iterator = cache.entrySet().iterator();
+        if (iterator.hasNext()) {iterator.remove();}
+        cache.put(id,i);
+        return i;
+    }
+
+    //méthode interne pour gérer la mise à jour du cache
+    private Image cacheAndReturnTile(TileId id, InputStream f) {
+        return cacheAndReturnTile(id, new Image(f));
     }
 
     record TileId(int zoomLevel, int x, int y) {
