@@ -9,7 +9,7 @@ import ch.epfl.javelo.Preconditions;
 public record PointWebMercator(double x, double y) {
 
     /**
-     * constructeur d'un point dans le système WebMarcator
+     * constructeur d'un point dans le système WebMercator
      * @param x coordonnée x du point. compris entre 0 et 1
      * @param y coordonnée y du point. compris entre 0 et 1
      */
