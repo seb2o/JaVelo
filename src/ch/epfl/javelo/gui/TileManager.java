@@ -65,6 +65,7 @@ public final class TileManager {
                         tile.y()));
                 URLConnection c = u.openConnection();
                 c.setRequestProperty("User-Agent", "JaVelo");
+                System.out.println("image was in remote database");
                 InputStream i = c.getInputStream();
 
                 if (Files.exists(xDirectory)) {
@@ -105,6 +106,7 @@ public final class TileManager {
 
     private void writeStream(InputStream i, Path path) throws IOException {
         FileOutputStream o = new FileOutputStream(path.toFile());
+        i.transferTo(o);
         i.close();
         o.close();
     }
