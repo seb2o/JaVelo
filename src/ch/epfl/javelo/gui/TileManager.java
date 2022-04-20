@@ -98,17 +98,17 @@ public final class TileManager {
     }
 
 
-    private void writeStream(InputStream inputStream, Path path) throws IOException {
-        FileOutputStream o = new FileOutputStream(path.toString());
-        inputStream.transferTo(o);
-        inputStream.close();
+    private void writeStream(InputStream i, Path path) throws IOException {
+        FileOutputStream o = new FileOutputStream(path.toFile());
+        i.transferTo(o);
+        i.close();
         o.close();
     }
 
     record TileId(int zoomLevel, int x, int y) {
 
         public static boolean isValid(int zoomLevel, int xIndex, int yIndex){
-            int numberOfTiles = 1<<zoomLevel*2;
+            long numberOfTiles = 1L<<zoomLevel*2;
             return (0<=zoomLevel && 0<=xIndex && 0<=yIndex && zoomLevel<=19 && xIndex<numberOfTiles && yIndex<numberOfTiles);
         }
 
