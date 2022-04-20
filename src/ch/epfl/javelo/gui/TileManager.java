@@ -7,10 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Edgar Gonzalez (328095)
@@ -48,7 +45,7 @@ public final class TileManager {
                 .resolve(Path.of(String.valueOf(tile.zoomLevel())));
         Path xDirectory = zoomDirectory
                 .resolve(Path.of(String.valueOf(tile.x())));
-        Path imagePath = xDirectory.resolve(String.valueOf(tile.y())+".png");
+        Path imagePath = xDirectory.resolve(tile.y() +".png");
 
         //si la tuile est stockée sur le disque, on la stocke en cache et on la retourne
         try (FileInputStream f = new FileInputStream(imagePath.toString())) {
@@ -93,7 +90,10 @@ public final class TileManager {
     //méthode interne pour gérer la mise à jour du cache
     private Image cacheAndReturnTile(TileId id, Image i) {
         Iterator<Map.Entry<TileId, Image>> iterator = cache.entrySet().iterator();
-        if (iterator.hasNext()) {iterator.remove();}
+        if ( cache.size()>=100 && iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
+        }
         cache.put(id,i);
         return i;
     }

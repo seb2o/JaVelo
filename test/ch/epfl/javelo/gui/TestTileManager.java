@@ -11,11 +11,11 @@ public final class TestTileManager extends Application {
     public static void main(String[] args) { launch(args); }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         TileManager tm = new TileManager(
                 Path.of("tiles"), "https://tile.openstreetmap.org");
-        Image tileImage = tm.getImageOf(
-                new TileManager.TileId(19, 271725, 185422));
+        tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
+        tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
         Platform.exit();
     }
 }
