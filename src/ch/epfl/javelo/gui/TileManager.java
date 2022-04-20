@@ -38,7 +38,10 @@ public final class TileManager {
 
         //si la tuile est stockée en cache, on la retourne et la fonction se termine
         Image tileImage = cache.get(tile);
-        if (tileImage!=null) return tileImage;
+        if (tileImage!=null) {
+            System.out.println("image was in cache");
+            return tileImage;
+        }
 
 
         Path zoomDirectory = cachePath
@@ -46,9 +49,12 @@ public final class TileManager {
         Path xDirectory = zoomDirectory
                 .resolve(Path.of(String.valueOf(tile.x())));
         Path imagePath = xDirectory.resolve(String.valueOf(tile.y())+".png");
+
         //si la tuile est stockée sur le disque, on la stocke en cache et on la retourne
         try (FileInputStream f = new FileInputStream(imagePath.toString())) {
-            return cacheAndReturnTile(tile,f);
+            System.out.println("image was in disk");
+            tileImage = cacheAndReturnTile(tile,f);
+            return tileImage;
         }
         catch (IOException e) {//si erreur, alors le fichier n'existe pas dans la base de données
             try {
@@ -60,7 +66,6 @@ public final class TileManager {
                 URLConnection c = u.openConnection();
                 c.setRequestProperty("User-Agent", "JaVelo");
                 InputStream i = c.getInputStream();
-                tileImage = cacheAndReturnTile(tile,i);
 
                 if (Files.exists(xDirectory)) {
                     writeStream(i,imagePath);
@@ -71,17 +76,17 @@ public final class TileManager {
                     writeStream(i,imagePath);
                 }
 
+
+                try (FileInputStream is = new FileInputStream(imagePath.toFile())){
+                    tileImage = cacheAndReturnTile(tile,is);
+                }
+
                 return tileImage;
 
             } catch (IOException ex) { //si erreur, alors souci de programmation
                 throw new Error(ex);
             }
         }
-
-
-
-
-
     }
 
     //méthode interne pour gérer la mise à jour du cache
@@ -100,7 +105,6 @@ public final class TileManager {
 
     private void writeStream(InputStream i, Path path) throws IOException {
         FileOutputStream o = new FileOutputStream(path.toFile());
-        i.transferTo(o);
         i.close();
         o.close();
     }
