@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -47,9 +48,10 @@ public final class Stage8Test extends Application {
                         waypointsManager,
                         mapViewParameters);
 
-        StackPane mainPane =
-                new StackPane(baseMapManager.pane(),
-                        waypointsManager.pane());
+        //StackPane mainPane =
+        //        new StackPane(baseMapManager.pane(),
+        //                waypointsManager.pane());
+        Pane mainPane = baseMapManager.pane();
         mainPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);
