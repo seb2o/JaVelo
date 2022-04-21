@@ -1,5 +1,7 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -82,6 +84,7 @@ public final class TileManager {
                 return tileImage;
 
             } catch (IOException ex) { //si erreur, alors souci de programmation
+                ex.printStackTrace();
                 throw new IOException();
             }
         }

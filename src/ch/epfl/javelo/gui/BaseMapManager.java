@@ -1,6 +1,7 @@
 package ch.epfl.javelo.gui;
 
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -12,21 +13,21 @@ import java.io.IOException;
 public final class BaseMapManager {
 
     private boolean redrawNeeded = true;
-    private Canvas canvas;
     private Pane pane;
+    private Canvas canvas;
     private TileManager tileManager;
     private WaypointsManager waypointsManager;
+    private MapViewParameters mapViewParameters;
 
-    public BaseMapManager(TileManager tileManager, WaypointsManager waypointsManager, MapViewParameters properties){
-        this.canvas = new Canvas();
+    public BaseMapManager(TileManager tileManager, WaypointsManager waypointsManager, MapViewParameters mapViewParameters){
         this.pane = new Pane();
-        pane.setOnScroll(pane.getOnScroll());
-        pane.setOnMousePressed(pane.getOnMousePressed());
-        ScrollEvent = new ScrollEvent()
+        this.canvas = new Canvas();
+        this.pane.getChildren().add(canvas);
         this.tileManager = tileManager;
         this.waypointsManager = waypointsManager;
+        this.mapViewParameters = mapViewParameters;
 
-        canvas.widthProperty().bind(pane().widthProperty());
+        canvas.widthProperty().bind(pane.widthProperty());
         canvas.sceneProperty().addListener((p, oldS, newS) -> {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
@@ -39,21 +40,22 @@ public final class BaseMapManager {
     }
 
     private void redrawIfNeeded(){
-        TileManager.TileId tileId = new TileManager.TileId(1,0,0);
+        int x,y;
+        x = Math.floorDiv((int) mapViewParameters.originX(),256);
+        y = Math.floorDiv((int) mapViewParameters.originY(),256);
+        TileManager.TileId tileId = new TileManager.TileId(mapViewParameters.zoomLevel(),x,y);
 
         if(!redrawNeeded) return;
         redrawNeeded = false;
 
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-        try{Image image = tileManager.getImageOf(tileId);
-            graphicsContext.drawImage(image,10,10);
+        try{
+            Image image = tileManager.getImageOf(tileId);
+            graphicsContext.drawImage(image,0,0);
         }
         catch (IOException ignored) {
         }
-
         //LOOP
-        ScrollEvent scrollEvent = pane.getOnScroll();
-        tileId.zoomLevel() += pane.getOnScroll().g
         //LOOP
     }
 
@@ -61,6 +63,8 @@ public final class BaseMapManager {
         redrawNeeded = true;
         Platform.requestNextPulse();
     }
+
+
 
     //MOLETTE
     //DEPLACEMENT CARTE
