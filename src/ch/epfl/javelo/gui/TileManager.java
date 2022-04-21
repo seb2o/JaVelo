@@ -24,7 +24,7 @@ public final class TileManager {
         this.cachePath = tilePath;
     }
 
-    public Image getImageOf(TileId tile)  {
+    public Image getImageOf(TileId tile) throws IOException {
 
 
         if (!TileId.isValid(tile)) {
@@ -82,7 +82,7 @@ public final class TileManager {
                 return tileImage;
 
             } catch (IOException ex) { //si erreur, alors souci de programmation
-                throw new Error(ex);
+                throw new IOException();
             }
         }
     }
