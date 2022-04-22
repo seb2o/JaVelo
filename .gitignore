@@ -2,3 +2,4 @@ tiles
 *.class
 .DS_STORE
 playground
+*.png
