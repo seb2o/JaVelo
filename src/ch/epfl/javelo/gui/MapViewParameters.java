@@ -31,6 +31,7 @@ public record MapViewParameters(int zoomLevel, double originX, double originY) {
         return new MapViewParameters(this.zoomLevel(),x,y);
     }
 
+    public MapViewParameters withNewZoom(int zoom){return new MapViewParameters(zoom, this.originX(), this.originY());}
     /**
      * permet de convertir des coordonnées d'image en coordonnées mercator
      * @param x le nombre de pixels vers la droite de l'image du point

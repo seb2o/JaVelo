@@ -23,7 +23,7 @@ public final class Stage8Test extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Graph graph = Graph.loadFrom(Path.of("lausanne"));
-        Path cacheBasePath = Path.of(".");
+        Path cacheBasePath = Path.of("tiles");
         String tileServerHost = "https://tile.openstreetmap.org";
         TileManager tileManager =
                 new TileManager(cacheBasePath, tileServerHost);
@@ -51,7 +51,6 @@ public final class Stage8Test extends Application {
         StackPane mainPane =
                 new StackPane(baseMapManager.pane(),
                         waypointsManager.pane());
-        //Pane mainPane = baseMapManager.pane();
         mainPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);

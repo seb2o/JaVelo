@@ -1,13 +1,11 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
-import ch.epfl.javelo.projection.Ch1903;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 

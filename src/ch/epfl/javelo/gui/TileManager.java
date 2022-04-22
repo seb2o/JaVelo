@@ -37,7 +37,6 @@ public final class TileManager {
         //si la tuile est stockée en cache, on la retourne et la fonction se termine
         Image tileImage = cache.get(tile);
         if (tileImage!=null) {
-            System.out.println("image was in cache");
             return tileImage;
         }
 
@@ -50,7 +49,6 @@ public final class TileManager {
 
         //si la tuile est stockée sur le disque, on la stocke en cache et on la retourne
         try (FileInputStream f = new FileInputStream(imagePath.toString())) {
-            System.out.println("image was in disk");
             tileImage = cacheAndReturnTile(tile,f);
             return tileImage;
         }
@@ -63,7 +61,6 @@ public final class TileManager {
                         tile.y()));
                 URLConnection c = u.openConnection();
                 c.setRequestProperty("User-Agent", "JaVelo");
-                System.out.println("image was in remote database");
                 InputStream i = c.getInputStream();
 
                 if (Files.exists(xDirectory)) {
