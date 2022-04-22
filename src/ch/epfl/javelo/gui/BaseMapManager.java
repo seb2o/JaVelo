@@ -47,6 +47,8 @@ public final class BaseMapManager {
             redrawOnNextPulse();
         });
 
+
+
     }
 
     public Pane pane(){
