@@ -15,8 +15,13 @@ public final class TestTileManager extends Application {
     public void start(Stage primaryStage) throws IOException {
         TileManager tm = new TileManager(
                 Path.of("tiles"), "https://tile.openstreetmap.org");
-        tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
-        tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
+        try {
+            tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
+            tm.getImageOf(new TileManager.TileId(19, 271725, 185422));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Platform.exit();
     }
 }

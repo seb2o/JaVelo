@@ -28,10 +28,9 @@ public final class TileManager {
 
     public Image getImageOf(TileId tile) throws IOException {
 
-
+        //on vérifie que la tuile est valide
         if (!TileId.isValid(tile)) {
-            System.out.println("invalid tile");
-            return null;
+            throw  new IOException();
         }
 
 
@@ -70,17 +69,15 @@ public final class TileManager {
                 if (Files.exists(xDirectory)) {
                     writeStream(i,imagePath);
                 }
-
                 else {
                     Files.createDirectories(xDirectory);
                     writeStream(i,imagePath);
                 }
 
-
+                //on retourne le fichier depuis le disque
                 try (FileInputStream is = new FileInputStream(imagePath.toFile())){
                     tileImage = cacheAndReturnTile(tile,is);
                 }
-
                 return tileImage;
 
             } catch (IOException ex) { //si erreur, alors souci de programmation
@@ -106,7 +103,7 @@ public final class TileManager {
         return cacheAndReturnTile(id, new Image(f));
     }
 
-
+    //méthode interne permettant d'écrire dans un fichier depuis un inputStream
     private void writeStream(InputStream i, Path path) throws IOException {
         FileOutputStream o = new FileOutputStream(path.toFile());
         i.transferTo(o);
@@ -114,6 +111,14 @@ public final class TileManager {
         o.close();
     }
 
+    /**
+     * représente une tile avec son zoom level et ses coordonnées par rapport
+     * au coin haut gauche de la carte
+     * fournis également une méthode permettant de vérifier la validité d'une tuile
+     * @param zoomLevel le zoomLevel de la tile
+     * @param x son décalage vers la droite
+     * @param y son décalage vers le bas
+     */
     record TileId(int zoomLevel, int x, int y) {
 
         public static boolean isValid(int zoomLevel, int xIndex, int yIndex){

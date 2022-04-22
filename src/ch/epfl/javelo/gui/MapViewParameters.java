@@ -8,7 +8,6 @@ import javafx.geometry.Point2D;
  * @author Sébastien Boo (345870)
  */
 public record MapViewParameters(int zoomLevel, double originX, double originY) {
-    //todo vérifier les zoom levels ?
     /**
      * permet d'obtenir les coordonnées du coin haut-gauche de la map
      * @return les coordonnées du coin haut-gauche de la map
