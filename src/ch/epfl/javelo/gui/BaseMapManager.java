@@ -70,6 +70,8 @@ public final class BaseMapManager {
             System.out.println(newOriginX);
         });
 
+
+
     }
 
     public Pane pane(){
