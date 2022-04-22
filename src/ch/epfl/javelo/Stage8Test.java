@@ -40,18 +40,18 @@ public final class Stage8Test extends Application {
 
         WaypointsManager waypointsManager =
                 new WaypointsManager(graph,
-                        mapViewParameters,
+                        mapViewParametersP,
                         waypoints,
                         errorConsumer);
         BaseMapManager baseMapManager =
                 new BaseMapManager(tileManager,
                         waypointsManager,
-                        mapViewParameters);
+                        mapViewParametersP);
 
-        //StackPane mainPane =
-        //        new StackPane(baseMapManager.pane(),
-        //                waypointsManager.pane());
-        Pane mainPane = baseMapManager.pane();
+        StackPane mainPane =
+                new StackPane(baseMapManager.pane(),
+                        waypointsManager.pane());
+        //Pane mainPane = baseMapManager.pane();
         mainPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);

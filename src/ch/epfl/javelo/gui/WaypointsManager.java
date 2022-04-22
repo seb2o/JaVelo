@@ -4,6 +4,7 @@ import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.Ch1903;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -19,7 +20,7 @@ public final class WaypointsManager {
     private Consumer<String> consumer;
 
 
-    public WaypointsManager(Graph graph, MapViewParameters mapViewParameters, ObservableList<Waypoint> waypoints, Consumer<String> consumer){
+    public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, Consumer<String> consumer){
         this.consumer = consumer;
         this.pane = new Pane();
         this.waypoints = waypoints;
@@ -28,13 +29,12 @@ public final class WaypointsManager {
         for (Waypoint waypoint : waypoints) {
             Group group = createPin();
             pane.getChildren().add(group);
-            String CSSClass = index == 0 ? "first" : (index != waypoints.size()-1 ? "middle" : "last"); //Todo : insh ca marche
+            String CSSClass = index == 0 ? "first" : (index != waypoints.size()-1 ? "middle" : "last");
             group.getStyleClass().add(CSSClass);
-            //PointWebMercator pwb = new PointWebMercator(waypoint.waypoint().e(),waypoint.waypoint().n());
-            //Todo :  mettre autre chose..
 
-            //group.setLayoutX(mapViewParameters.viewX(pwb));
-            //group.setLayoutY(mapViewParameters.viewY(pwb));
+            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.waypoint());
+            group.setLayoutX(mapViewParameters.get().viewX(pwb));
+            group.setLayoutY(mapViewParameters.get().viewY(pwb));
             index++;
         }
         //Todo : pas sûr de devoir recréer un nouveau pin à chaque fois, à tester.

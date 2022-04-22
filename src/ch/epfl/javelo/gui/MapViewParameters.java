@@ -49,7 +49,7 @@ public record MapViewParameters(int zoomLevel, double originX, double originY) {
      * @return le nombre de pixels vers la droite de l'image du point p
      */
     public double viewX(PointWebMercator p) {
-        return p.xAtZoomLevel(this.zoomLevel())-this.originX();
+        return p.xAtZoomLevel(this.zoomLevel())-this.originX(); ////Todo : pas censé retourner un int plutôt ? (nb de pixels)
     }
 
     /**
