@@ -1,8 +1,11 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Math2;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -37,14 +40,34 @@ public final class BaseMapManager {
         });
 
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
+        SimpleObjectProperty<Point2D> lastPointerPosition = new SimpleObjectProperty<>();
         pane.setOnScroll(scrollEvent -> {
-            System.out.println("toto");
+            lastPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 250);
             int zoomDelta = (int)Math.signum(scrollEvent.getDeltaY());
-            mapViewParameters.set(mapViewParameters.get().withNewZoom(mapViewParameters.get().zoomLevel() + zoomDelta));
+            int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
+            int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);
+            int newOriginX,newOriginY;
+            if(newZoom != tempZoom){
+                zoomDelta = 0;
+            }
+            if(zoomDelta > 0){
+                newOriginX = (int)Math.pow(2,zoomDelta)*(int)mapViewParameters.get().originX() + zoomDelta * (int)lastPointerPosition.get().getX();
+                newOriginY = (int)Math.pow(2,zoomDelta)*(int)mapViewParameters.get().originY() + zoomDelta * (int)lastPointerPosition.get().getY();
+            }
+            else if(zoomDelta < 0){
+                newOriginX = ((int)mapViewParameters.get().originX() - (int)lastPointerPosition.get().getX())/2;
+                newOriginY = ((int)mapViewParameters.get().originY() - (int)lastPointerPosition.get().getY())/2;
+            }
+            else{
+                newOriginX = (int)mapViewParameters.get().originX();
+                newOriginY = (int)mapViewParameters.get().originY();
+            }
+            mapViewParameters.set(mapViewParameters.get().withNewZoom(newZoom).withMinXY(newOriginX,newOriginY));
             redrawOnNextPulse();
+            System.out.println(newOriginX);
         });
 
     }

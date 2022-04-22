@@ -35,6 +35,7 @@ public final class WaypointsManager {
             group.setLayoutY(mapViewParameters.get().viewY(pwb));
             index++;
         }
+        pane.setPickOnBounds(false);
         //Todo : pas sûr de devoir recréer un nouveau pin à chaque fois, à tester.
 
     }
