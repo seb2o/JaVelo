@@ -45,7 +45,7 @@ public final class BaseMapManager {
             lastPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
-            minScrollTime.set(currentTime + 250);
+            minScrollTime.set(currentTime + 25);
             int zoomDelta = (int)Math.signum(scrollEvent.getDeltaY());
             int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
             int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);
@@ -68,6 +68,20 @@ public final class BaseMapManager {
             mapViewParameters.set(mapViewParameters.get().withNewZoom(newZoom).withMinXY(newOriginX,newOriginY));
             redrawOnNextPulse();
             System.out.println(newOriginX);
+        });
+
+
+        pane.setOnMousePressed(e -> {
+
+        });
+        pane.setOnMouseDragged(e -> {
+
+        });
+        pane.setOnMouseReleased( e -> {
+            e.isStillSincePress();//todo le prof dit que cette methode peut etre utile
+        });
+        waypointsManager.pane().setOnMousePressed( e -> {
+            
         });
 
 
