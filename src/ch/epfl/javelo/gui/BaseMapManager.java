@@ -1,11 +1,15 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.projection.PointCh;
+import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -14,6 +18,7 @@ import javafx.scene.layout.Pane;
 
 import java.beans.EventHandler;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public final class BaseMapManager {
@@ -40,9 +45,9 @@ public final class BaseMapManager {
         });
 
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
-        SimpleObjectProperty<Point2D> lastPointerPosition = new SimpleObjectProperty<>();
+        SimpleObjectProperty<Point2D> lastScrollPointerPosition = new SimpleObjectProperty<>();
         pane.setOnScroll(scrollEvent -> {
-            lastPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
+            lastScrollPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 25);
@@ -50,42 +55,69 @@ public final class BaseMapManager {
             int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
             int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);
             int newOriginX,newOriginY;
+
+
             if(newZoom != tempZoom){
-                zoomDelta = 0;
+                return;
             }
             if(zoomDelta > 0){
-                newOriginX = (int)Math.pow(2,zoomDelta)*(int)mapViewParameters.get().originX() + zoomDelta * (int)lastPointerPosition.get().getX();
-                newOriginY = (int)Math.pow(2,zoomDelta)*(int)mapViewParameters.get().originY() + zoomDelta * (int)lastPointerPosition.get().getY();
+                newOriginX = 2*(int)mapViewParameters.get().originX() +(int)lastScrollPointerPosition.get().getX();
+                newOriginY = 2*(int)mapViewParameters.get().originY() +(int)lastScrollPointerPosition.get().getY();
             }
             else if(zoomDelta < 0){
-                newOriginX = ((int)mapViewParameters.get().originX() - (int)lastPointerPosition.get().getX())/2;
-                newOriginY = ((int)mapViewParameters.get().originY() - (int)lastPointerPosition.get().getY())/2;
+                newOriginX = ((int)mapViewParameters.get().originX() - (int)lastScrollPointerPosition.get().getX())/2;
+                newOriginY = ((int)mapViewParameters.get().originY() - (int)lastScrollPointerPosition.get().getY())/2;
             }
             else{
-                newOriginX = (int)mapViewParameters.get().originX();
-                newOriginY = (int)mapViewParameters.get().originY();
+                return;
             }
+
+            int i = 0;
+            for (Node waypoint: waypointsManager.pane().getChildren()){
+                double oldLayoutX = mapViewParameters.get().viewX(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).waypoint()));
+                double oldLayoutY = mapViewParameters.get().viewY(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).waypoint()));
+                double mouseDiffX = oldLayoutX - scrollEvent.getX();
+                double mouseDiffY = oldLayoutY - scrollEvent.getY();
+                waypoint.setLayoutX(scrollEvent.getX() + mouseDiffX * Math.pow(2,zoomDelta));
+                waypoint.setLayoutY(scrollEvent.getY() + mouseDiffY * Math.pow(2,zoomDelta));
+                i++;
+            }
+
             mapViewParameters.set(mapViewParameters.get().withNewZoom(newZoom).withMinXY(newOriginX,newOriginY));
             redrawOnNextPulse();
-            System.out.println(newOriginX);
         });
 
+        SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>();
 
         pane.setOnMousePressed(e -> {
-
+            if(e.isPrimaryButtonDown()){
+                lastDragPointerPosition.set(new Point2D(e.getX(), e.getY()));
+            }
         });
+
         pane.setOnMouseDragged(e -> {
+            if(e.isPrimaryButtonDown()){
+                int offsetX = (int) (lastDragPointerPosition.get().getX() - e.getX());
+                int offsetY = (int) (lastDragPointerPosition.get().getY() - e.getY());
+                int oldXOrigin = (int)mapViewParameters.get().originX();
+                int oldYOrigin = (int)mapViewParameters.get().originY();
 
+                mapViewParameters.set(mapViewParameters.get().withMinXY(oldXOrigin + offsetX, oldYOrigin + offsetY));
+                lastDragPointerPosition.set(new Point2D(e.getX(), e.getY()));
+                for (Node waypoint: waypointsManager.pane().getChildren()) {
+                    waypoint.setLayoutX(waypoint.getLayoutX() - offsetX);
+                    waypoint.setLayoutY(waypoint.getLayoutY() - offsetY); //Todo : un "-" ici pour le offset, mais un "+" au dessus wtf??
+                }
+                redrawOnNextPulse();
+            }
         });
+
         pane.setOnMouseReleased( e -> {
-            e.isStillSincePress();//todo le prof dit que cette methode peut etre utile
+            if(e.isStillSincePress()){
+                waypointsManager.addWaypoint(mapViewParameters.get().originX() + e.getX(),
+                                             mapViewParameters.get().originY() + e.getY());
+            }
         });
-        waypointsManager.pane().setOnMousePressed( e -> {
-            
-        });
-
-
-
     }
 
     public Pane pane(){
