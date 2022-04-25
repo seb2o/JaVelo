@@ -9,9 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 public final class WaypointsManager {
@@ -59,7 +61,11 @@ public final class WaypointsManager {
         return waypoints;
     }
 
-    public boolean addWaypoint(double x, double y){
+    public boolean addWaypoint(double x,double y){
+        return addWaypointAtIndex(x,y,pane.getChildren().size());
+    }
+
+    private boolean addWaypointAtIndex(double x, double y, int atIndex){
         PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(),x,y);
         PointCh pch = pwb.toPointCh();
         int closestNodeId = graph.nodeClosestTo(pch,1000);
@@ -68,21 +74,24 @@ public final class WaypointsManager {
             return false;
         }
         Waypoint newWaypoint = new Waypoint(pch, closestNodeId);
-        waypoints.add(newWaypoint);
+        waypoints.add(atIndex,newWaypoint);
         Group group = createPin();
         group.setLayoutX(mapViewParameters.get().viewX(pwb));
         group.setLayoutY(mapViewParameters.get().viewY(pwb));
-        pane.getChildren().add(group);
-        if(pane.getChildren().size() == 1){
-            group.getStyleClass().add("first");
-        }
-        else {
-            group.getStyleClass().add("last");
-            if(pane.getChildren().size() > 2){
-                ObservableList<String> styleClass = pane.getChildren().get(pane.getChildren().size() - 2).getStyleClass();
-                styleClass.add("middle");
-                styleClass.remove("last");
+        pane.getChildren().add(atIndex,group);
+        int index = 0;
+        for (Node node : pane.getChildren()) {
+            node.getStyleClass().removeAll("first","middle","last");
+            if(index == 0){
+                node.getStyleClass().add("first");
             }
+            else if(index == pane.getChildren().size() - 1){
+                node.getStyleClass().add("last");
+            }
+            else{
+                node.getStyleClass().add("middle");
+            }
+            index++;
         }
 
 
@@ -107,6 +116,25 @@ public final class WaypointsManager {
             if(e.isStillSincePress() && group.getStyleClass().contains("middle")){
                 this.waypoints().remove(newWaypoint);
                 pane.getChildren().remove(group);
+            }
+            else{
+                if(addWaypointAtIndex(group.getLayoutX() + mapViewParameters.get().originX(), group.getLayoutY() + mapViewParameters.get().originY(),atIndex)){
+                    this.waypoints().remove(newWaypoint);
+                    pane.getChildren().remove(group);
+                    if(pane.getChildren().size() - 1 == atIndex){
+                        pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().remove("middle");
+                        pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().add("last");
+                    }
+                }
+                else{
+                    PointWebMercator oldPos = PointWebMercator.ofPointCh(newWaypoint.waypoint());
+                    int zoomLevel = mapViewParameters.get().zoomLevel();
+                    double originX = mapViewParameters.get().originX();
+                    double originY = mapViewParameters.get().originY();
+
+                    group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
+                    group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
+                }
             }
         });
         return true;
