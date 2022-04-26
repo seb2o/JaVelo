@@ -43,6 +43,16 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
+        canvas.heightProperty().addListener((p,o,n) -> {
+            if(!o.equals(n)){
+                redrawOnNextPulse();
+            }
+        });
+        canvas.widthProperty().addListener((p,o,n) -> {
+            if(!o.equals(n)){
+                redrawOnNextPulse();
+            }
+        });
 
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
         SimpleObjectProperty<Point2D> lastScrollPointerPosition = new SimpleObjectProperty<>();
@@ -118,6 +128,7 @@ public final class BaseMapManager {
                                              mapViewParameters.get().originY() + e.getY());
             }
         });
+        redrawOnNextPulse();
     }
 
     public Pane pane(){
@@ -146,16 +157,10 @@ public final class BaseMapManager {
         }
         catch (IOException ignored) {
         }
-        redrawOnNextPulse();
     }
 
     private void redrawOnNextPulse(){ //à appeler quand un event est appelé.
         redrawNeeded = true;
         Platform.requestNextPulse();
     }
-
-    //MOLETTE
-    //DEPLACEMENT CARTE
-    //PT DE PASSAGE (CLIC)
-
 }

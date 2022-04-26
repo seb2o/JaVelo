@@ -62,7 +62,7 @@ public final class WaypointsManager {
     }
 
     public boolean addWaypoint(double x,double y){
-        return addWaypointAtIndex(x,y,pane.getChildren().size());
+        return addWaypointAtIndex(x,y,waypoints.size());
     }
 
     private boolean addWaypointAtIndex(double x, double y, int atIndex){
@@ -121,7 +121,7 @@ public final class WaypointsManager {
                 if(addWaypointAtIndex(group.getLayoutX() + mapViewParameters.get().originX(), group.getLayoutY() + mapViewParameters.get().originY(),atIndex)){
                     this.waypoints().remove(newWaypoint);
                     pane.getChildren().remove(group);
-                    if(pane.getChildren().size() - 1 == atIndex){
+                    if(waypoints.size() - 1 == atIndex){
                         pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().remove("middle");
                         pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().add("last");
                     }
