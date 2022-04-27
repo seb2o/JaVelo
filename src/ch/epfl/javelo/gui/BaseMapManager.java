@@ -8,16 +8,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-import javax.swing.event.ChangeEvent;
 import java.io.IOException;
 
 
@@ -27,7 +24,6 @@ public final class BaseMapManager {
     private Pane pane;
     private Canvas canvas;
     private TileManager tileManager;
-    private WaypointsManager waypointsManager;
     private ObjectProperty<MapViewParameters> mapViewParameters;
 
     public BaseMapManager(TileManager tileManager, WaypointsManager waypointsManager, ObjectProperty<MapViewParameters>  mapViewParameters){
@@ -35,7 +31,6 @@ public final class BaseMapManager {
         this.pane = new Pane();
         this.pane.getChildren().add(canvas);
         this.tileManager = tileManager;
-        this.waypointsManager = waypointsManager;
         this.mapViewParameters = mapViewParameters;
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
