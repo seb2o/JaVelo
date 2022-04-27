@@ -26,6 +26,7 @@ public record GraphSectors(ByteBuffer buffer) {
      */
     public List<Sector> sectorsInArea(PointCh center, double distance){
 
+        if (center == null ) return null;
         ArrayList<Sector> sectors = new ArrayList<>();
         ArrayList<Integer> sectorsId = new ArrayList<>();
 

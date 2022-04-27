@@ -136,10 +136,16 @@ public class Graph {
      * @return l'identité du noeud se trouvant le plus proche du point donné, à unedistance maximale donnée , -1 si pas de noeud
      */
     public int nodeClosestTo(PointCh point, double searchDistance){
+
+
+
         double squaredSearchDistance = searchDistance * searchDistance;
         int closestNodeId = -1;
         double squaredDistanceFromClosestNode = -1;
         List<GraphSectors.Sector> sectorList = sectors.sectorsInArea(point, searchDistance);
+        if (sectorList == null) {
+            return -1;
+        }
 
         for (GraphSectors.Sector sector : sectorList) {
             for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId() ; nodeId++) {

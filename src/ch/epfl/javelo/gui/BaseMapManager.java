@@ -5,20 +5,20 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-import java.beans.EventHandler;
+import javax.swing.event.ChangeEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public final class BaseMapManager {
@@ -56,6 +56,10 @@ public final class BaseMapManager {
 
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
         SimpleObjectProperty<Point2D> lastScrollPointerPosition = new SimpleObjectProperty<>();
+        SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>();
+
+
+
         pane.setOnScroll(scrollEvent -> {
             lastScrollPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
             long currentTime = System.currentTimeMillis();
@@ -84,8 +88,8 @@ public final class BaseMapManager {
 
             int i = 0;
             for (Node waypoint: waypointsManager.pane().getChildren()){
-                double oldLayoutX = mapViewParameters.get().viewX(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).waypoint()));
-                double oldLayoutY = mapViewParameters.get().viewY(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).waypoint()));
+                double oldLayoutX = mapViewParameters.get().viewX(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).coordinates()));
+                double oldLayoutY = mapViewParameters.get().viewY(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).coordinates()));
                 double mouseDiffX = oldLayoutX - scrollEvent.getX();
                 double mouseDiffY = oldLayoutY - scrollEvent.getY();
                 waypoint.setLayoutX(scrollEvent.getX() + mouseDiffX * Math.pow(2,zoomDelta));
@@ -97,7 +101,6 @@ public final class BaseMapManager {
             redrawOnNextPulse();
         });
 
-        SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>();
 
         pane.setOnMousePressed(e -> {
             if(e.isPrimaryButtonDown()){
@@ -128,7 +131,8 @@ public final class BaseMapManager {
                                              mapViewParameters.get().originY() + e.getY());
             }
         });
-        redrawOnNextPulse();
+
+
     }
 
     public Pane pane(){
@@ -157,10 +161,16 @@ public final class BaseMapManager {
         }
         catch (IOException ignored) {
         }
+        redrawOnNextPulse();
     }
 
     private void redrawOnNextPulse(){ //à appeler quand un event est appelé.
         redrawNeeded = true;
         Platform.requestNextPulse();
     }
+
+    //MOLETTE
+    //DEPLACEMENT CARTE
+    //PT DE PASSAGE (CLIC)
+
 }

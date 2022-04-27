@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 public final class WaypointsManager {
@@ -28,12 +27,12 @@ public final class WaypointsManager {
     public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, Consumer<String> consumer){
         this.consumer = consumer;
         this.pane = new Pane();
-        pane.setPickOnBounds(false);
+//        pane.setPickOnBounds(false);
         this.waypoints = FXCollections.observableArrayList();
         this.graph = graph;
         this.mapViewParameters = mapViewParameters;
         for (Waypoint waypoint : waypoints) {
-            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.waypoint());
+            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.coordinates());
             addWaypoint(pwb.xAtZoomLevel(mapViewParameters.get().zoomLevel()), pwb.yAtZoomLevel(mapViewParameters.get().zoomLevel()));
         }
         pane.setPickOnBounds(false);
@@ -74,11 +73,17 @@ public final class WaypointsManager {
             return false;
         }
         Waypoint newWaypoint = new Waypoint(pch, closestNodeId);
-        waypoints.add(atIndex,newWaypoint);
         Group group = createPin();
         group.setLayoutX(mapViewParameters.get().viewX(pwb));
         group.setLayoutY(mapViewParameters.get().viewY(pwb));
-        pane.getChildren().add(atIndex,group);
+        try {//todo degeu a changer
+            waypoints.add(atIndex, newWaypoint);
+            pane.getChildren().add(atIndex, group);
+        } catch (Exception e) {
+            System.out.println("catcherrt");
+            waypoints.add( newWaypoint);
+            pane.getChildren().add( group);
+        }
         int index = 0;
         for (Node node : pane.getChildren()) {
             node.getStyleClass().removeAll("first","middle","last");
@@ -127,7 +132,7 @@ public final class WaypointsManager {
                     }
                 }
                 else{
-                    PointWebMercator oldPos = PointWebMercator.ofPointCh(newWaypoint.waypoint());
+                    PointWebMercator oldPos = PointWebMercator.ofPointCh(newWaypoint.coordinates());
                     int zoomLevel = mapViewParameters.get().zoomLevel();
                     double originX = mapViewParameters.get().originX();
                     double originY = mapViewParameters.get().originY();
