@@ -3,6 +3,8 @@ package ch.epfl.javelo;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.gui.*;
 import ch.epfl.javelo.projection.PointCh;
+import ch.epfl.javelo.routing.CityBikeCF;
+import ch.epfl.javelo.routing.RouteComputer;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,6 +27,9 @@ public final class Stage8Test extends Application {
         Graph graph = Graph.loadFrom(Path.of("lausanne"));
         Path cacheBasePath = Path.of("tiles");
         String tileServerHost = "https://tile.openstreetmap.org";
+        RouteBean routeBean = new RouteBean(new RouteComputer(graph, new CityBikeCF(graph)));
+        routeBean.setHighlightedPosition(1000);
+
         TileManager tileManager =
                 new TileManager(cacheBasePath, tileServerHost);
 
@@ -32,10 +37,8 @@ public final class Stage8Test extends Application {
                 new MapViewParameters(12, 543200, 370650);
         ObjectProperty<MapViewParameters> mapViewParametersP =
                 new SimpleObjectProperty<>(mapViewParameters);
-        ObservableList<Waypoint> waypoints =
-                FXCollections.observableArrayList(
-                        new Waypoint(new PointCh(2532697, 1152350), 159049),
-                        new Waypoint(new PointCh(2538659, 1154350), 117669));
+        ObservableList<Waypoint> waypoints = routeBean.waypoints();
+
         Consumer<String> errorConsumer = new ErrorConsumer();
 
         WaypointsManager waypointsManager =
@@ -47,9 +50,11 @@ public final class Stage8Test extends Application {
                 new BaseMapManager(tileManager,
                         waypointsManager,
                         mapViewParametersP);
+        RouteManager routeManager = new RouteManager(routeBean,mapViewParametersP,errorConsumer);
+
 
         StackPane mainPane =
-                new StackPane(baseMapManager.pane(),waypointsManager.pane());
+                new StackPane(baseMapManager.pane(),waypointsManager.pane(),routeManager.pane());
         mainPane.getStylesheets().add("map.css");
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.setMinHeight(600);

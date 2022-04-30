@@ -22,5 +22,6 @@ public class ListInvalidationSample {
         list.remove("jefl");
         System.out.println(list);
 
+
     }
 }
