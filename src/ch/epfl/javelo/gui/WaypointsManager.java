@@ -140,12 +140,17 @@ public final class WaypointsManager {
                 pane.getChildren().remove(group);
             }
             else{
-                if(addWaypointAtIndex(group.getLayoutX() + mapViewParameters.get().originX(), group.getLayoutY() + mapViewParameters.get().originY(),atIndex)){
+                if(addWaypointAtIndex(
+                        group.getLayoutX() + mapViewParameters.get().originX(),
+                        group.getLayoutY() + mapViewParameters.get().originY(),
+                        atIndex)){
                     this.waypoints().remove(newWaypoint);
                     pane.getChildren().remove(group);
                     if(waypoints.size() - 1 == atIndex){
-                        pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().remove("middle");
-                        pane.getChildren().get(pane.getChildren().size() - 1).getStyleClass().add("last");
+                        pane.getChildren().get(pane.getChildren().size() - 1)
+                                .getStyleClass().remove("middle");
+                        pane.getChildren().get(pane.getChildren().size() - 1)
+                                .getStyleClass().add("last");
                     }
                 }
                 else{
