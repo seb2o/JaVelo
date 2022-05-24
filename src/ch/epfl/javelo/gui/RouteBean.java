@@ -26,27 +26,36 @@ public final class RouteBean {
         this.route = new SimpleObjectProperty<>();
         this.elevationProfile = new SimpleObjectProperty<>();
 
-        this.waypoints = FXCollections.observableArrayList(
-                new Waypoint(new PointCh(2532697, 1152350), 159049), //Todo : mettre dans des ctes ?
-                new Waypoint(new PointCh(2538659, 1154350), 117669));
+        this.waypoints = FXCollections.observableArrayList();
 
-        if(waypoints.size() >= 2){
-            this.route.set(computeMultiRoute());
-            this.elevationProfile.set((computeElevationProfile()));
-        }
-        else{
-            this.route = new SimpleObjectProperty<>(null);
-            this.elevationProfile = new SimpleObjectProperty<>(null);
-        }
+        this.route.set(null);
+        this.elevationProfile.set(null);
+
         waypoints.addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
             if(c.wasAdded()){
-                route.set(computeMultiRoute());
-                this.elevationProfile.set((computeElevationProfile()));
+                if(waypoints.size() >= 2){
+                    this.route.set(computeMultiRoute());
+                    this.elevationProfile.set((computeElevationProfile()));
+                    System.out.println(waypoints.size());
+
+                }
+                else{
+                    this.route.set(null);
+                    this.elevationProfile.set(null);
+                    System.out.println(waypoints.size());
+                }
             }
             if(c.wasRemoved()){
-                route.set(computeMultiRoute());
-                this.elevationProfile.set((computeElevationProfile()));
+                if(waypoints.size() >= 2){
+                    this.route.set(computeMultiRoute());
+                    this.elevationProfile.set((computeElevationProfile()));
+                }
+                else{
+                    this.route.set(null);
+                    this.elevationProfile.set(null);
+                }
+
             }
         });
 
@@ -61,7 +70,7 @@ public final class RouteBean {
         return new MultiRoute(routeList);
     }
 
-    private ElevationProfile  computeElevationProfile(){
+    private ElevationProfile computeElevationProfile(){
         return ElevationProfileComputer.elevationProfile(this.route.get(), MAX_STEP_LENGTH);
     }
 

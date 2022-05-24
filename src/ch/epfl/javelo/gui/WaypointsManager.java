@@ -135,9 +135,10 @@ public final class WaypointsManager {
         });
 
         group.setOnMouseReleased(e ->{
-            if(e.isStillSincePress() && group.getStyleClass().contains("middle")){
+            if(e.isStillSincePress()){
                 this.waypoints().remove(newWaypoint);
                 pane.getChildren().remove(group);
+                updateColor();
             }
             else{
                 if(addWaypointAtIndex(
