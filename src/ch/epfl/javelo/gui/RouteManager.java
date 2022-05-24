@@ -54,7 +54,7 @@ public final class RouteManager {
             if(oldZoom != newZoom){
                 polyline.getPoints().setAll(buildPointList());
                 polyline.setLayoutX(0);
-                polyline.setLayoutY(0); //Pas facile à trouver cette astuce!
+                polyline.setLayoutY(0); //Pas facile à trouver !
                 updateHighlightPosition();
             }
         });
@@ -69,7 +69,7 @@ public final class RouteManager {
             if(e.isStillSincePress()){
                 System.out.println("Un point de passage est déjà présent à cet endroit !\n");
             }
-            //Todo : faire un truc pour creer un waypoint au bon endroit
+            //Todo : faire un truc pour creer un waypoint au bon endroit quand on clique sur le cercle
         });
 
     }

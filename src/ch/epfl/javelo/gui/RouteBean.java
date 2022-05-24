@@ -1,23 +1,22 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public final class RouteBean {
+    private final double MAX_STEP_LENGTH = 5d;
     private ObservableList<Waypoint> waypoints;
-    private SimpleObjectProperty<Route> route; //Todo : retourner une ReadOnlyObjectProperty
+    private SimpleObjectProperty<Route> route;
     private DoubleProperty highlightedPosition;
-    private SimpleObjectProperty<ElevationProfile> elevationProfile; //Todo : idem
+    private SimpleObjectProperty<ElevationProfile> elevationProfile;
     private RouteComputer routeComputer;
     private LinkedHashMap<WaypointPair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
 
@@ -33,20 +32,21 @@ public final class RouteBean {
 
         if(waypoints.size() >= 2){
             this.route.set(computeMultiRoute());
-            //elevationProfile = new SimpleObjectProperty<>(ElevationProfileComputer.elevationProfile(route.get(),5.0));
+            this.elevationProfile.set((computeElevationProfile()));
         }
         else{
             this.route = new SimpleObjectProperty<>(null);
-            //this.elevationProfile = new SimpleObjectProperty<>(null);
+            this.elevationProfile = new SimpleObjectProperty<>(null);
         }
         waypoints.addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
             if(c.wasAdded()){
                 route.set(computeMultiRoute());
-                //elevationProfile = new SimpleObjectProperty<>(ElevationProfileComputer.elevationProfile(route.get(),5.0));
+                this.elevationProfile.set((computeElevationProfile()));
             }
             if(c.wasRemoved()){
                 route.set(computeMultiRoute());
+                this.elevationProfile.set((computeElevationProfile()));
             }
         });
 
@@ -59,6 +59,10 @@ public final class RouteBean {
             routeList.add(computeRouteBetween(waypoints().get(index), waypoints().get(index+1)));
         }
         return new MultiRoute(routeList);
+    }
+
+    private ElevationProfile  computeElevationProfile(){
+        return ElevationProfileComputer.elevationProfile(this.route.get(), MAX_STEP_LENGTH);
     }
 
     private Route computeRouteBetween(Waypoint w1, Waypoint w2){

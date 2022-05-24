@@ -1,4 +1,4 @@
-package ch.epfl.javelo;
+package ch.epfl.test;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.gui.*;
