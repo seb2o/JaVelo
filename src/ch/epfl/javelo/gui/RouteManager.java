@@ -30,8 +30,8 @@ public final class RouteManager {
         highlight.setId("highlight");
         pane.getChildren().addAll(polyline, highlight);
         pane.setPickOnBounds(false);
-        polyline.getPoints().addAll(buildPointList());
-        updateHighlightPosition();
+//        polyline.getPoints().addAll(buildPointList());
+//        updateHighlightPosition();
 
 
         mapViewParametersProperty.addListener( (observable, oldValue, newValue) -> {
