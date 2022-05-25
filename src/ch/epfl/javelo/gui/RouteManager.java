@@ -52,17 +52,29 @@ public final class RouteManager {
             }
 
             if(oldZoom != newZoom){
-                polyline.getPoints().setAll(buildPointList());
+                if(polyline.getPoints().size() != 0){
+                    polyline.getPoints().setAll(buildPointList());
+                }
                 polyline.setLayoutX(0);
-                polyline.setLayoutY(0); //Pas facile à trouver !
+                polyline.setLayoutY(0);
                 updateHighlightPosition();
             }
         });
 
         routeBean.routeProperty().addListener(((observable, oldValue, newValue) -> {
-            polyline.getPoints().setAll(buildPointList());
+            List<Double> pointList = buildPointList();
+            if(pointList == null){
+                polyline.visibleProperty().set(false);
+                highlight.visibleProperty().set(false);
+            }
+            else{
+                polyline.visibleProperty().set(true);
+                highlight.visibleProperty().set(true);
+                polyline.getPoints().setAll(buildPointList());
+            }
             polyline.setLayoutX(0);
             polyline.setLayoutY(0);
+            updateHighlightPosition();
         }));
 
         highlight.setOnMousePressed(e ->{
@@ -78,6 +90,9 @@ public final class RouteManager {
     }
 
     private List<Double> buildPointList(){
+        if(routeBean.route() == null || routeBean.route().edges().isEmpty()){
+            return null;
+        }
         List<Double> pointListTemp = new ArrayList<>();
         for (Edge edge: routeBean.route().edges()) {
             PointCh pch = edge.fromPoint();
@@ -88,13 +103,15 @@ public final class RouteManager {
         return pointListTemp;
     }
     private void updateHighlightPosition(){
-        double highlightPos = routeBean.getHighlitedPosition();
-        if (Double.isNaN(highlightPos)) {
-            return;
+        if(routeBean.route() != null){
+            double highlightPos = routeBean.getHighlitedPosition();
+            if (Double.isNaN(highlightPos)) {
+                return;
+            }
+            PointCh highlightPch = routeBean.route().pointAt(highlightPos);
+            highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
+            highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));
         }
-        PointCh highlightPch = routeBean.route().pointAt(highlightPos);
-        highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
-        highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));
     }
 
 }

@@ -28,18 +28,34 @@ public final class RouteBean {
 
         this.waypoints = FXCollections.observableArrayList();
 
-        this.route = new SimpleObjectProperty<>(null);
-        this.elevationProfile = new SimpleObjectProperty<>(null);
+        this.route.set(null);
+        this.elevationProfile.set(null);
 
         waypoints.addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
             if(c.wasAdded()){
-                route.set(computeMultiRoute());
-                this.elevationProfile.set((computeElevationProfile()));
+                if(waypoints.size() >= 2){
+                    this.route.set(computeMultiRoute());
+                    this.elevationProfile.set((computeElevationProfile()));
+                    System.out.println(waypoints.size());
+
+                }
+                else{
+                    this.route.set(null);
+                    this.elevationProfile.set(null);
+                    System.out.println(waypoints.size());
+                }
             }
             if(c.wasRemoved()){
-                route.set(computeMultiRoute());
-                this.elevationProfile.set((computeElevationProfile()));
+                if(waypoints.size() >= 2){
+                    this.route.set(computeMultiRoute());
+                    this.elevationProfile.set((computeElevationProfile()));
+                }
+                else{
+                    this.route.set(null);
+                    this.elevationProfile.set(null);
+                }
+
             }
         });
 
@@ -48,16 +64,13 @@ public final class RouteBean {
 
     private MultiRoute computeMultiRoute(){
         List<Route> routeList = new ArrayList<>();
-        if(waypoints.size() < 2){
-            return null;
-        }
         for(int index = 0; index < waypoints.size() - 1; index++){
             routeList.add(computeRouteBetween(waypoints().get(index), waypoints().get(index+1)));
         }
         return new MultiRoute(routeList);
     }
 
-    private ElevationProfile  computeElevationProfile(){
+    private ElevationProfile computeElevationProfile(){
         return ElevationProfileComputer.elevationProfile(this.route.get(), MAX_STEP_LENGTH);
     }
 
