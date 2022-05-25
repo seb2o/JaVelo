@@ -26,18 +26,11 @@ public final class RouteBean {
         this.route = new SimpleObjectProperty<>();
         this.elevationProfile = new SimpleObjectProperty<>();
 
-        this.waypoints = FXCollections.observableArrayList(
-                new Waypoint(new PointCh(2532697, 1152350), 159049), //Todo : mettre dans des ctes ?
-                new Waypoint(new PointCh(2538659, 1154350), 117669));
+        this.waypoints = FXCollections.observableArrayList();
 
-        if(waypoints.size() >= 2){
-            this.route.set(computeMultiRoute());
-            this.elevationProfile.set((computeElevationProfile()));
-        }
-        else{
-            this.route = new SimpleObjectProperty<>(null);
-            this.elevationProfile = new SimpleObjectProperty<>(null);
-        }
+        this.route = new SimpleObjectProperty<>(null);
+        this.elevationProfile = new SimpleObjectProperty<>(null);
+
         waypoints.addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
             if(c.wasAdded()){
@@ -55,6 +48,9 @@ public final class RouteBean {
 
     private MultiRoute computeMultiRoute(){
         List<Route> routeList = new ArrayList<>();
+        if(waypoints.size() < 2){
+            return null;
+        }
         for(int index = 0; index < waypoints.size() - 1; index++){
             routeList.add(computeRouteBetween(waypoints().get(index), waypoints().get(index+1)));
         }
