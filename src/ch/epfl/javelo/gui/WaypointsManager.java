@@ -32,6 +32,13 @@ public final class WaypointsManager {
         this.waypoints = waypoints;
         this.graph = graph;
         this.mapViewParameters = mapViewParameters;
+        for (Waypoint waypoint : waypoints) {
+            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.coordinates());
+            Group pin = createPin();
+            pin.setLayoutX(mapViewParameters.get().viewX(pwb));
+            pin.setLayoutY(mapViewParameters.get().viewY(pwb));
+            pane.getChildren().add(pin);
+        }
         updateColor();
         pane.setPickOnBounds(false);
 
@@ -42,6 +49,82 @@ public final class WaypointsManager {
                 Waypoint addedWaypoint = waypoints().get(index);
                 //SI UN WAYPOINT EST AJOUTÉ À LINDEX INDEX
                 //ALORS
+
+                //DEBUT CTRL C CTRL V
+                PointWebMercator pwb = PointWebMercator.ofPointCh(addedWaypoint.coordinates());
+                Group group = createPin();
+                group.setLayoutX(mapViewParameters.get().viewX(pwb));
+                group.setLayoutY(mapViewParameters.get().viewY(pwb));
+
+                try {
+                    pane.getChildren().add(index, group);
+                } catch (Exception e) {
+                    pane.getChildren().add(group);
+                }
+
+                int i = 0;
+                for (Node node : pane.getChildren()) {
+                    node.getStyleClass().removeAll("first","middle","last");
+                    if(i == 0){
+                        node.getStyleClass().add("first");
+                    }
+                    else if(i == pane.getChildren().size() - 1){
+                        node.getStyleClass().add("last");
+                    }
+                    else{
+                        node.getStyleClass().add("middle");
+                    }
+                    i++;
+                }
+                //todo tester avec updateColor() à la place;
+
+                group.setOnMousePressed(e ->{
+                    if(e.isPrimaryButtonDown()){
+                        lastDragPointerPosition.set(new Point2D(e.getSceneX(),e.getSceneY()));
+                    }
+                });
+
+                group.setOnMouseDragged(e ->{
+                    if(e.isPrimaryButtonDown()){
+                        double offsetX = (lastDragPointerPosition.get().getX() - e.getSceneX());
+                        double offsetY = (lastDragPointerPosition.get().getY() - e.getSceneY());
+                        group.setLayoutX(group.getLayoutX() - offsetX);
+                        group.setLayoutY(group.getLayoutY() - offsetY);
+
+                        lastDragPointerPosition.set(new Point2D(e.getSceneX(), e.getSceneY()));
+                    }
+                });
+
+                group.setOnMouseReleased(e ->{
+                    if(e.isStillSincePress()){
+                        this.waypoints().remove(addedWaypoint);
+                        pane.getChildren().remove(group);
+                        updateColor();
+                    }
+                    else{
+                        if(addWaypointAtIndex(
+                                group.getLayoutX() + mapViewParameters.get().originX(),
+                                group.getLayoutY() + mapViewParameters.get().originY(),
+                                index)){
+                            this.waypoints().remove(addedWaypoint);
+                            pane.getChildren().remove(group);
+                            updateColor();
+                        }
+                        else{
+                            PointWebMercator oldPos = PointWebMercator.ofPointCh(addedWaypoint.coordinates());
+                            int zoomLevel = mapViewParameters.get().zoomLevel();
+                            double originX = mapViewParameters.get().originX();
+                            double originY = mapViewParameters.get().originY();
+
+                            group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
+                            group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
+                        }
+                    }
+                });
+                //FIN CTRL C CTRL V
+
+
+
             }
         });
 
@@ -86,86 +169,25 @@ public final class WaypointsManager {
     }
 
     //x et y en pwb au zoom donné
-    private boolean addWaypointAtIndex(double x, double y, int atIndex){
-        PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(),x,y);
+    private boolean addWaypointAtIndex(double x, double y, int atIndex) {
+        PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(), x, y);
         PointCh pch = pwb.toPointCh();
-        int closestNodeId = graph.nodeClosestTo(pch,1000);
-        if(closestNodeId == -1){
+        int closestNodeId = graph.nodeClosestTo(pch, 1000);
+        if (closestNodeId == -1) {
             consumer.accept("Aucune route à proximité !");
             return false;
         }
         Waypoint newWaypoint = new Waypoint(pch, closestNodeId);
-        Group group = createPin();
-        group.setLayoutX(mapViewParameters.get().viewX(pwb));
-        group.setLayoutY(mapViewParameters.get().viewY(pwb));
+
         try {//todo degeu a changer
             waypoints.add(atIndex, newWaypoint);
-            pane.getChildren().add(atIndex, group);
+            //pane.getChildren().add(atIndex, group);
         } catch (Exception e) {
             waypoints.add(newWaypoint);
-            pane.getChildren().add( group);
+            //pane.getChildren().add(group);
         }
-
-        int index = 0;
-        for (Node node : pane.getChildren()) {
-            node.getStyleClass().removeAll("first","middle","last");
-            if(index == 0){
-                node.getStyleClass().add("first");
-            }
-            else if(index == pane.getChildren().size() - 1){
-                node.getStyleClass().add("last");
-            }
-            else{
-                node.getStyleClass().add("middle");
-            }
-            index++;
-        }
-        //todo tester avec updateColor() à la place;
-
-        group.setOnMousePressed(e ->{
-            if(e.isPrimaryButtonDown()){
-                lastDragPointerPosition.set(new Point2D(e.getSceneX(),e.getSceneY()));
-            }
-        });
-
-        group.setOnMouseDragged(e ->{
-            if(e.isPrimaryButtonDown()){
-                double offsetX = (lastDragPointerPosition.get().getX() - e.getSceneX());
-                double offsetY = (lastDragPointerPosition.get().getY() - e.getSceneY());
-                group.setLayoutX(group.getLayoutX() - offsetX);
-                group.setLayoutY(group.getLayoutY() - offsetY);
-
-                lastDragPointerPosition.set(new Point2D(e.getSceneX(), e.getSceneY()));
-            }
-        });
-
-        group.setOnMouseReleased(e ->{
-            if(e.isStillSincePress()){
-                this.waypoints().remove(newWaypoint);
-                pane.getChildren().remove(group);
-                updateColor();
-            }
-            else{
-                if(addWaypointAtIndex(
-                        group.getLayoutX() + mapViewParameters.get().originX(),
-                        group.getLayoutY() + mapViewParameters.get().originY(),
-                        atIndex)){
-                    this.waypoints().remove(newWaypoint);
-                    pane.getChildren().remove(group);
-                    updateColor();
-                }
-                else{
-                    PointWebMercator oldPos = PointWebMercator.ofPointCh(newWaypoint.coordinates());
-                    int zoomLevel = mapViewParameters.get().zoomLevel();
-                    double originX = mapViewParameters.get().originX();
-                    double originY = mapViewParameters.get().originY();
-
-                    group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
-                    group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
-                }
-            }
-        });
         return true;
+
     }
 
 
