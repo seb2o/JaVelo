@@ -41,7 +41,7 @@ public final class WaypointsManager {
                 int index = c.getFrom();
                 Waypoint addedWaypoint = waypoints().get(index);
 
-                PointWebMercator pwb = PointWebMercator.ofPointCh(graph.nodePoint(addedWaypoint.closestNodeId()));
+                PointWebMercator pwb = PointWebMercator.ofPointCh(addedWaypoint.coordinates());
                 Group group = createPin();
                 group.setLayoutX(mapViewParameters.get().viewX(pwb));
                 group.setLayoutY(mapViewParameters.get().viewY(pwb));
