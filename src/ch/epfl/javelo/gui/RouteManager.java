@@ -30,7 +30,7 @@ public final class RouteManager {
         highlight.setId("highlight");
         pane.getChildren().addAll(polyline, highlight);
         pane.setPickOnBounds(false);
-
+        updateHighlightPosition();
 
         mapViewParametersProperty.addListener( (observable, oldValue, newValue) -> {
             double oldX = oldValue.originX();
@@ -112,17 +112,26 @@ public final class RouteManager {
             pointListTemp.add(mapViewParameters.get().viewX(pwb));
             pointListTemp.add(mapViewParameters.get().viewY(pwb));
         }
+        PointCh lastPointCh = routeBean.route().edges().get(routeBean.route().edges().size() - 1).toPoint();
+        PointWebMercator lastPwb = PointWebMercator.ofPointCh(lastPointCh);
+        pointListTemp.add(mapViewParameters.get().viewX(lastPwb));
+        pointListTemp.add(mapViewParameters.get().viewY(lastPwb));
         return pointListTemp;
     }
     private void updateHighlightPosition(){
         if(routeBean.route() != null){
             double highlightPos = routeBean.getHighlitedPosition();
             if (Double.isNaN(highlightPos)) {
+                highlight.visibleProperty().set(false);
                 return;
             }
+            highlight.visibleProperty().set(true);
             PointCh highlightPch = routeBean.route().pointAt(highlightPos);
             highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
             highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));
+        }
+        else{
+            highlight.visibleProperty().set(false);
         }
     }
 

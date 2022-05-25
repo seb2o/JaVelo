@@ -32,13 +32,6 @@ public final class WaypointsManager {
         this.waypoints = waypoints;
         this.graph = graph;
         this.mapViewParameters = mapViewParameters;
-        for (Waypoint waypoint : waypoints) {
-            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.coordinates());
-            Group pin = createPin();
-            pin.setLayoutX(mapViewParameters.get().viewX(pwb));
-            pin.setLayoutY(mapViewParameters.get().viewY(pwb));
-            pane.getChildren().add(pin);
-        }
         updateColor();
         pane.setPickOnBounds(false);
 
@@ -47,11 +40,8 @@ public final class WaypointsManager {
             if(c.wasAdded()){
                 int index = c.getFrom();
                 Waypoint addedWaypoint = waypoints().get(index);
-                //SI UN WAYPOINT EST AJOUTÉ À LINDEX INDEX
-                //ALORS
 
-                //DEBUT CTRL C CTRL V
-                PointWebMercator pwb = PointWebMercator.ofPointCh(addedWaypoint.coordinates());
+                PointWebMercator pwb = PointWebMercator.ofPointCh(graph.nodePoint(addedWaypoint.closestNodeId()));
                 Group group = createPin();
                 group.setLayoutX(mapViewParameters.get().viewX(pwb));
                 group.setLayoutY(mapViewParameters.get().viewY(pwb));
@@ -121,9 +111,6 @@ public final class WaypointsManager {
                         }
                     }
                 });
-                //FIN CTRL C CTRL V
-
-
 
             }
         });
