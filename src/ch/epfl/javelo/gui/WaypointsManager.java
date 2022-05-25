@@ -32,13 +32,6 @@ public final class WaypointsManager {
         this.waypoints = waypoints;
         this.graph = graph;
         this.mapViewParameters = mapViewParameters;
-        for (Waypoint waypoint : waypoints) {
-            PointWebMercator pwb = PointWebMercator.ofPointCh(waypoint.coordinates());
-            Group pin = createPin();
-            pin.setLayoutX(mapViewParameters.get().viewX(pwb));
-            pin.setLayoutY(mapViewParameters.get().viewY(pwb));
-            pane.getChildren().add(pin);
-        }
         updateColor();
         pane.setPickOnBounds(false);
 
