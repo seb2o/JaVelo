@@ -30,8 +30,6 @@ public final class RouteManager {
         highlight.setId("highlight");
         pane.getChildren().addAll(polyline, highlight);
         pane.setPickOnBounds(false);
-//        polyline.getPoints().addAll(buildPointList());
-//        updateHighlightPosition();
 
 
         mapViewParametersProperty.addListener( (observable, oldValue, newValue) -> {
@@ -68,9 +66,9 @@ public final class RouteManager {
                 highlight.visibleProperty().set(false);
             }
             else{
-                polyline.visibleProperty().set(true);
-                highlight.visibleProperty().set(true);
                 polyline.getPoints().setAll(buildPointList());
+                polyline.visibleProperty().set(!routeBean.shouldHideRoute());
+                highlight.visibleProperty().set(!routeBean.shouldHideRoute());
             }
             polyline.setLayoutX(0);
             polyline.setLayoutY(0);
@@ -79,7 +77,12 @@ public final class RouteManager {
 
         highlight.setOnMousePressed(e ->{
             if(e.isStillSincePress()){
-                System.out.println("Un point de passage est déjà présent à cet endroit !\n");
+                PointCh pointCh = mapViewParameters.get().pointAt(highlight.getLayoutX(), highlight.getLayoutY()).toPointCh();
+                int nodeId = routeBean.route().nodeClosestTo(routeBean.highlightedPosition());
+                if(!(nodeId == -1 || waypointExistsAtNodeId(nodeId))){
+                    routeBean.waypoints().add(routeBean.route().indexOfSegmentAt(routeBean.highlightedPosition())+1, new Waypoint(pointCh, nodeId));
+                    System.out.println(routeBean.route().indexOfSegmentAt(routeBean.highlightedPosition()));
+                }
             }
             //Todo : faire un truc pour creer un waypoint au bon endroit quand on clique sur le cercle
         });
@@ -87,6 +90,15 @@ public final class RouteManager {
     }
     public Pane pane(){
         return pane;
+    }
+
+    private boolean waypointExistsAtNodeId(int nodeId){
+        for (Waypoint waypoint: routeBean.waypoints()) {
+            if(waypoint.closestNodeId() == nodeId){
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Double> buildPointList(){

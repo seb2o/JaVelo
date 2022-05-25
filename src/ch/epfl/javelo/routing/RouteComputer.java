@@ -30,7 +30,7 @@ import java.util.*;
         Preconditions.checkArgument(startNodeId != endNodeId);
 
         //création des variables nécessaires au calcul de la mailleure route
-        //node Cound : le nombre de noeuds dans le graph
+        //nodeCount : le nombre de noeuds dans le graph
         //distance[] le tableau des distances de chaque noeud de l'itinéraire par rapport a son prédécésseur
         //predecessor[] la liste des noeuds dans le chemin
         //inExploration la liste des noeuds atteignables a partir d'un noued via une seule arête

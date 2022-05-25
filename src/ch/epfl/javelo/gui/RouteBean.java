@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.*;
 import javafx.beans.property.*;
@@ -19,8 +20,10 @@ public final class RouteBean {
     private SimpleObjectProperty<ElevationProfile> elevationProfile;
     private RouteComputer routeComputer;
     private LinkedHashMap<WaypointPair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
+    private boolean shouldHideRoute;
 
     public RouteBean(RouteComputer routeComputer){
+        this.shouldHideRoute = false;
         this.routeComputer = routeComputer;
         this.highlightedPosition = new SimpleDoubleProperty(Double.NaN);
         this.route = new SimpleObjectProperty<>();
@@ -37,13 +40,11 @@ public final class RouteBean {
                 if(waypoints.size() >= 2){
                     this.route.set(computeMultiRoute());
                     this.elevationProfile.set((computeElevationProfile()));
-                    System.out.println(waypoints.size());
 
                 }
                 else{
                     this.route.set(null);
                     this.elevationProfile.set(null);
-                    System.out.println(waypoints.size());
                 }
             }
             if(c.wasRemoved()){
@@ -62,12 +63,22 @@ public final class RouteBean {
     }
 
 
-    private MultiRoute computeMultiRoute(){
+    private Route computeMultiRoute(){
         List<Route> routeList = new ArrayList<>();
         for(int index = 0; index < waypoints.size() - 1; index++){
-            routeList.add(computeRouteBetween(waypoints().get(index), waypoints().get(index+1)));
+            Route temproute = computeRouteBetween(waypoints().get(index), waypoints().get(index+1));
+            if(temproute == null){
+                shouldHideRoute = true;
+                return new SingleRoute(List.of(new Edge(1,1, new PointCh(2532697, 1152350), new PointCh(2532697, 1152351), 20, Functions.constant(10))));
+            }
+            shouldHideRoute = false;
+            routeList.add(temproute);
         }
         return new MultiRoute(routeList);
+    }
+
+    public boolean shouldHideRoute(){
+        return shouldHideRoute;
     }
 
     private ElevationProfile computeElevationProfile(){
@@ -77,9 +88,9 @@ public final class RouteBean {
     private Route computeRouteBetween(Waypoint w1, Waypoint w2){
         WaypointPair wp = new WaypointPair(w1,w2);
         Route route = cache.get(wp);
-            if(route != null){
-                return route;
-            }
+        if(route != null){
+            return route;
+        }
         return routeComputer.bestRouteBetween(w1.closestNodeId(), w2.closestNodeId());
     }
 
@@ -101,6 +112,10 @@ public final class RouteBean {
 
     public void setHighlightedPosition(double highlightedPosition) {
         this.highlightedPosition.set(highlightedPosition);
+    }
+
+    public double highlightedPosition() {
+        return highlightedPosition.get();
     }
 
     private class WaypointPair{

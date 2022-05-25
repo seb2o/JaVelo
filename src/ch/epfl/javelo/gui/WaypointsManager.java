@@ -5,6 +5,7 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -40,6 +41,16 @@ public final class WaypointsManager {
         }
         updateColor();
         pane.setPickOnBounds(false);
+
+        waypoints.addListener((ListChangeListener<Waypoint>) c -> {
+            c.next();
+            if(c.wasAdded()){
+                int index = c.getFrom();
+                Waypoint addedWaypoint = waypoints().get(index);
+                //SI UN WAYPOINT EST AJOUTÉ À LINDEX INDEX
+                //ALORS
+            }
+        });
 
     }
 
@@ -81,6 +92,7 @@ public final class WaypointsManager {
         return addWaypointAtIndex(x,y,waypoints.size());
     }
 
+    //x et y en pwb au zoom donné
     private boolean addWaypointAtIndex(double x, double y, int atIndex){
         PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(),x,y);
         PointCh pch = pwb.toPointCh();
@@ -97,10 +109,10 @@ public final class WaypointsManager {
             waypoints.add(atIndex, newWaypoint);
             pane.getChildren().add(atIndex, group);
         } catch (Exception e) {
-            System.out.println("catcherrt");
-            waypoints.add( newWaypoint);
+            waypoints.add(newWaypoint);
             pane.getChildren().add( group);
         }
+
         int index = 0;
         for (Node node : pane.getChildren()) {
             node.getStyleClass().removeAll("first","middle","last");
@@ -115,7 +127,7 @@ public final class WaypointsManager {
             }
             index++;
         }
-
+        //todo tester avec updateColor() à la place;
 
         group.setOnMousePressed(e ->{
             if(e.isPrimaryButtonDown()){
@@ -147,12 +159,7 @@ public final class WaypointsManager {
                         atIndex)){
                     this.waypoints().remove(newWaypoint);
                     pane.getChildren().remove(group);
-                    if(waypoints.size() - 1 == atIndex){
-                        pane.getChildren().get(pane.getChildren().size() - 1)
-                                .getStyleClass().remove("middle");
-                        pane.getChildren().get(pane.getChildren().size() - 1)
-                                .getStyleClass().add("last");
-                    }
+                    updateColor();
                 }
                 else{
                     PointWebMercator oldPos = PointWebMercator.ofPointCh(newWaypoint.coordinates());
