@@ -20,7 +20,7 @@ public final class RouteManager {
     private RouteBean routeBean;
     private Circle highlight;
 
-    public RouteManager(RouteBean routeBean, ReadOnlyObjectProperty<MapViewParameters> mapViewParametersProperty, Consumer<String> consumer){
+    public RouteManager(RouteBean routeBean, ReadOnlyObjectProperty<MapViewParameters> mapViewParametersProperty){
         this.pane = new Pane();
         this.routeBean = routeBean;
         this.mapViewParameters = mapViewParametersProperty;
@@ -75,16 +75,15 @@ public final class RouteManager {
             updateHighlightPosition();
         }));
 
-        highlight.setOnMousePressed(e ->{
-            if(e.isStillSincePress()){
-                PointCh pointCh = mapViewParameters.get().pointAt(highlight.getLayoutX(), highlight.getLayoutY()).toPointCh();
-                int nodeId = routeBean.route().nodeClosestTo(routeBean.highlightedPosition());
-                if(!(nodeId == -1 || waypointExistsAtNodeId(nodeId))){
-                    routeBean.waypoints().add(routeBean.route().indexOfSegmentAt(routeBean.highlightedPosition())+1, new Waypoint(pointCh, nodeId));
-                    System.out.println(routeBean.route().indexOfSegmentAt(routeBean.highlightedPosition()));
-                }
+        highlight.setOnMouseClicked(e ->{
+            PointCh pointCh = mapViewParameters.get().pointAt(highlight.getLayoutX(), highlight.getLayoutY()).toPointCh();
+            int nodeId = routeBean.route().nodeClosestTo(routeBean.highlightedPosition());
+            if(nodeId == -1 ){
             }
-            //Todo : faire un truc pour creer un waypoint au bon endroit quand on clique sur le cercle
+            else{
+                routeBean.waypoints().add(routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition()) + 1, new Waypoint(pointCh, nodeId));
+            }
+
         });
 
     }
@@ -92,7 +91,7 @@ public final class RouteManager {
         return pane;
     }
 
-    private boolean waypointExistsAtNodeId(int nodeId){
+    public boolean waypointExistsAtNodeId(int nodeId){
         for (Waypoint waypoint: routeBean.waypoints()) {
             if(waypoint.closestNodeId() == nodeId){
                 return true;
@@ -100,6 +99,7 @@ public final class RouteManager {
         }
         return false;
     }
+
 
     private List<Double> buildPointList(){
         if(routeBean.route() == null || routeBean.route().edges().isEmpty()){
@@ -125,7 +125,7 @@ public final class RouteManager {
                 highlight.visibleProperty().set(false);
                 return;
             }
-            highlight.visibleProperty().set(true);
+            highlight.visibleProperty().set(!routeBean.shouldHideRoute());
             PointCh highlightPch = routeBean.route().pointAt(highlightPos);
             highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
             highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));
