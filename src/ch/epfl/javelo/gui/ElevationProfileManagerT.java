@@ -7,11 +7,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
@@ -22,7 +20,7 @@ import javafx.scene.transform.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ElevationProfileManager {
+public final class ElevationProfileManagerT {
 
     //informations à afficher -exterieur-
     private ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty;
@@ -40,7 +38,7 @@ public final class ElevationProfileManager {
     //profil : graphe, grille et étiquettes
     private Pane pane;
     private Path grid;
-    private Polygon polygon;
+    private SimpleObjectProperty<Polygon> polygonProperty;
     private Line highlighted;
     private Group gridLabels;
 
@@ -68,46 +66,46 @@ public final class ElevationProfileManager {
     private double rec2Dheight;
 
 
-    public ElevationProfileManager(ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty, ReadOnlyDoubleProperty position) {
+    public ElevationProfileManagerT(ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty, ReadOnlyDoubleProperty position) {
 
         this.elevationProfileProperty = elevationProfileProperty;
         this.position = position;
         this.mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
         this.screenToWorldProperty = new SimpleObjectProperty<>();
         this.worldToScreenProperty = new SimpleObjectProperty<>();
-        this.borderPane = new BorderPane();
-;
+        ;
 
         this.captionText = new Text();
-        this.polygon = new Polygon();
-        polygon.setId("profile");
+        this.polygonProperty = new SimpleObjectProperty<>(new Polygon());
+        polygonProperty.get().setId("profile");
 
         this.captionContainer = new VBox(captionText);
-        this.pane = new Pane();
-        pane.getChildren().add(polygon);
-        this.captionContainer.setBackground(Background.fill(Color.RED));
-        this.pane.setBackground(Background.fill(Color.BLUE));
-        borderPane = new BorderPane(pane,null,null,captionContainer,null);
+        this.pane = new Pane(polygonProperty.get());
+        this.borderPane = new BorderPane(pane,null,null,captionContainer,null);
+
+
+
 
         this.rectangle2DProperty = new SimpleObjectProperty<>(Rectangle2D.EMPTY);
         this.minHeight = elevationProfileProperty.get().minElevation();
         this.maxHeight = elevationProfileProperty.get().maxElevation();
         borderPane.getStylesheets().add("elevation_profile.css");
 
-        pane.setOnMouseMoved( e -> {
+        borderPane.setOnMouseMoved( e -> {
             double distance = elevationProfileProperty.get().length();
             this.mousePositionOnProfileProperty = new SimpleDoubleProperty( (int)((distance / pane.getWidth()) * e.getX()));
         });
 
 
         ChangeListener<Number> updateOnResize = (o, ov, nv) -> {
-            updatePolygon();
+            System.out.println(pane.getChildren());
         };
-        pane.heightProperty().addListener(updateOnResize);
-        pane.widthProperty().addListener(updateOnResize);
+        borderPane.heightProperty().addListener(updateOnResize);
+        borderPane.widthProperty().addListener(updateOnResize);
 
-        bindTransform();
         bindRectangle();
+        bindTransform();
+        bindPolygon();
 
     }
 
@@ -124,7 +122,7 @@ public final class ElevationProfileManager {
     private void bindTransform() {
         this.screenToWorldProperty.bind(Bindings.createObjectBinding( () -> {
             Affine screenToWorld = new Affine();
-            screenToWorld.prependTranslation(-insets.getLeft(), -rec2Dheight - insets.getTop());
+            screenToWorld.prependTranslation(-insets.getLeft(), -(rec2Dheight + insets.getTop()));
             screenToWorld.prependScale(elevationProfileProperty.get().length() / rec2Dwidth, -(maxHeight - minHeight) / rec2Dheight);
             screenToWorld.prependTranslation(0, minHeight);
             return screenToWorld;
@@ -136,8 +134,8 @@ public final class ElevationProfileManager {
     private void bindRectangle() {
         this.rectangle2DProperty.bind(Bindings.createObjectBinding(
                 () -> {
-                    this.rec2Dwidth =  pane.getWidth() - insets.getRight() - insets.getLeft() ;
-                    this.rec2Dheight =  pane.getHeight() - insets.getBottom() - insets.getTop();
+                    this.rec2Dwidth =  borderPane.getWidth() - insets.getRight() ;
+                    this.rec2Dheight =  borderPane.getHeight()  - insets.getTop();
                     return new Rectangle2D(
                             insets.getLeft(),
                             insets.getTop(),
@@ -146,27 +144,29 @@ public final class ElevationProfileManager {
                             rec2Dheight > 0 ?
                                     rec2Dheight : 0);
                 },
-                pane.widthProperty(),
-                pane.heightProperty()));
+                borderPane.widthProperty(),
+                borderPane.heightProperty()));
     }
 
-    private void updatePolygon() {
-        polygon.getPoints().removeAll(polygon.getPoints());
-        List<Double> graphPoints = new ArrayList<>();
-        ElevationProfile profile = elevationProfileProperty.get();
-        double wStep = profile.length()/rectangle2DProperty.get().getWidth();
-        for (double i = rectangle2DProperty.get().getMinX(); i < pane.getWidth()-insets.getRight() ; i++) {
-            double wX = i*wStep;
-            graphPoints.add(i);
-            graphPoints.add(worldToScreenProperty.get().transform(wX,profile.elevationAt(wX)).getY());
-        }
+    private void bindPolygon() {
 
-
-        polygon.getPoints().setAll(graphPoints);
-        polygon.getPoints().addAll(pane.getWidth()-insets.getRight(), worldToScreenProperty.get().transform(profile.length(),profile.elevationAt(profile.length())).getY());
-        polygon.getPoints().addAll(pane.getWidth()-insets.getRight(),pane.getHeight()-insets.getBottom());
-        polygon.getPoints().addAll(insets.getLeft(),pane.getHeight()-insets.getBottom());
-
+        polygonProperty.bind(Bindings.createObjectBinding(
+                () -> {
+                    List<Double> polygonPoints = new ArrayList<>();
+                    Polygon polygon = polygonProperty.get();
+                    ElevationProfile profile = elevationProfileProperty.get();
+                    for (double i = rectangle2DProperty.get().getMinX(); i <= rectangle2DProperty.get().getWidth(); i++) {
+                        polygonPoints.add(i);
+                        polygonPoints.add(rectangle2DProperty.get().getHeight() - profile.elevationAt(i*profile.length()/rectangle2DProperty.get().getWidth())*rectangle2DProperty.get().getHeight()/profile.maxElevation());
+                    }
+                    polygonPoints.add(rectangle2DProperty.get().getWidth());
+                    polygonPoints.add(rectangle2DProperty.get().getHeight());
+                    polygonPoints.add(rectangle2DProperty.get().getMinX());
+                    polygonPoints.add(rectangle2DProperty.get().getHeight());
+                    polygon.getPoints().setAll(polygonPoints);
+                    return polygon;
+                },rectangle2DProperty)
+        );
     }
 
 }

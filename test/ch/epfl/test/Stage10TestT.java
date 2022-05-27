@@ -2,6 +2,7 @@ package ch.epfl.test;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.gui.ElevationProfileManager;
+import ch.epfl.javelo.gui.ElevationProfileManagerT;
 import ch.epfl.javelo.routing.*;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 
 import java.nio.file.Path;
 
-public final class Stage10Test extends Application {
+public final class Stage10TestT extends Application {
     public static void main(String[] args) { launch(args); }
 
     @Override
@@ -26,15 +27,15 @@ public final class Stage10Test extends Application {
         Route route = routeComputer
                 .bestRouteBetween(159049, 117669);
         ElevationProfile profile = ElevationProfileComputer
-                .elevationProfile(route, 50);
+                .elevationProfile(route, 5);
 
         ObjectProperty<ElevationProfile> profileProperty =
                 new SimpleObjectProperty<>(profile);
         DoubleProperty highlightProperty =
                 new SimpleDoubleProperty(1500);
 
-        ElevationProfileManager profileManager =
-                new ElevationProfileManager(profileProperty,
+        ElevationProfileManagerT profileManager =
+                new ElevationProfileManagerT(profileProperty,
                         highlightProperty);
 
         highlightProperty.bind(
