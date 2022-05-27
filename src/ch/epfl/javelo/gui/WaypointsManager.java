@@ -40,34 +40,30 @@ public final class WaypointsManager {
             if(c.wasAdded()){
                 int index = c.getFrom();
                 Waypoint addedWaypoint = waypoints().get(index);
-
                 PointWebMercator pwb = PointWebMercator.ofPointCh(addedWaypoint.coordinates());
                 Group group = createPin();
                 group.setLayoutX(mapViewParameters.get().viewX(pwb));
                 group.setLayoutY(mapViewParameters.get().viewY(pwb));
-
                 try {
                     pane.getChildren().add(index, group);
                 } catch (Exception e) {
                     pane.getChildren().add(group);
                 }
-
-                int i = 0;
-                for (Node node : pane.getChildren()) {
-                    node.getStyleClass().removeAll("first","middle","last");
-                    if(i == 0){
-                        node.getStyleClass().add("first");
-                    }
-                    else if(i == pane.getChildren().size() - 1){
-                        node.getStyleClass().add("last");
-                    }
-                    else{
-                        node.getStyleClass().add("middle");
-                    }
-                    i++;
-                }
-                //todo tester avec updateColor() à la place;
-
+                //int i = 0;
+                    //for (Node node : pane.getChildren()) {
+                    //    node.getStyleClass().removeAll("first","middle","last");
+                    //    if(i == 0){
+                    //        node.getStyleClass().add("first");
+                    //    }
+                    //    else if(i == pane.getChildren().size() - 1){
+                    //        node.getStyleClass().add("last");
+                    //    }
+                    //    else{
+                    //        node.getStyleClass().add("middle");
+                    //    }
+                    //    i++;
+                    //}
+                updateColor();
                 group.setOnMousePressed(e ->{
                     if(e.isPrimaryButtonDown()){
                         lastDragPointerPosition.set(new Point2D(e.getSceneX(),e.getSceneY()));
@@ -84,7 +80,6 @@ public final class WaypointsManager {
                         lastDragPointerPosition.set(new Point2D(e.getSceneX(), e.getSceneY()));
                     }
                 });
-
                 group.setOnMouseReleased(e ->{
                     if(e.isStillSincePress()){
                         this.waypoints().remove(addedWaypoint);
@@ -95,7 +90,7 @@ public final class WaypointsManager {
                         if(addWaypointAtIndex(
                                 group.getLayoutX() + mapViewParameters.get().originX(),
                                 group.getLayoutY() + mapViewParameters.get().originY(),
-                                index)){
+                                waypoints.indexOf(addedWaypoint))){
                             this.waypoints().remove(addedWaypoint);
                             pane.getChildren().remove(group);
                             updateColor();
@@ -105,14 +100,15 @@ public final class WaypointsManager {
                             int zoomLevel = mapViewParameters.get().zoomLevel();
                             double originX = mapViewParameters.get().originX();
                             double originY = mapViewParameters.get().originY();
-
                             group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
                             group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
                         }
                     }
                 });
-
             }
+
+
+
         });
 
     }
@@ -165,7 +161,6 @@ public final class WaypointsManager {
             return false;
         }
         Waypoint newWaypoint = new Waypoint(pch, closestNodeId);
-
         try {//todo degeu a changer
             waypoints.add(atIndex, newWaypoint);
             //pane.getChildren().add(atIndex, group);
@@ -175,6 +170,18 @@ public final class WaypointsManager {
         }
         return true;
 
+    }
+    private boolean waypointExistsAtNodeId(int nodeId){
+        boolean foundOne = false;
+        for (Waypoint waypoint: waypoints) {
+            if(waypoint.closestNodeId() == nodeId){
+                if(foundOne){
+                    return true;
+                }
+                foundOne = true;
+            }
+        }
+        return false;
     }
 
 

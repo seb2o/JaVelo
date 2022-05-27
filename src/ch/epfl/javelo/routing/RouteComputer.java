@@ -27,7 +27,6 @@ import java.util.*;
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
-        Preconditions.checkArgument(startNodeId != endNodeId);
 
         //création des variables nécessaires au calcul de la mailleure route
         //nodeCount : le nombre de noeuds dans le graph

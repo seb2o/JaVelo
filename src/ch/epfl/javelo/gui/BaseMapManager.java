@@ -53,13 +53,12 @@ public final class BaseMapManager {
         SimpleObjectProperty<Point2D> lastScrollPointerPosition = new SimpleObjectProperty<>();
         SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>();
 
-
-
         pane.setOnScroll(scrollEvent -> {
             lastScrollPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
+            if (scrollEvent.getDeltaY() == 0d) return;
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
-            minScrollTime.set(currentTime + 25);
+            minScrollTime.set(currentTime + 200); //LAISSER CETTE VALEUR DE 200 !!
             int zoomDelta = (int)Math.signum(scrollEvent.getDeltaY());
             int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
             int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);
