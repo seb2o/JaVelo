@@ -20,15 +20,14 @@ public final class WaypointsManager {
     private Pane pane;
     private ObservableList<Waypoint> waypoints;
     private Graph graph;
-    private Consumer<String> consumer;
+    private ErrorManager errorManager;
     private ObjectProperty<MapViewParameters> mapViewParameters;
 
     private  SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>(new Point2D(0,0));
 
-    public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, Consumer<String> consumer){
-        this.consumer = consumer;
+    public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, ErrorManager errorManager){
+        this.errorManager = errorManager;
         this.pane = new Pane();
-//        pane.setPickOnBounds(false);
         this.waypoints = waypoints;
         this.graph = graph;
         this.mapViewParameters = mapViewParameters;
@@ -49,20 +48,7 @@ public final class WaypointsManager {
                 } catch (Exception e) {
                     pane.getChildren().add(group);
                 }
-                //int i = 0;
-                    //for (Node node : pane.getChildren()) {
-                    //    node.getStyleClass().removeAll("first","middle","last");
-                    //    if(i == 0){
-                    //        node.getStyleClass().add("first");
-                    //    }
-                    //    else if(i == pane.getChildren().size() - 1){
-                    //        node.getStyleClass().add("last");
-                    //    }
-                    //    else{
-                    //        node.getStyleClass().add("middle");
-                    //    }
-                    //    i++;
-                    //}
+
                 updateColor();
                 group.setOnMousePressed(e ->{
                     if(e.isPrimaryButtonDown()){
@@ -102,6 +88,7 @@ public final class WaypointsManager {
                             double originY = mapViewParameters.get().originY();
                             group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
                             group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
+                            System.out.println("tttt");
                         }
                     }
                 });
@@ -157,32 +144,16 @@ public final class WaypointsManager {
         PointCh pch = pwb.toPointCh();
         int closestNodeId = graph.nodeClosestTo(pch, 1000);
         if (closestNodeId == -1) {
-            consumer.accept("Aucune route à proximité !");
+            errorManager.displayError("Aucune route à proximité !");
             return false;
         }
         Waypoint newWaypoint = new Waypoint(pch, closestNodeId);
-        try {//todo degeu a changer
+        try {
             waypoints.add(atIndex, newWaypoint);
-            //pane.getChildren().add(atIndex, group);
         } catch (Exception e) {
             waypoints.add(newWaypoint);
-            //pane.getChildren().add(group);
         }
         return true;
-
     }
-    private boolean waypointExistsAtNodeId(int nodeId){
-        boolean foundOne = false;
-        for (Waypoint waypoint: waypoints) {
-            if(waypoint.closestNodeId() == nodeId){
-                if(foundOne){
-                    return true;
-                }
-                foundOne = true;
-            }
-        }
-        return false;
-    }
-
 
 }

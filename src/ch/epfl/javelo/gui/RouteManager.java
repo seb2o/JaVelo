@@ -43,7 +43,7 @@ public final class RouteManager {
             if((oldX != newX || oldY != newY) && oldZoom == newZoom){
                 polyline.setLayoutX(polyline.getLayoutX() + oldX - newX);
                 polyline.setLayoutY(polyline.getLayoutY() + oldY - newY);
-                if(!Double.isNaN(routeBean.getHighlitedPosition())){
+                if(!Double.isNaN(routeBean.highlightedPosition())){
                     highlight.setLayoutX(highlight.getLayoutX() + oldX - newX);
                     highlight.setLayoutY(highlight.getLayoutY() + oldY - newY);
                 }
@@ -86,6 +86,10 @@ public final class RouteManager {
 
         });
 
+        routeBean.highlightedPositionProperty().addListener((observable, oldValue, newValue) -> {
+            updateHighlightPosition();
+        });
+
     }
     public Pane pane(){
         return pane;
@@ -120,7 +124,7 @@ public final class RouteManager {
     }
     private void updateHighlightPosition(){
         if(routeBean.route() != null){
-            double highlightPos = routeBean.getHighlitedPosition();
+            double highlightPos = routeBean.highlightedPosition();
             if (Double.isNaN(highlightPos)) {
                 highlight.visibleProperty().set(false);
                 return;

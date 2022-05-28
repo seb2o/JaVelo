@@ -109,10 +109,6 @@ public final class RouteBean {
         return this.waypoints;
     }
 
-    public Double getHighlitedPosition(){
-        return this.highlightedPosition.get();
-    }
-
     public DoubleProperty highlightedPositionProperty(){
         return highlightedPosition;
     }

@@ -18,7 +18,7 @@ public final class AnnotatedMapManager {
     private Graph graph;
     private TileManager tileManager;
     private RouteBean routeBean;
-    private Consumer<String> errorConsumer;
+    private ErrorManager errorManager;
     private BaseMapManager baseMapManager;
     private WaypointsManager waypointsManager;
     private SimpleObjectProperty<MapViewParameters> mapViewParametersProperty;
@@ -26,16 +26,14 @@ public final class AnnotatedMapManager {
     private Pane pane;
     private DoubleProperty mousePositionOnRouteProperty;
     private SimpleObjectProperty<Point2D> mousePos;
-    private boolean isOverMap;
-    private boolean isOverProfile;
 
-    AnnotatedMapManager(Graph graph, TileManager tileManager, RouteBean routeBean, Consumer<String> errorConsumer){
+    public AnnotatedMapManager(Graph graph, TileManager tileManager, RouteBean routeBean, ErrorManager errorManager){
         this.graph = graph;
         this.tileManager = tileManager;
         this.routeBean = routeBean;
-        this.errorConsumer = errorConsumer;
-        this.waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorConsumer);
+        this.errorManager = errorManager;
         this.mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));
+        this.waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorManager);
         this.baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
         this.routeManager = new RouteManager(routeBean,mapViewParametersProperty);
         this.mousePos = new SimpleObjectProperty<>(new Point2D(0,0));
@@ -44,23 +42,32 @@ public final class AnnotatedMapManager {
         this.mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
 
         pane.setOnMouseMoved(e ->{
-            Point2D currentMousePos = mousePos.get();
-            int zoomLevel = mapViewParametersProperty.get().zoomLevel();
-            PointWebMercator pwb = PointWebMercator.of(zoomLevel,currentMousePos.getX(),currentMousePos.getY());
-            PointCh pch = pwb.toPointCh();
-            RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(pch);
-            PointWebMercator routePwb = PointWebMercator.ofPointCh(closestRoutePoint.point());
-            double distance = Math2.squaredNorm(routePwb.xAtZoomLevel(zoomLevel) - pwb.xAtZoomLevel(zoomLevel),routePwb.yAtZoomLevel(zoomLevel) - pwb.yAtZoomLevel(zoomLevel));
-            if(distance < 15 * 15 && routeBean.waypoints().size() > 1){
-                mousePositionOnRouteProperty.set(closestRoutePoint.position());
+            mousePos.set(new Point2D(e.getX(),e.getY()));
+            if(routeBean.route() != null){
+                Point2D currentMousePos = mousePos.get();
+                int zoomLevel = mapViewParametersProperty.get().zoomLevel();
+                PointWebMercator pwb = mapViewParametersProperty.get().pointAt(currentMousePos.getX(),currentMousePos.getY());
+                PointCh pch = pwb.toPointCh();
+                if(pch != null){
+                    RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(pch);
+                    PointWebMercator routePwb = PointWebMercator.ofPointCh(closestRoutePoint.point());
+                    double squaredDistance = Math2.squaredNorm(routePwb.xAtZoomLevel(zoomLevel) - pwb.xAtZoomLevel(zoomLevel),routePwb.yAtZoomLevel(zoomLevel) - pwb.yAtZoomLevel(zoomLevel));
+                    if(squaredDistance < 15 * 15 && routeBean.waypoints().size() > 1){
+                        mousePositionOnRouteProperty.set(closestRoutePoint.position());
+                        return;
+                    }
+                }
             }
-            else{
-                mousePositionOnRouteProperty.set(Double.NaN);
-            }
+            mousePositionOnRouteProperty.set(Double.NaN);
+
         });
         pane.setOnMouseExited(e ->{
             mousePositionOnRouteProperty.set(Double.NaN);
         });
+
+        mousePositionOnRouteProperty.addListener(((observable, oldValue, newValue) -> {
+            routeBean.setHighlightedPosition(mousePositionOnRouteProperty.get());
+        }));
     }
 
     public Pane pane() {
