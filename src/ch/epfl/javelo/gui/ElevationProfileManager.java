@@ -91,8 +91,8 @@ public final class ElevationProfileManager {
         borderPane = new BorderPane(pane,null,null,captionContainer,null);
 
         this.rectangle2DProperty = new SimpleObjectProperty<>(Rectangle2D.EMPTY);
-        this.minHeight = elevationProfileProperty.get().minElevation();
-        this.maxHeight = elevationProfileProperty.get().maxElevation();
+        //this.minHeight = elevationProfileProperty.get().minElevation();
+        //this.maxHeight = elevationProfileProperty.get().maxElevation();
         borderPane.getStylesheets().add("elevation_profile.css");
 
         pane.setOnMouseMoved( e -> {

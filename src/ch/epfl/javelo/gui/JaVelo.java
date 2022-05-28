@@ -16,10 +16,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.function.Consumer;
+import java.rmi.UnexpectedException;
 
 public final class JaVelo extends Application {
     public static void main(String[] args) { launch(args); }
@@ -33,21 +35,21 @@ public final class JaVelo extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Graph graph = Graph.loadFrom(Path.of("javelo-data"));
+        Graph graph = Graph.loadFrom(Path.of("lausanne"));
         Path cacheBasePath = Path.of("osm-cache");
-        String tileServerHost = "tile.openstreetmap.org";
+        String tileServerHost = "https://tile.openstreetmap.org";
         CostFunction costFunction = new CityBikeCF(graph);
         RouteBean routeBean = new RouteBean(new RouteComputer(graph, costFunction));
-        Consumer<String> errorConsumer = new ErrorConsumer();
+        ErrorManager errorManager = new ErrorManager();
         TileManager tileManager = new TileManager(cacheBasePath, tileServerHost);
 
-        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorConsumer);
+        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorManager);
 
         this.elevationProfileManager = new ElevationProfileManager(elevationProfileProperty,routeBean.highlightedPositionProperty());
         highlightedPositionProperty = elevationProfileManager.mousePositionOnProfileProperty();
-
+        StackPane topPane = new StackPane(annotatedMapManager.pane(), errorManager.pane());
         SplitPane splitpane = new SplitPane();
-        splitpane.getItems().add(annotatedMapManager.pane());
+        splitpane.getItems().add(topPane);
         splitpane.orientationProperty().set(Orientation.VERTICAL);
         SplitPane.setResizableWithParent(annotatedMapManager.pane(),false);
 
@@ -55,17 +57,25 @@ public final class JaVelo extends Application {
         this.pane = new BorderPane(splitpane);
         pane.getStylesheets().add("map.css");
 
-        //todo titre : JaVelo;
         //todo setOnAction;
         MenuItem exportGPX = new MenuItem("Exporter GPX");
         Menu Fichier = new Menu("Fichier", null, exportGPX);
         MenuBar menuBar = new MenuBar(Fichier);
+        exportGPX.disableProperty().set(true);
+        exportGPX.setOnAction(event -> {
+            try {
+                GpxGenerator.writeGpx("javelo.gpx", routeBean.route(), elevationProfileProperty.get());
+            } catch (IOException e) {
+                errorManager.displayError("Erreur lors de la création du GPX");
+            }
+        });
 
         pane.setTop(menuBar);
         pane.setCenter(splitpane);
         primaryStage.setScene(new Scene(pane));
         primaryStage.setMinHeight(600);
         primaryStage.setMinWidth(800);
+        primaryStage.setTitle("JaVelo");
         primaryStage.show();
 
         routeBean.routeProperty().addListener(((observable, oldValue, newValue) -> {
@@ -107,12 +117,8 @@ public final class JaVelo extends Application {
         });
 
         splitpane.getItems().addListener((ListChangeListener<Node>) c -> {
-            exportGPX.disableProperty().set(c.getList().size() != 1);
+            exportGPX.disableProperty().set(c.getList().size() != 2);
         });
     }
 
-    private static final class ErrorConsumer implements Consumer<String> {
-        @Override
-        public void accept(String s) { System.out.println(s); }
-    }
 }

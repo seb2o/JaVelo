@@ -28,33 +28,18 @@ public final class Stage8Test extends Application {
         Path cacheBasePath = Path.of("tiles");
         String tileServerHost = "https://tile.openstreetmap.org";
         RouteBean routeBean = new RouteBean(new RouteComputer(graph, new CityBikeCF(graph)));
-        routeBean.setHighlightedPosition(1000);
 
         TileManager tileManager =
                 new TileManager(cacheBasePath, tileServerHost);
 
-        MapViewParameters mapViewParameters =
-                new MapViewParameters(12, 543200, 370650);
-        ObjectProperty<MapViewParameters> mapViewParametersP =
-                new SimpleObjectProperty<>(mapViewParameters);
-        ObservableList<Waypoint> waypoints = routeBean.waypoints();
+        ErrorManager errorManager = new ErrorManager();
+        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph,tileManager,routeBean,errorManager);
 
-        Consumer<String> errorConsumer = new ErrorConsumer();
 
-        WaypointsManager waypointsManager =
-                new WaypointsManager(graph,
-                        mapViewParametersP,
-                        waypoints,
-                        errorConsumer);
-        BaseMapManager baseMapManager =
-                new BaseMapManager(tileManager,
-                        waypointsManager,
-                        mapViewParametersP);
-        RouteManager routeManager = new RouteManager(routeBean,mapViewParametersP);
 
 
         StackPane mainPane =
-                new StackPane(baseMapManager.pane(),waypointsManager.pane(),routeManager.pane());
+                new StackPane(annotatedMapManager.pane(), errorManager.pane());
         mainPane.getStylesheets().add("map.css");
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.setMinHeight(600);
@@ -62,8 +47,4 @@ public final class Stage8Test extends Application {
         primaryStage.show();
     }
 
-    private static final class ErrorConsumer implements Consumer<String> {
-        @Override
-        public void accept(String s) { System.out.println(s); }
-    }
 }
