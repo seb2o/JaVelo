@@ -15,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public final class JaVelo extends Application {
     private ReadOnlyDoubleProperty highlightedPositionProperty;
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException, NonInvertibleTransformException {
         Graph graph = Graph.loadFrom(Path.of("javelo-data"));
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "tile.openstreetmap.org";

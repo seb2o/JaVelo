@@ -26,7 +26,7 @@ public final class Stage10Test extends Application {
         Route route = routeComputer
                 .bestRouteBetween(159049, 117669);
         ElevationProfile profile = ElevationProfileComputer
-                .elevationProfile(route, 50);
+                .elevationProfile(route, 5);
 
         ObjectProperty<ElevationProfile> profileProperty =
                 new SimpleObjectProperty<>(profile);
