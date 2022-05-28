@@ -80,11 +80,12 @@ public final class ElevationProfileManager {
 
         this.captionText = new Text();
         this.polygon = new Polygon();
-        polygon.setId("profile");
 
         this.captionContainer = new VBox(captionText);
         this.pane = new Pane();
         pane.getChildren().add(polygon);
+        polygon.setId("profile");
+        captionContainer.setId("profile_data");
         this.captionContainer.setBackground(Background.fill(Color.RED));
         this.pane.setBackground(Background.fill(Color.BLUE));
         borderPane = new BorderPane(pane,null,null,captionContainer,null);
@@ -150,17 +151,16 @@ public final class ElevationProfileManager {
                 pane.heightProperty()));
     }
 
-    private void updatePolygon() {
+    private void updatePolygon() {//todo ptetre probleme de la dernière arête pas parfaitement verticale
         polygon.getPoints().removeAll(polygon.getPoints());
         List<Double> graphPoints = new ArrayList<>();
         ElevationProfile profile = elevationProfileProperty.get();
         double wStep = profile.length()/rectangle2DProperty.get().getWidth();
-        for (double i = rectangle2DProperty.get().getMinX(); i < pane.getWidth()-insets.getRight() ; i++) {
-            double wX = i*wStep;
+        for (double i = rectangle2DProperty.get().getMinX(); i < pane.getWidth()-insets.getRight()  ; i++) {
+            double wX = (i-insets.getLeft())*wStep;
             graphPoints.add(i);
             graphPoints.add(worldToScreenProperty.get().transform(wX,profile.elevationAt(wX)).getY());
         }
-
 
         polygon.getPoints().setAll(graphPoints);
         polygon.getPoints().addAll(pane.getWidth()-insets.getRight(), worldToScreenProperty.get().transform(profile.length(),profile.elevationAt(profile.length())).getY());
