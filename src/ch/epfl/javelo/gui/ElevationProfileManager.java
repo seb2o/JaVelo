@@ -92,16 +92,29 @@ public final class ElevationProfileManager {
         setStyles();
         createListeners();
         bindRectangle();
-        bindTransform();
-        bindPolygon();
-        bindLine();
+        if(elevationProfileProperty.get() != null){
+            bindTransform();
+            bindPolygon();
+            bindLine();
+        }
+
 
 
         //todo a virer
         this.vBox.setBackground(Background.fill(Color.RED));
         this.pane.setBackground(Background.fill(Color.BLUE));
 
+        elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
+            if(elevationProfileProperty.get() != null && elevationProfileProperty.get().length() > 0){
+                bindRectangle();
+                bindTransform();
+                bindRectangle();
+                bindLine();
 
+                createListeners();
+                updatePolygon();
+            }
+        }));
     }
 
     public Pane pane(){

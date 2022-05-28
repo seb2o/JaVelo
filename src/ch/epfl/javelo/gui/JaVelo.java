@@ -15,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
 
@@ -34,8 +35,8 @@ public final class JaVelo extends Application {
     private ReadOnlyDoubleProperty highlightedPositionProperty;
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
-        Graph graph = Graph.loadFrom(Path.of("lausanne"));
+    public void start(Stage primaryStage) throws IOException, NonInvertibleTransformException {
+        Graph graph = Graph.loadFrom(Path.of("lausanne")); //todo changer !!!
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "https://tile.openstreetmap.org";
         CostFunction costFunction = new CityBikeCF(graph);
@@ -45,7 +46,7 @@ public final class JaVelo extends Application {
 
         AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorManager);
 
-        this.elevationProfileManager = new ElevationProfileManager(elevationProfileProperty,routeBean.highlightedPositionProperty());
+        this.elevationProfileManager = new ElevationProfileManager(elevationProfileProperty, routeBean.highlightedPositionProperty());
         highlightedPositionProperty = elevationProfileManager.mousePositionOnProfileProperty();
         StackPane topPane = new StackPane(annotatedMapManager.pane(), errorManager.pane());
         SplitPane splitpane = new SplitPane();
@@ -57,7 +58,6 @@ public final class JaVelo extends Application {
         this.pane = new BorderPane(splitpane);
         pane.getStylesheets().add("map.css");
 
-        //todo setOnAction;
         MenuItem exportGPX = new MenuItem("Exporter GPX");
         Menu Fichier = new Menu("Fichier", null, exportGPX);
         MenuBar menuBar = new MenuBar(Fichier);
@@ -100,9 +100,11 @@ public final class JaVelo extends Application {
             else{
                 if(splitpane.getItems().size() == 1){
                     splitpane.getItems().add(elevationProfileManager.pane());
+                    SplitPane.setResizableWithParent(elevationProfileManager.pane(),false);
                 }
                 else{
                     splitpane.getItems().set(1,elevationProfileManager.pane());
+                    SplitPane.setResizableWithParent(elevationProfileManager.pane(),false);
                 }
             }
         }));
@@ -115,6 +117,13 @@ public final class JaVelo extends Application {
                 routeBean.setHighlightedPosition(elevationProfileManager.mousePositionOnProfileProperty().get());
             }
         });
+
+        ReadOnlyDoubleProperty profileMousePos = elevationProfileManager.mousePositionOnProfileProperty();
+        elevationProfileManager.mousePositionOnProfileProperty().addListener(((observable, oldValue, newValue) -> {
+            if (profileMousePos != null && profileMousePos.get() > 0) {
+                    routeBean.setHighlightedPosition(profileMousePos.get());
+            }
+        }));
 
         splitpane.getItems().addListener((ListChangeListener<Node>) c -> {
             exportGPX.disableProperty().set(c.getList().size() != 2);
