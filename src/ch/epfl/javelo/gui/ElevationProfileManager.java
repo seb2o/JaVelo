@@ -50,7 +50,6 @@ public final class ElevationProfileManager {
 
     //highlight
     private DoubleProperty mousePositionOnProfileProperty;
-    private SimpleDoubleProperty mouseOnPaneProperty;
 
     //bordures
     private final Insets insets = new Insets(10, 10, 20, 40);
@@ -82,7 +81,6 @@ public final class ElevationProfileManager {
         screenToWorldProperty = new SimpleObjectProperty<>();
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
-        mouseOnPaneProperty = new SimpleDoubleProperty(Double.NaN);
 
         vBox = new VBox();
         vBoxText = new Text();
@@ -185,7 +183,7 @@ public final class ElevationProfileManager {
                         () -> worldToScreenProperty.get().transform(
                                                 highlightedPosition.doubleValue(),
                                                 rectangle2DProperty.get().getMinY()).getX(),
-                        mousePositionOnProfileProperty));
+                        mousePositionOnProfileProperty,highlightedPosition));
         line.startYProperty().bind(
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMinY(),
                         rectangle2DProperty)
@@ -247,7 +245,7 @@ public final class ElevationProfileManager {
                             /rectangle2DProperty.get().getWidth());
             });
         pane.setOnMouseExited(e ->{
-
+            mousePositionOnProfileProperty.set(Double.NaN);
         });
 
         elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {

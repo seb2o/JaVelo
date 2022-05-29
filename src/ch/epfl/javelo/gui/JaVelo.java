@@ -107,19 +107,14 @@ public final class JaVelo extends Application {
 
         highlightedPositionProperty.addListener((observable, oldValue, newValue) -> {
             if(highlightedPositionProperty.getValue() > 0){
-                routeBean.setHighlightedPosition(routeBean.highlightedPositionProperty().get());
+                routeBean.setHighlightedPosition(
+                        elevationProfileManager.mousePositionOnProfileProperty().doubleValue());
             }
             else{
-                routeBean.setHighlightedPosition(elevationProfileManager.mousePositionOnProfileProperty().get());
+                routeBean.setHighlightedPosition(
+                        routeBean.highlightedPositionProperty().doubleValue());
             }
         });
-
-        ReadOnlyDoubleProperty profileMousePos = elevationProfileManager.mousePositionOnProfileProperty();
-        elevationProfileManager.mousePositionOnProfileProperty().addListener(((observable, oldValue, newValue) -> {
-            if (profileMousePos != null && profileMousePos.get() > 0) {
-                routeBean.setHighlightedPosition(profileMousePos.get());
-            }
-        }));
 
         splitpane.getItems().addListener((ListChangeListener<Node>) c -> {
             exportGPX.disableProperty().set(c.getList().size() != 2);

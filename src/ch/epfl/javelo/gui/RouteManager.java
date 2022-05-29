@@ -124,7 +124,9 @@ public final class RouteManager {
             pointListTemp.add(mapViewParameters.get().viewX(pwb));
             pointListTemp.add(mapViewParameters.get().viewY(pwb));
         }
-        PointCh lastPointCh = routeBean.route().edges().get(routeBean.route().edges().size() - 1).toPoint();
+        PointCh lastPointCh = routeBean.route().edges()
+                .get(routeBean.route().edges().size() - 1)
+                .toPoint();
         PointWebMercator lastPwb = PointWebMercator.ofPointCh(lastPointCh);
         pointListTemp.add(mapViewParameters.get().viewX(lastPwb));
         pointListTemp.add(mapViewParameters.get().viewY(lastPwb));
