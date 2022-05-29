@@ -19,13 +19,17 @@ import static java.nio.file.Files.newBufferedWriter;
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
  */
+
+/*
+ * Classe statique permettant d'exporter un intinéraire au format GPX.
+ */
 public final class GpxGenerator {
 
     private GpxGenerator() {}
 
 
     /**
-     * permet de formater un itinéraire sous un format xml
+     * Permet de formater un itinéraire sous un format xml
      * @param route l'itinéraire a formater
      * @param profile le profil de l'itinéraire
      * @return un Document contenant les arètes de l'itinéraire sous forme de balies xml
@@ -77,7 +81,7 @@ public final class GpxGenerator {
     }
 
     /**
-     * permet de créer le fichier gpx correspondant à un itinéraire
+     * Permet de créer le fichier gpx correspondant à un itinéraire
      * @param fileName le nom du fichier gpx a créer
      * @param route l'itinéraire à sauvegarder dans le fichier
      * @param profile le profil de l'itinéraire
@@ -103,6 +107,9 @@ public final class GpxGenerator {
 
     }
 
+    /**
+     * Crée un nouveau Document par défaut.
+     */
     private static Document newDocument() {
         try {
             return DocumentBuilderFactory

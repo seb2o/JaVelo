@@ -4,15 +4,16 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.Edge;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+/**
+ * Classe gèrant l'affichage de l'itinéraire et une partie de l'interaction avec lui.
+ */
 public final class RouteManager {
 
     private Pane pane;
@@ -20,6 +21,11 @@ public final class RouteManager {
     private RouteBean routeBean;
     private Circle highlight;
 
+    /**
+     * Constructeur du gestionnaire de route.
+     * @param routeBean son bean de Route associé.
+     * @param mapViewParametersProperty des paramètres de carte.
+     */
     public RouteManager(RouteBean routeBean, ReadOnlyObjectProperty<MapViewParameters> mapViewParametersProperty){
         this.pane = new Pane();
         this.routeBean = routeBean;
@@ -32,6 +38,8 @@ public final class RouteManager {
         pane.setPickOnBounds(false);
         updateHighlightPosition();
 
+        //Listener qui gère le placement de la route sur la carte en fonction de changements sur le niveau
+        // de zoom ou de position du font de carte.
         mapViewParametersProperty.addListener( (observable, oldValue, newValue) -> {
             double oldX = oldValue.originX();
             double oldY = oldValue.originY();
@@ -59,54 +67,54 @@ public final class RouteManager {
             }
         });
 
+        //Listener qui gère l'affichage et le placement de la polyline représentant la route quand le nombre
+        //waypoint change.
         routeBean.routeProperty().addListener(((observable, oldValue, newValue) -> {
-            List<Double> pointList = buildPointList();
-            if(pointList == null){
-                polyline.visibleProperty().set(false);
-                highlight.visibleProperty().set(false);
-            }
-            else{
-                polyline.getPoints().setAll(buildPointList());
-                polyline.visibleProperty().set(!routeBean.shouldHideRoute());
-                highlight.visibleProperty().set(!routeBean.shouldHideRoute());
-            }
+            polyline.getPoints().setAll(buildPointList());
+
+            polyline.visibleProperty().set(!routeBean.shouldHideRoute());
+            highlight.visibleProperty().set(!routeBean.shouldHideRoute());
+
             polyline.setLayoutX(0);
             polyline.setLayoutY(0);
             updateHighlightPosition();
         }));
 
+        //Listener qui ajoute un WayPoint intermédiaire quand le point en subrillance est cliqué.
         highlight.setOnMouseClicked(e ->{
             PointCh pointCh = mapViewParameters.get().pointAt(highlight.getLayoutX(), highlight.getLayoutY()).toPointCh();
             int nodeId = routeBean.route().nodeClosestTo(routeBean.highlightedPosition());
-            if(nodeId == -1 ){
-            }
-            else{
-                routeBean.waypoints().add(routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition()) + 1, new Waypoint(pointCh, nodeId));
+            if(nodeId != -1 ){
+                routeBean.waypoints().add(
+                        routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition()) + 1,
+                        new Waypoint(pointCh, nodeId));
             }
 
         });
 
+        //Listener qui met à jour la position affichée du point en surbrillance quand la position change.
         routeBean.highlightedPositionProperty().addListener((observable, oldValue, newValue) -> {
             updateHighlightPosition();
         });
 
     }
+
+    /**
+     * @return le pane associé au gestionnaire de route.
+     */
     public Pane pane(){
         return pane;
     }
 
-    public boolean waypointExistsAtNodeId(int nodeId){
-        for (Waypoint waypoint: routeBean.waypoints()) {
-            if(waypoint.closestNodeId() == nodeId){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
+    /**
+     * Construit la liste des coordonnées à partir de la route qui vont servir à former la polyline.
+     * Le premier élément est la coordonnée x du 1er noeud, le deuxième la coordonnée y du 1er noeud,
+     * le troisième est la coordonnée x du 2ème noeud etc.
+     * @return la liste des coordonnées en pixels des points de la polyline.
+     */
     private List<Double> buildPointList(){
         if(routeBean.route() == null || routeBean.route().edges().isEmpty()){
+            highlight.visibleProperty().set(false);
             return new ArrayList<>();
         }
         List<Double> pointListTemp = new ArrayList<>();
@@ -122,6 +130,10 @@ public final class RouteManager {
         pointListTemp.add(mapViewParameters.get().viewY(lastPwb));
         return pointListTemp;
     }
+
+    /**
+     * Met à jour la position du point en surbrillance sur l'itinéraire et décide s'il doit être visible ou non.
+     */
     private void updateHighlightPosition(){
         if(routeBean.route() != null){
             double highlightPos = routeBean.highlightedPosition();
@@ -129,7 +141,6 @@ public final class RouteManager {
                 highlight.visibleProperty().set(false);
                 return;
             }
-//            highlight.visibleProperty().set(!routeBean.shouldHideRoute());
             PointCh highlightPch = routeBean.route().pointAt(highlightPos);
             highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
             highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));

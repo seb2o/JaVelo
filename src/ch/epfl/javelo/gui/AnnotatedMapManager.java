@@ -12,13 +12,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
-import java.util.function.Consumer;
 
+/**
+ * Classe gérant l'affichage de la carte «annotée»,
+ * c.-à-d. le fond de carte au-dessus duquel sont superposés l'itinéraire et les points de passage.
+ */
 public final class AnnotatedMapManager {
-    private Graph graph;
-    private TileManager tileManager;
-    private RouteBean routeBean;
-    private ErrorManager errorManager;
     private BaseMapManager baseMapManager;
     private WaypointsManager waypointsManager;
     private SimpleObjectProperty<MapViewParameters> mapViewParametersProperty;
@@ -27,11 +26,14 @@ public final class AnnotatedMapManager {
     private DoubleProperty mousePositionOnRouteProperty;
     private SimpleObjectProperty<Point2D> mousePos;
 
+    /**
+     * Constructeur de carte annotée.
+     * @param graph le Graph associé à la carte.
+     * @param tileManager le gestionnaire de tuile associé à la carte.
+     * @param routeBean le bean de route associé à la carte.
+     * @param errorManager le gestionnaire d'erreur associé à la carte.
+     */
     public AnnotatedMapManager(Graph graph, TileManager tileManager, RouteBean routeBean, ErrorManager errorManager){
-        this.graph = graph;
-        this.tileManager = tileManager;
-        this.routeBean = routeBean;
-        this.errorManager = errorManager;
         this.mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));
         this.waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorManager);
         this.baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
@@ -41,6 +43,9 @@ public final class AnnotatedMapManager {
         pane.getStylesheets().add("map.css");
         this.mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
 
+
+        //Listener qui gère la position du point en surbrillance sur l'intinéraire
+        //si la souris en est assez proche.
         pane.setOnMouseMoved(e ->{
             mousePos.set(new Point2D(e.getX(),e.getY()));
             if(routeBean.route() != null){
@@ -61,19 +66,29 @@ public final class AnnotatedMapManager {
             mousePositionOnRouteProperty.set(Double.NaN);
 
         });
+
+        //Listener qui gère le cas ou la souris sort du panneau contenant la carte annotée.
         pane.setOnMouseExited(e ->{
             mousePositionOnRouteProperty.set(Double.NaN);
         });
 
+        //Listener qui met à jour la position du point en surbrillance par rapport à la position de la souris
+        //sur le profile.
         mousePositionOnRouteProperty.addListener(((observable, oldValue, newValue) -> {
             routeBean.setHighlightedPosition(mousePositionOnRouteProperty.get());
         }));
     }
 
+    /**
+     * @return le Pane contenant la carte annotée.
+     */
     public Pane pane() {
         return pane;
     }
 
+    /**
+     * @return la propriété contenant la position du pointeur de la souris le long de l'itinéraire.
+     */
     public DoubleProperty mousePositionOnRouteProperty(){
         return mousePositionOnRouteProperty;
     }

@@ -1,11 +1,9 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -17,7 +15,14 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * @author Edgar Gonzalez (328095)
+ * @author Sébastien Boo (345870)
+ */
 
+/**
+ * Classe qui gère l'affichage et l'interaction avec le fond de carte.
+ */
 public final class BaseMapManager {
 
     private boolean redrawNeeded = true;
@@ -26,6 +31,12 @@ public final class BaseMapManager {
     private TileManager tileManager;
     private ObjectProperty<MapViewParameters> mapViewParameters;
 
+    /**
+     * Constructeur de la classe.
+     * @param tileManager un gestionnaire de tuiles.
+     * @param waypointsManager un gestionnaire de point de passag.
+     * @param mapViewParameters les paramètres pour l'initialisation.
+     */
     public BaseMapManager(TileManager tileManager, WaypointsManager waypointsManager, ObjectProperty<MapViewParameters>  mapViewParameters){
         this.canvas = new Canvas();
         this.pane = new Pane();
@@ -38,6 +49,8 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
+
+        //Si les dimensions changent alors la carte est redessinnée.
         canvas.heightProperty().addListener((p,o,n) -> {
             if(!o.equals(n)){
                 redrawOnNextPulse();
@@ -53,18 +66,20 @@ public final class BaseMapManager {
         SimpleObjectProperty<Point2D> lastScrollPointerPosition = new SimpleObjectProperty<>();
         SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>();
 
+
+        //Listener pour la gestion du zoom.
         pane.setOnScroll(scrollEvent -> {
             lastScrollPointerPosition.set(new Point2D(scrollEvent.getX(), scrollEvent.getY()));
             if (scrollEvent.getDeltaY() == 0d) return;
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
-            minScrollTime.set(currentTime + 200); //LAISSER CETTE VALEUR DE 200 !!
+            minScrollTime.set(currentTime + 200); //todo laisser cette valeur à 200 !
             int zoomDelta = (int)Math.signum(scrollEvent.getDeltaY());
             int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
             int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);
             int newOriginX,newOriginY;
 
-
+            //Gestion du placement de la carte après un zoom.
             if(newZoom != tempZoom){
                 return;
             }
@@ -80,6 +95,7 @@ public final class BaseMapManager {
                 return;
             }
 
+            //Gestion de la position des waypoints après un zoom.
             int i = 0;
             for (Node waypoint: waypointsManager.pane().getChildren()){
                 double oldLayoutX = mapViewParameters.get().viewX(PointWebMercator.ofPointCh(waypointsManager.waypoints().get(i).coordinates()));
@@ -95,13 +111,14 @@ public final class BaseMapManager {
             redrawOnNextPulse();
         });
 
-
+        //Listener qui enregistre la position du clicK.
         pane.setOnMousePressed(e -> {
             if(e.isPrimaryButtonDown()){
                 lastDragPointerPosition.set(new Point2D(e.getX(), e.getY()));
             }
         });
 
+        //Listener qui gère le déplacement de la carte en glissant.
         pane.setOnMouseDragged(e -> {
             if(e.isPrimaryButtonDown()){
                 int offsetX = (int) (lastDragPointerPosition.get().getX() - e.getX());
@@ -113,12 +130,13 @@ public final class BaseMapManager {
                 lastDragPointerPosition.set(new Point2D(e.getX(), e.getY()));
                 for (Node waypoint: waypointsManager.pane().getChildren()) {
                     waypoint.setLayoutX(waypoint.getLayoutX() - offsetX);
-                    waypoint.setLayoutY(waypoint.getLayoutY() - offsetY); //Todo : un "-" ici pour le offset, mais un "+" au dessus wtf??
+                    waypoint.setLayoutY(waypoint.getLayoutY() - offsetY);
                 }
                 redrawOnNextPulse();
             }
         });
 
+        //Listener qui gère l'ajout de waypoint.
         pane.setOnMouseReleased( e -> {
             if(e.isStillSincePress()){
                 waypointsManager.addWaypoint(mapViewParameters.get().originX() + e.getX(),
@@ -129,10 +147,16 @@ public final class BaseMapManager {
 
     }
 
+    /**
+     * @return le Pane associé au fond de carte.
+     */
     public Pane pane(){
         return pane;
     }
 
+    /**
+     * Méthode interne qui gère entre autres le bon placement des tuiles.
+     */
     private void redrawIfNeeded(){
         int x,y;
         x = Math.floorDiv((int) mapViewParameters.get().originX(),256);
@@ -158,13 +182,13 @@ public final class BaseMapManager {
         redrawOnNextPulse();
     }
 
-    private void redrawOnNextPulse(){ //à appeler quand un event est appelé.
+    /**
+     * Méthode interne à appeler quand un event est appelé.
+     */
+    private void redrawOnNextPulse(){
         redrawNeeded = true;
         Platform.requestNextPulse();
     }
 
-    //MOLETTE
-    //DEPLACEMENT CARTE
-    //PT DE PASSAGE (CLIC)
 
 }

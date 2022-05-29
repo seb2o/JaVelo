@@ -14,8 +14,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
 import java.util.List;
-import java.util.function.Consumer;
+/**
+ * @author Edgar Gonzalez (328095)
+ * @author Sébastien Boo (345870)
+ */
 
+
+/**
+ * Classe gèrant l'affichage et l'interaction avec les points de passage.
+ */
 public final class WaypointsManager {
     private Pane pane;
     private ObservableList<Waypoint> waypoints;
@@ -23,7 +30,7 @@ public final class WaypointsManager {
     private ErrorManager errorManager;
     private ObjectProperty<MapViewParameters> mapViewParameters;
 
-    private  SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>(new Point2D(0,0));
+    private SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>(new Point2D(0,0));
 
     public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, ErrorManager errorManager){
         this.errorManager = errorManager;
@@ -88,7 +95,6 @@ public final class WaypointsManager {
                             double originY = mapViewParameters.get().originY();
                             group.setLayoutX(oldPos.xAtZoomLevel(zoomLevel) - originX);
                             group.setLayoutY(oldPos.yAtZoomLevel(zoomLevel) - originY);
-                            System.out.println("tttt");
                         }
                     }
                 });
@@ -100,6 +106,10 @@ public final class WaypointsManager {
 
     }
 
+    /**
+     * Crée un nouveau pin grâce au SVG.
+     * @return un nouveau Group, représentant un pin, sans couleur.
+     */
     private Group createPin(){
         Group group = new Group();
         SVGPath exterior = new SVGPath(), interior = new SVGPath();
@@ -113,6 +123,9 @@ public final class WaypointsManager {
         return group;
     }
 
+    /**
+     * Méthode qui gère les couleurs des waypoints.
+     */
     private void updateColor(){
         int index = 0;
         List<Node> list = pane.getChildren();
@@ -126,19 +139,35 @@ public final class WaypointsManager {
         }
     }
 
+    /**
+     * @return le Pane associé.
+     */
     public Pane pane(){
         return pane;
     }
 
+    /**
+     * @return une liste observable de tous les waypoints de la carte.
+     */
     public ObservableList<Waypoint> waypoints(){
         return waypoints;
     }
 
-    public boolean addWaypoint(double x,double y){
-        return addWaypointAtIndex(x,y,waypoints.size());
+    /**
+     * Ajoute un waypoint à la fin de la liste, qui est donc un point d'arrivé.
+     * @param x la coordonnée X en PointWebMercator de ce Waypoint.
+     * @param y la coordonnée Y en PointWebMercator de ce Waypoint.
+     */
+    public void addWaypoint(double x, double y){
+        addWaypointAtIndex(x, y, waypoints.size());
     }
 
-    //x et y en pwb au zoom donné
+    /**
+     * Ajoute un waypoint à l'index donné.
+     * @param x la coordonnée X en PointWebMercator de ce Waypoint.
+     * @param y la coordonnée Y en PointWebMercator de ce Waypoint.
+     * @return true si le point a bien pu être placé, false sinon.
+     */
     private boolean addWaypointAtIndex(double x, double y, int atIndex) {
         PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(), x, y);
         PointCh pch = pwb.toPointCh();

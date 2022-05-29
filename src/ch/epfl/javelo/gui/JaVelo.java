@@ -17,12 +17,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Stage;
-import org.w3c.dom.Document;
-
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.rmi.UnexpectedException;
 
 public final class JaVelo extends Application {
     public static void main(String[] args) { launch(args); }

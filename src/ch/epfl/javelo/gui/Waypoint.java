@@ -6,5 +6,9 @@ import ch.epfl.javelo.projection.PointCh;
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
  */
-public record Waypoint(PointCh coordinates, int closestNodeId) {
+
+/*
+* Enregistrement qui associe a une coordonnée son point le plus proche
+ *  */
+public record Waypoint(PointCh coordinates, int nodeId) {
 }

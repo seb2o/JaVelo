@@ -1,7 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -15,6 +13,10 @@ import java.util.*;
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
  */
+
+/*
+* Classe gérant le téléchargement et le cache des tuiles composant la carte.
+ */
 public final class TileManager {
 
     private final Path cachePath;
@@ -26,6 +28,7 @@ public final class TileManager {
         this.cachePath = tilePath;
     }
 
+    //todo commenter
     public Image getImageOf(TileId tile) throws IOException {
 
         //on vérifie que la tuile est valide
@@ -109,7 +112,7 @@ public final class TileManager {
     }
 
     /**
-     * représente une tile avec son zoom level et ses coordonnées par rapport
+     * Représente une tile avec son zoom level et ses coordonnées par rapport
      * au coin haut gauche de la carte
      * fournis également une méthode permettant de vérifier la validité d'une tuile
      * @param zoomLevel le zoomLevel de la tile
