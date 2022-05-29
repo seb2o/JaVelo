@@ -5,6 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.layout.Background;
@@ -47,8 +48,9 @@ public final class ElevationProfileManager {
 
     //informations internes
 
-    //a communiquer a l'exterieur
+    //highlight
     private DoubleProperty mousePositionOnProfileProperty;
+    private SimpleDoubleProperty mouseOnPaneProperty;
 
     //bordures
     private final Insets insets = new Insets(10, 10, 20, 40);
@@ -58,6 +60,7 @@ public final class ElevationProfileManager {
     private SimpleObjectProperty<Transform> screenToWorldProperty;
     private SimpleObjectProperty<Transform> worldToScreenProperty;
 
+    //grille
     int[] POS_STEPS =
             { 1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000 };
     int[] ELE_STEPS =
@@ -79,6 +82,7 @@ public final class ElevationProfileManager {
         screenToWorldProperty = new SimpleObjectProperty<>();
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
+        mouseOnPaneProperty = new SimpleDoubleProperty(Double.NaN);
 
         vBox = new VBox();
         vBoxText = new Text();
@@ -149,7 +153,9 @@ public final class ElevationProfileManager {
                 rectangle2DProperty));
 
         this.worldToScreenProperty.bind(Bindings.createObjectBinding( () ->
-               screenToWorldProperty.get() == null ? null : screenToWorldProperty.get().createInverse(), screenToWorldProperty));
+               screenToWorldProperty.get() == null ?
+                       null :
+                       screenToWorldProperty.get().createInverse(), screenToWorldProperty));
     }
 
     private void bindRectangle() {
@@ -188,7 +194,11 @@ public final class ElevationProfileManager {
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMaxY(),
                         rectangle2DProperty)
         );
-        line.visibleProperty().bind(mousePositionOnProfileProperty.greaterThanOrEqualTo(rectangle2DProperty.get().getMinX()));
+        line.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+                rectangle2DProperty.get().contains(
+                        mousePositionOnProfileProperty.doubleValue(),
+                        rectangle2DProperty.get().getMinY()),
+                rectangle2DProperty,mousePositionOnProfileProperty));
     }
 
     private void updatePolygon() {//todo ptetre probleme de la dernière arête pas parfaitement verticale
@@ -232,15 +242,10 @@ public final class ElevationProfileManager {
 
     private void createListeners() {
         pane.setOnMouseMoved( e -> {
-            mousePositionOnProfileProperty.set((e.getX())); //- insets.getLeft()) * elevationProfileProperty.get().length() / rectangle2DProperty.get().getWidth());
-//            mousePositionOnProfileProperty.set(
-//                    rectangle2DProperty.get()
-//                            .contains(e.getX(), e.getY()) ?
-//                            (e.getX() - insets.getLeft()) * elevationProfileProperty.get().length() / rectangle2DProperty.get().getWidth() :
-//                            Double.NaN);
             });
-        pane.setOnMouseExited(e ->
-                mousePositionOnProfileProperty.set(Double.NaN));
+        pane.setOnMouseExited(e ->{
+
+        });
 
         elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
             System.out.println("updating profile");
@@ -250,6 +255,7 @@ public final class ElevationProfileManager {
                 bindLine();
                 updatePolygon();
             }
+
         }));
     }
 
