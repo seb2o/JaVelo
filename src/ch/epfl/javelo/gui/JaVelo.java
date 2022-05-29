@@ -20,7 +20,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Classe principale de l'application qui associe toutes les classes du projet ensemble afin de créer
+ */
 public final class JaVelo extends Application {
+
     public static void main(String[] args) { launch(args); }
 
     private BorderPane pane;
@@ -32,7 +36,7 @@ public final class JaVelo extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException, NonInvertibleTransformException {
-        Graph graph = Graph.loadFrom(Path.of("lausanne")); //todo changer !!!
+        Graph graph = Graph.loadFrom(Path.of("javelo-data"));
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "https://tile.openstreetmap.org";
         CostFunction costFunction = new CityBikeCF(graph);

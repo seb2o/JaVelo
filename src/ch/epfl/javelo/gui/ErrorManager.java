@@ -8,11 +8,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Classe gérant l'affichage de messages d'erreur.
+ */
 public final class ErrorManager {
     private Pane pane;
     private Text text;
     private SequentialTransition transition;
 
+    /**
+     * Constructeur de gestionnaire d'erreur.
+     */
     public ErrorManager(){
         this.pane = new VBox();
         pane.getStylesheets().add("error.css");
@@ -30,10 +36,17 @@ public final class ErrorManager {
         transition.nodeProperty().set(pane);
     }
 
+    /**
+     * @return le panneau, sur lequel apparaissent les messages d'erreur
+     */
     public Pane pane() {
         return pane;
     }
 
+    /**
+     * Affiche le message d'erreur et joue le son d'erreur, avec l'animation.
+     * @param string le message d'erreur à afficher.
+     */
     public void displayError(String string){
         transition.stop();
         java.awt.Toolkit.getDefaultToolkit().beep();
