@@ -72,7 +72,8 @@ public final class RouteBean {
             Route temproute = computeRouteBetween(waypoints().get(index), waypoints().get(index+1));
             if(temproute == null){
                 shouldHideRoute = true;
-                return new SingleRoute(List.of(new Edge(1,1, new PointCh(2532697, 1152350), new PointCh(2532697, 1152351), 20, Functions.constant(10))));
+                return null;
+//                return new SingleRoute(List.of(new Edge(1,1, new PointCh(2532697, 1152350), new PointCh(2532697, 1152351), 20, Functions.constant(10))));//todo pk pas juste null ?
             }
             shouldHideRoute = false;
             routeList.add(temproute);
@@ -85,7 +86,7 @@ public final class RouteBean {
     }
 
     private ElevationProfile computeElevationProfile(){
-        return ElevationProfileComputer.elevationProfile(this.route.get(), MAX_STEP_LENGTH);
+        return this.route.get() != null ? ElevationProfileComputer.elevationProfile(this.route.get(), MAX_STEP_LENGTH) : null;
     }
 
     private Route computeRouteBetween(Waypoint w1, Waypoint w2){
@@ -102,7 +103,7 @@ public final class RouteBean {
     }
 
     public Route route(){
-        return this.route.get(); //todo : pas un getter intrusif ? car pas readonly, transtypage à faire ?
+        return this.route.get(); //todo : pas un getter intrusif ? car pas readonly, transtypage à faire ? Multiroute est immuable
     }
 
     public ObservableList<Waypoint> waypoints(){

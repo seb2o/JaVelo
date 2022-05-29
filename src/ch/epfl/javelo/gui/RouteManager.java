@@ -107,7 +107,7 @@ public final class RouteManager {
 
     private List<Double> buildPointList(){
         if(routeBean.route() == null || routeBean.route().edges().isEmpty()){
-            return null;
+            return new ArrayList<>();
         }
         List<Double> pointListTemp = new ArrayList<>();
         for (Edge edge: routeBean.route().edges()) {
@@ -129,10 +129,11 @@ public final class RouteManager {
                 highlight.visibleProperty().set(false);
                 return;
             }
-            highlight.visibleProperty().set(!routeBean.shouldHideRoute());
+//            highlight.visibleProperty().set(!routeBean.shouldHideRoute());
             PointCh highlightPch = routeBean.route().pointAt(highlightPos);
             highlight.setLayoutX(mapViewParameters.get().viewX(PointWebMercator.ofPointCh(highlightPch)));
             highlight.setLayoutY(mapViewParameters.get().viewY(PointWebMercator.ofPointCh(highlightPch)));
+            highlight.visibleProperty().set(true);
         }
         else{
             highlight.visibleProperty().set(false);

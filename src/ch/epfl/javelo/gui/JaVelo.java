@@ -121,7 +121,7 @@ public final class JaVelo extends Application {
         ReadOnlyDoubleProperty profileMousePos = elevationProfileManager.mousePositionOnProfileProperty();
         elevationProfileManager.mousePositionOnProfileProperty().addListener(((observable, oldValue, newValue) -> {
             if (profileMousePos != null && profileMousePos.get() > 0) {
-                    routeBean.setHighlightedPosition(profileMousePos.get());
+                routeBean.setHighlightedPosition(profileMousePos.get());
             }
         }));
 

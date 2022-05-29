@@ -26,6 +26,7 @@ public final class ElevationProfileManager {
 
     //informations à afficher -exterieur-
     private ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty;
+    private ReadOnlyDoubleProperty highlightedPosition;
 
     //hierarchie javafx//
     //conteneur principal
@@ -68,10 +69,13 @@ public final class ElevationProfileManager {
 
 
 
-    public ElevationProfileManager(ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty, ReadOnlyDoubleProperty position) {
+    public ElevationProfileManager(
+            ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty,
+            ReadOnlyDoubleProperty highlightedPosition) {
 
         this.elevationProfileProperty = elevationProfileProperty;
-        mousePositionOnProfileProperty = new SimpleDoubleProperty(position.doubleValue());
+        this.highlightedPosition = highlightedPosition;
+        mousePositionOnProfileProperty = new SimpleDoubleProperty(highlightedPosition.doubleValue());
         screenToWorldProperty = new SimpleObjectProperty<>();
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
@@ -92,11 +96,7 @@ public final class ElevationProfileManager {
         setStyles();
         createListeners();
         bindRectangle();
-        if(elevationProfileProperty.get() != null){
-            bindTransform();
-            bindPolygon();
-            bindLine();
-        }
+        bindPolygon();
 
 
 
@@ -104,17 +104,7 @@ public final class ElevationProfileManager {
         this.vBox.setBackground(Background.fill(Color.RED));
         this.pane.setBackground(Background.fill(Color.BLUE));
 
-        elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
-            if(elevationProfileProperty.get() != null && elevationProfileProperty.get().length() > 0){
-                bindRectangle();
-                bindTransform();
-                bindRectangle();
-                bindLine();
 
-                createListeners();
-                updatePolygon();
-            }
-        }));
     }
 
     public Pane pane(){
@@ -126,11 +116,13 @@ public final class ElevationProfileManager {
     }
 
     private void bindPolygon() {
-        ChangeListener<Object> updateOnResize = (o, ov, nv) -> {
-            updatePolygon();
+        ChangeListener<Object> updatePolygon = (o, ov, nv) -> {
+            if(elevationProfileProperty.get() != null) updatePolygon();
         };
-        pane.heightProperty().addListener(updateOnResize);
-        pane.widthProperty().addListener(updateOnResize);
+        pane.heightProperty().addListener(updatePolygon);
+        pane.widthProperty().addListener(updatePolygon);
+        elevationProfileProperty.addListener(updatePolygon);
+
     }
 
     private void bindTransform() {
@@ -157,7 +149,7 @@ public final class ElevationProfileManager {
                 rectangle2DProperty));
 
         this.worldToScreenProperty.bind(Bindings.createObjectBinding( () ->
-                screenToWorldProperty.get().createInverse(), screenToWorldProperty));
+               screenToWorldProperty.get() == null ? null : screenToWorldProperty.get().createInverse(), screenToWorldProperty));
     }
 
     private void bindRectangle() {
@@ -182,12 +174,11 @@ public final class ElevationProfileManager {
     }
 
     private void bindLine() {
-
-
-
         line.layoutXProperty().bind(
                 Bindings.createDoubleBinding(
-                        () -> mousePositionOnProfileProperty.doubleValue(),
+                        () -> worldToScreenProperty.get().transform(
+                                                highlightedPosition.doubleValue(),
+                                                rectangle2DProperty.get().getMinY()).getX(),
                         mousePositionOnProfileProperty));
         line.startYProperty().bind(
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMinY(),
@@ -240,15 +231,26 @@ public final class ElevationProfileManager {
     }
 
     private void createListeners() {
-        pane.setOnMouseMoved( e ->
-                mousePositionOnProfileProperty.set(
-                        rectangle2DProperty.get()
-                                .contains(e.getX(),e.getY()) ?
-                                e.getX() :
-                                Double.NaN));
+        pane.setOnMouseMoved( e -> {
+            mousePositionOnProfileProperty.set((e.getX())); //- insets.getLeft()) * elevationProfileProperty.get().length() / rectangle2DProperty.get().getWidth());
+//            mousePositionOnProfileProperty.set(
+//                    rectangle2DProperty.get()
+//                            .contains(e.getX(), e.getY()) ?
+//                            (e.getX() - insets.getLeft()) * elevationProfileProperty.get().length() / rectangle2DProperty.get().getWidth() :
+//                            Double.NaN);
+            });
         pane.setOnMouseExited(e ->
                 mousePositionOnProfileProperty.set(Double.NaN));
 
+        elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
+            System.out.println("updating profile");
+            if(elevationProfileProperty.get() != null){
+                bindRectangle();
+                bindTransform();
+                bindLine();
+                updatePolygon();
+            }
+        }));
     }
 
     private void setStyles() {
