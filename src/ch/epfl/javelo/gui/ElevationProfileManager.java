@@ -194,11 +194,10 @@ public final class ElevationProfileManager {
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMaxY(),
                         rectangle2DProperty)
         );
-        line.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-                rectangle2DProperty.get().contains(
-                        mousePositionOnProfileProperty.doubleValue(),
-                        rectangle2DProperty.get().getMinY()),
-                rectangle2DProperty,mousePositionOnProfileProperty));
+//        line.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+//                        mousePositionOnProfileProperty.doubleValue() >= 0
+//                                && mousePositionOnProfileProperty.doubleValue() <= elevationProfileProperty.get().length()));
+
     }
 
     private void updatePolygon() {//todo ptetre probleme de la dernière arête pas parfaitement verticale
@@ -242,13 +241,16 @@ public final class ElevationProfileManager {
 
     private void createListeners() {
         pane.setOnMouseMoved( e -> {
+            mousePositionOnProfileProperty.set(
+                    (e.getX()-insets.getLeft())
+                            *elevationProfileProperty.get().length()
+                            /rectangle2DProperty.get().getWidth());
             });
         pane.setOnMouseExited(e ->{
 
         });
 
         elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
-            System.out.println("updating profile");
             if(elevationProfileProperty.get() != null){
                 bindRectangle();
                 bindTransform();
