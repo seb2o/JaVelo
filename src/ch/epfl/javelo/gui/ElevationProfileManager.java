@@ -5,7 +5,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.layout.Background;
@@ -29,7 +28,7 @@ public final class ElevationProfileManager {
     private ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty;
     private ReadOnlyDoubleProperty highlightedPosition;
 
-    //hierarchie javafx//
+    //hierarchie javafx
     //conteneur principal
     private BorderPane borderPane;
 
@@ -43,7 +42,7 @@ public final class ElevationProfileManager {
     private Polygon polygon;
     private Line line;
     private Group gridLabels;
-    //fin hierarchie javafx//
+    //fin hierarchie javafx
 
 
     //informations internes
@@ -64,16 +63,22 @@ public final class ElevationProfileManager {
             { 1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000 };
     int[] ELE_STEPS =
             { 5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000 };
-    private final static int HORIZONTAL_SPACING = 25;
-    private static final int VERTICAL_SPACING = 50;
+    private SimpleIntegerProperty posStepProperty;
+    private SimpleIntegerProperty eleStepProperty;
 
+    private static final int VERTICAL_STEP_TRESHOLD = 50;
+    private final static int HORIZONTAL_STEP_TRESHOLD = 25;
 
+    //infos profil souvent accédées
+    private double minElevation;
+    private double maxElevation;
+    private double routeLength;
 
 
 
     public ElevationProfileManager(
-            ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty,
-            ReadOnlyDoubleProperty highlightedPosition) {
+        ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty,
+        ReadOnlyDoubleProperty highlightedPosition) {
 
         this.elevationProfileProperty = elevationProfileProperty;
         this.highlightedPosition = highlightedPosition;
@@ -81,6 +86,8 @@ public final class ElevationProfileManager {
         screenToWorldProperty = new SimpleObjectProperty<>();
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
+        posStepProperty = new SimpleIntegerProperty();
+        eleStepProperty = new SimpleIntegerProperty();
 
         vBox = new VBox();
         vBoxText = new Text();
@@ -132,8 +139,6 @@ public final class ElevationProfileManager {
                 () -> {
 
                     Affine screenToWorld = new Affine();
-                    double minHeight = elevationProfileProperty.get().minElevation();
-                    double maxHeight = elevationProfileProperty.get().maxElevation();
                     double rec2Dheight = rectangle2DProperty.get().getHeight();
                     double rec2Dwidth = rectangle2DProperty.get().getWidth();
 
@@ -141,11 +146,11 @@ public final class ElevationProfileManager {
                             -insets.getLeft(),
                             -rec2Dheight - insets.getTop());
                     screenToWorld.prependScale(
-                            elevationProfileProperty.get().length() / rec2Dwidth,
-                            -(maxHeight - minHeight) / rec2Dheight);
+                            routeLength / rec2Dwidth,
+                            -(maxElevation - minElevation) / rec2Dheight);
                     screenToWorld.prependTranslation(
                             0,
-                            minHeight);
+                            minElevation);
                     return screenToWorld;
                 },
                 rectangle2DProperty));
@@ -192,9 +197,7 @@ public final class ElevationProfileManager {
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMaxY(),
                         rectangle2DProperty)
         );
-//        line.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-//                        mousePositionOnProfileProperty.doubleValue() >= 0
-//                                && mousePositionOnProfileProperty.doubleValue() <= elevationProfileProperty.get().length()));
+
 
     }
 
@@ -204,7 +207,7 @@ public final class ElevationProfileManager {
 
         List<Double> graphPoints = new ArrayList<>();
         ElevationProfile profile = elevationProfileProperty.get();
-        double wStep = profile.length()/rectangle2DProperty.get().getWidth();
+        double wStep = routeLength/rectangle2DProperty.get().getWidth();
 
         for (double i = rectangle2DProperty.get().getMinX();
              i < pane.getWidth()-insets.getRight();
@@ -222,8 +225,8 @@ public final class ElevationProfileManager {
                         -insets.getRight(),
                 worldToScreenProperty.get()
                         .transform(
-                                profile.length(),
-                                profile.elevationAt(profile.length()))
+                                routeLength,
+                                profile.elevationAt(routeLength))
                         .getY());
         polygon.getPoints().addAll(
                 pane.getWidth()
@@ -241,21 +244,31 @@ public final class ElevationProfileManager {
         pane.setOnMouseMoved( e -> mousePositionOnProfileProperty.set(
                 rectangle2DProperty.get().contains(e.getX(),e.getY()) ?
                 (e.getX()-insets.getLeft())
-                        *elevationProfileProperty.get().length()
+                        *routeLength
                         /rectangle2DProperty.get().getWidth() :
                 Double.NaN));
         pane.setOnMouseExited(e ->
                 mousePositionOnProfileProperty.set(Double.NaN));
 
         elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
-            if(elevationProfileProperty.get() != null){
+            ElevationProfile p = elevationProfileProperty.get();
+            if(p != null){
+                minElevation = p.minElevation();
+                maxElevation = p.maxElevation();
+                routeLength = p.length();
                 bindRectangle();
                 bindTransform();
                 bindLine();
                 updatePolygon();
+                bindSteps();
             }
 
         }));
+
+        posStepProperty.addListener((o,oV,Nv) -> {
+
+        });
+
     }
 
     private void setStyles() {
@@ -266,25 +279,34 @@ public final class ElevationProfileManager {
         gridLabels.getStyleClass().setAll("grid_label","horizontal","vertical");
     }
 
-    private void gridSpacing() {
-        double length = elevationProfileProperty.get().length();
-        double minW = elevationProfileProperty.get().minElevation();
-        double maxW = elevationProfileProperty.get().maxElevation();
-        double heightW = maxW - minW;
-        double heightS = rectangle2DProperty.get().getHeight();
-        double widthS = rectangle2DProperty.get().getWidth();
-        int eleIndex = ELE_STEPS.length-1;
-        int posIndex = POS_STEPS.length-1;
-        double nOfhorizontals = heightW/ELE_STEPS[eleIndex];
-        double nOfVertical = length/POS_STEPS[posIndex];
-        while (heightS / nOfhorizontals > HORIZONTAL_SPACING ) {
-            eleIndex--;
-            nOfhorizontals = heightW/ELE_STEPS[eleIndex];
-        }
-        while (widthS / nOfVertical > VERTICAL_SPACING ) {
-            posIndex--;
-            nOfVertical = length/POS_STEPS[posIndex];
-        }
+    private void bindSteps() {
+
+
+        posStepProperty.bind(Bindings.createIntegerBinding( () -> {
+            double widthS = rectangle2DProperty.get().getWidth();
+            int posIndex = POS_STEPS.length-1;
+            double nOfVertical = routeLength/POS_STEPS[posIndex];
+
+            while (widthS / nOfVertical > VERTICAL_STEP_TRESHOLD && posIndex > 0) {
+                posIndex--;
+                nOfVertical = routeLength/POS_STEPS[posIndex];
+            }
+            return POS_STEPS[posIndex];
+        },elevationProfileProperty,rectangle2DProperty));
+
+        eleStepProperty.bind(Bindings.createIntegerBinding(()->{
+            double heightS = rectangle2DProperty.get().getHeight();
+            double heightW = maxElevation - minElevation;
+            int eleIndex = ELE_STEPS.length-1;
+            double nOfhorizontals = heightW/ELE_STEPS[eleIndex];
+
+            while (heightS / nOfhorizontals > HORIZONTAL_STEP_TRESHOLD && eleIndex > 0) {
+                eleIndex--;
+                nOfhorizontals = heightW/ELE_STEPS[eleIndex];
+            }
+            return ELE_STEPS[eleIndex];
+        },elevationProfileProperty,rectangle2DProperty));
+
 
 
 
