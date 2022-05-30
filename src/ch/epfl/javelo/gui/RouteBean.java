@@ -89,6 +89,10 @@ public final class RouteBean {
             routeList.add(temproute);
         }
         shouldHideRoute = false;
+        if(routeList.isEmpty()){
+            shouldHideRoute = true;
+            return null;
+        }
         return new MultiRoute(routeList);
     }
 
