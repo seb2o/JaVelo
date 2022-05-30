@@ -1,6 +1,7 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.data.Graph;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.nio.file.Path;
 
 public class GpxGeneratorTest {
     
-    @Test
+    @Test@Disabled
     public void gpxCreatorTest() throws IOException {
 
         Graph g = Graph.loadFrom(Path.of("ch_west"));

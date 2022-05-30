@@ -4,6 +4,7 @@ import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ElevationProfileComputerTest {
 
-    @Test
+    @Test@Disabled
     public void elevationProfileTestSeveralEdge() throws IOException {
 
         Graph graph = Graph.loadFrom(Path.of("lausanne"));

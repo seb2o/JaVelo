@@ -24,7 +24,7 @@ class SingleRouteTestG {
         assertThrows(IllegalArgumentException.class, () -> {new SingleRoute(none);});
     }
 
-    @Test
+    @Test@Disabled
     void indexOfSegmentAt() {
         assertEquals(0, test1.indexOfSegmentAt(0));
         assertEquals(0, test1.indexOfSegmentAt(746));

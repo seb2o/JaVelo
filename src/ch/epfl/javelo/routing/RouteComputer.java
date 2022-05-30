@@ -8,7 +8,9 @@ import java.util.*;
 /**
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
- */public final class RouteComputer {
+ * construit la meilleure route entre deux point d'un graphe fourni a la constrction, en fonction de couts également fournis a la construction.
+ */
+public final class RouteComputer {
 
     private final Graph graph;
     private final CostFunction costFunction;
