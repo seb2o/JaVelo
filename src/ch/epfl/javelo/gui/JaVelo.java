@@ -74,6 +74,12 @@ public final class JaVelo extends Application {
         primaryStage.setTitle("JaVelo");
         primaryStage.show();
 
+
+        //Listener qui met à jour la position du point en surbrillance par rapport à la position de la souris
+        //sur le profil.
+        annotatedMapManager.mousePositionOnRouteProperty().addListener(((observable, oldValue, newValue) ->
+                routeBean.setHighlightedPosition(annotatedMapManager.mousePositionOnRouteProperty().doubleValue())));
+
         routeBean.routeProperty().addListener(((observable, oldValue, newValue) -> {
             if( waypoints.size() < 2 || routeBean.route() == null || newValue == null){
                 elevationProfileProperty.set(null);
@@ -106,19 +112,18 @@ public final class JaVelo extends Application {
         }));
 
         highlightedPositionProperty.addListener((observable, oldValue, newValue) -> {
-            if(highlightedPositionProperty.getValue() > 0){
+            if(!Double.isNaN(highlightedPositionProperty.getValue())){
                 routeBean.setHighlightedPosition(
                         elevationProfileManager.mousePositionOnProfileProperty().doubleValue());
             }
             else{
                 routeBean.setHighlightedPosition(
-                        routeBean.highlightedPositionProperty().doubleValue());
+                        annotatedMapManager.mousePositionOnRouteProperty().doubleValue());
             }
         });
 
-        splitpane.getItems().addListener((ListChangeListener<Node>) c -> {
-            exportGPX.disableProperty().set(c.getList().size() != 2);
-        });
+        splitpane.getItems().addListener((ListChangeListener<Node>) c ->
+                exportGPX.disableProperty().set(c.getList().size() != 2));
     }
 
 }

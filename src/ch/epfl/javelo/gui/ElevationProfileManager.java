@@ -183,7 +183,7 @@ public final class ElevationProfileManager {
                         () -> worldToScreenProperty.get().transform(
                                                 highlightedPosition.doubleValue(),
                                                 rectangle2DProperty.get().getMinY()).getX(),
-                        mousePositionOnProfileProperty,highlightedPosition));
+                        highlightedPosition));
         line.startYProperty().bind(
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMinY(),
                         rectangle2DProperty)
@@ -238,15 +238,14 @@ public final class ElevationProfileManager {
     }
 
     private void createListeners() {
-        pane.setOnMouseMoved( e -> {
-            mousePositionOnProfileProperty.set(
-                    (e.getX()-insets.getLeft())
-                            *elevationProfileProperty.get().length()
-                            /rectangle2DProperty.get().getWidth());
-            });
-        pane.setOnMouseExited(e ->{
-            mousePositionOnProfileProperty.set(Double.NaN);
-        });
+        pane.setOnMouseMoved( e -> mousePositionOnProfileProperty.set(
+                rectangle2DProperty.get().contains(e.getX(),e.getY()) ?
+                (e.getX()-insets.getLeft())
+                        *elevationProfileProperty.get().length()
+                        /rectangle2DProperty.get().getWidth() :
+                Double.NaN));
+        pane.setOnMouseExited(e ->
+                mousePositionOnProfileProperty.set(Double.NaN));
 
         elevationProfileProperty.addListener(((observable, oldValue, newValue) -> {
             if(elevationProfileProperty.get() != null){

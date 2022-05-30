@@ -25,6 +25,7 @@ public final class AnnotatedMapManager {
     private Pane pane;
     private DoubleProperty mousePositionOnRouteProperty;
     private SimpleObjectProperty<Point2D> mousePos;
+    private static final int ROUTE_HIGHLIGHT_SEARCH_DISTANCE_SQUARED = 15*15;
 
     /**
      * Constructeur de carte annotée.
@@ -34,14 +35,15 @@ public final class AnnotatedMapManager {
      * @param errorManager le gestionnaire d'erreur associé à la carte.
      */
     public AnnotatedMapManager(Graph graph, TileManager tileManager, RouteBean routeBean, ErrorManager errorManager){
-        this.mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));
-        this.waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorManager);
-        this.baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
-        this.routeManager = new RouteManager(routeBean,mapViewParametersProperty);
-        this.mousePos = new SimpleObjectProperty<>(new Point2D(0,0));
-        this.pane = new StackPane(baseMapManager.pane(),waypointsManager.pane(),routeManager.pane());
+
+        mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));//todo pourquoi ces valeurs ?
+        waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorManager);
+        baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
+        routeManager = new RouteManager(routeBean,mapViewParametersProperty);
+        mousePos = new SimpleObjectProperty<>(new Point2D(0,0));
+        pane = new StackPane(baseMapManager.pane(),waypointsManager.pane(),routeManager.pane());
         pane.getStylesheets().add("map.css");
-        this.mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
+        mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
 
 
         //Listener qui gère la position du point en surbrillance sur l'intinéraire
@@ -51,13 +53,19 @@ public final class AnnotatedMapManager {
             if(routeBean.route() != null){
                 Point2D currentMousePos = mousePos.get();
                 int zoomLevel = mapViewParametersProperty.get().zoomLevel();
-                PointWebMercator pwb = mapViewParametersProperty.get().pointAt(currentMousePos.getX(),currentMousePos.getY());
+                PointWebMercator pwb = mapViewParametersProperty.get().pointAt(
+                        currentMousePos.getX(),currentMousePos.getY());
                 PointCh pch = pwb.toPointCh();
                 if(pch != null){
                     RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(pch);
-                    PointWebMercator routePwb = PointWebMercator.ofPointCh(closestRoutePoint.point());
-                    double squaredDistance = Math2.squaredNorm(routePwb.xAtZoomLevel(zoomLevel) - pwb.xAtZoomLevel(zoomLevel),routePwb.yAtZoomLevel(zoomLevel) - pwb.yAtZoomLevel(zoomLevel));
-                    if(squaredDistance < 15 * 15 && routeBean.waypoints().size() > 1){
+                    PointWebMercator routePwb = PointWebMercator.ofPointCh(
+                            closestRoutePoint.point());
+                    double squaredDistance = Math2.squaredNorm(
+                            routePwb.xAtZoomLevel(zoomLevel)
+                                    - pwb.xAtZoomLevel(zoomLevel),
+                            routePwb.yAtZoomLevel(zoomLevel)
+                                    - pwb.yAtZoomLevel(zoomLevel));
+                    if(squaredDistance < ROUTE_HIGHLIGHT_SEARCH_DISTANCE_SQUARED && routeBean.waypoints().size() > 1){
                         mousePositionOnRouteProperty.set(closestRoutePoint.position());
                         return;
                     }
@@ -68,15 +76,9 @@ public final class AnnotatedMapManager {
         });
 
         //Listener qui gère le cas ou la souris sort du panneau contenant la carte annotée.
-        pane.setOnMouseExited(e ->{
-            mousePositionOnRouteProperty.set(Double.NaN);
-        });
+        pane.setOnMouseExited(e -> mousePositionOnRouteProperty.set(Double.NaN));
 
-        //Listener qui met à jour la position du point en surbrillance par rapport à la position de la souris
-        //sur le profile.
-        mousePositionOnRouteProperty.addListener(((observable, oldValue, newValue) -> {
-            routeBean.setHighlightedPosition(mousePositionOnRouteProperty.get());
-        }));
+
     }
 
     /**

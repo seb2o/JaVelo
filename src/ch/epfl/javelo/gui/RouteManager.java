@@ -92,10 +92,10 @@ public final class RouteManager {
 
         });
 
+
+
         //Listener qui met à jour la position affichée du point en surbrillance quand la position change.
-        routeBean.highlightedPositionProperty().addListener((observable, oldValue, newValue) -> {
-            updateHighlightPosition();
-        });
+        routeBean.highlightedPositionProperty().addListener((observable, oldValue, newValue) -> updateHighlightPosition());
 
     }
 
