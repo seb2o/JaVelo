@@ -6,6 +6,7 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
@@ -61,11 +63,14 @@ public final class ElevationProfileManager {
             { 1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000 };
     int[] ELE_STEPS =
             { 5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000 };
+
     private int posStep;
     private int eleStep;
 
     private static final int VERTICAL_STEP_TRESHOLD = 50;
     private final static int HORIZONTAL_STEP_TRESHOLD = 25;
+    private static final double METERS_TO_KILOMETERS = 1d/1000d;
+    private static final int FONT_SIZE_AVENIR = 10;
 
     //infos profil souvent accédées
     private double minElevation;
@@ -102,13 +107,6 @@ public final class ElevationProfileManager {
         createListeners();
         bindRectangle();
         bindPolygon();
-
-
-
-        //todo a virer
-        this.vBox.setBackground(Background.fill(Color.RED));
-        this.pane.setBackground(Background.fill(Color.BLUE));
-
 
     }
 
@@ -235,6 +233,11 @@ public final class ElevationProfileManager {
     }
 
     private void createListeners() {
+
+        pane.setOnMouseEntered( e-> {
+            System.out.println(gridLabels.getChildren());
+        });
+
         pane.setOnMouseMoved( e -> mousePositionOnProfileProperty.set(
                 rectangle2DProperty.get().contains(e.getX(),e.getY()) ?
                 (e.getX()-insets.getLeft())
@@ -259,15 +262,30 @@ public final class ElevationProfileManager {
 
         }));
         rectangle2DProperty.addListener((a,b,c) -> {
-            updateSteps();
-            updateGrid();
+            if(elevationProfileProperty.get() != null){
+                updateSteps();
+                updateGrid();
+            }
         });
 
     }
 
     private void updateGrid() {
-        for (double i = rectangle2DProperty.get().getMinX(); i <= rectangle2DProperty.get().getMaxX(); i+=posStep) {
+        grid.getElements().removeAll(grid.getElements());
+        gridLabels.getChildren().removeAll(gridLabels.getChildren());
+        double posStepS = posStep*rectangle2DProperty.get().getWidth()/routeLength;
+        double eleStepS = eleStep*rectangle2DProperty.get().getHeight()/(maxElevation-minElevation);
+
+        if(posStepS <=0.0 || eleStepS <= 0.0) return;
+
+        for (double i = rectangle2DProperty.get().getMinX(); i <= rectangle2DProperty.get().getMaxX()+1; i+=posStepS) {
             grid.getElements().addAll(new MoveTo(i,rectangle2DProperty.get().getMinY()),new LineTo(i,rectangle2DProperty.get().getMaxY()));
+            posLabel(i);
+        }
+        double firstHorizontalLineY = rectangle2DProperty.get().getMaxY()-rectangle2DProperty.get().getMaxY()%eleStepS;
+        for (double i = firstHorizontalLineY; i >= rectangle2DProperty.get().getMinY(); i-=eleStepS) {
+            grid.getElements().addAll(new MoveTo(rectangle2DProperty.get().getMinX(),i),new LineTo(rectangle2DProperty.get().getMaxX(),i));
+            eleLabel(i);
         }
     }
 
@@ -281,13 +299,12 @@ public final class ElevationProfileManager {
 
     private void updateSteps() {
 
-
             double screenLength = rectangle2DProperty.get().getWidth();
             int posIndex = 0;
-            double nOfVertical = routeLength/POS_STEPS[posIndex];
+            int nOfVertical = (int) (routeLength/POS_STEPS[posIndex]);
             while (screenLength / nOfVertical < VERTICAL_STEP_TRESHOLD && posIndex < POS_STEPS.length - 1) {
                 posIndex++;
-                nOfVertical = routeLength/POS_STEPS[posIndex];
+                nOfVertical = (int) (routeLength/POS_STEPS[posIndex]);
             }
             posStep = POS_STEPS[posIndex];
 
@@ -296,15 +313,44 @@ public final class ElevationProfileManager {
             double heightS = rectangle2DProperty.get().getHeight();
             double heightW = maxElevation - minElevation;
             int eleIndex = 0;
-            double nOfhorizontals = heightW/ELE_STEPS[eleIndex];
+            int nOfHorizontal = (int) (heightW/ELE_STEPS[eleIndex]);
 
-            while (heightS / nOfhorizontals < HORIZONTAL_STEP_TRESHOLD && eleIndex < ELE_STEPS.length - 1) {
+            while (heightS / nOfHorizontal < HORIZONTAL_STEP_TRESHOLD && eleIndex < ELE_STEPS.length - 1) {
                 eleIndex++;
-                nOfhorizontals = heightW/ELE_STEPS[eleIndex];
+                nOfHorizontal = (int) (heightW/ELE_STEPS[eleIndex]);
             }
             eleStep = ELE_STEPS[eleIndex];
-        System.out.printf("espacement horizontal : %d, espacement vertical : %d\n",eleStep,posStep);
 
+
+
+
+
+    }
+
+    private void eleLabel(double eleS) {
+        System.out.println((int) screenToWorldProperty.get().transform(0, eleS).getY());
+        Text t = new Text(String.valueOf(
+                (int)screenToWorldProperty.get().transform(0,eleS).getY()));
+        t.textOriginProperty().set(VPos.CENTER);
+        t.setX(t.prefWidth(0)-2);
+        t.setY(eleS);
+
+        t.setFont(Font.font("Avenir", FONT_SIZE_AVENIR));
+        t.getStyleClass().addAll("grid_label","vertical");
+        gridLabels.getChildren().add(t);
+
+
+    }
+    private void posLabel(double pos) {
+        Text t = new Text(String.valueOf(
+                (int)(screenToWorldProperty.get().transform(pos,0).getX()*METERS_TO_KILOMETERS)));
+        t.textOriginProperty().set(VPos.TOP);
+        t.setX(pos - t.prefWidth(0)/2);
+        t.setY(pane.getHeight()-insets.getBottom());
+
+        t.setFont(Font.font("Avenir", FONT_SIZE_AVENIR));
+        t.getStyleClass().addAll("grid_label","horizontal");
+        gridLabels.getChildren().add(t);
 
 
 

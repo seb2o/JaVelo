@@ -3,6 +3,7 @@ package ch.epfl.javelo.routing;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
+import ch.epfl.javelo.projection.SwissBounds;
 
 import java.util.function.DoubleUnaryOperator;
 
@@ -48,7 +49,13 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
 //        position = Math2.clamp(0,position,this.length);
         double e = Math2.interpolate(fromPoint.e(),toPoint.e(),position/length);
         double n = Math2.interpolate(fromPoint.n(),toPoint.n(),position/length);
-        return new PointCh(e,n);
+        return SwissBounds.containsEN(e,n) ? new PointCh(e,n)
+                : new PointCh(
+                        Math2.interpolate(
+                                fromPoint.e(),toPoint.e(),
+                                Math2.clamp(0,position,this.length)/length),
+                        Math2.interpolate(fromPoint.n(),toPoint.n(),
+                                Math2.clamp(0,position,this.length)/length)) ;
     }
 
     /**
