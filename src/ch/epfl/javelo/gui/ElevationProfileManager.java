@@ -12,9 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
@@ -63,8 +61,8 @@ public final class ElevationProfileManager {
             { 1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000 };
     int[] ELE_STEPS =
             { 5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000 };
-    private SimpleIntegerProperty posStepProperty;
-    private SimpleIntegerProperty eleStepProperty;
+    private int posStep;
+    private int eleStep;
 
     private static final int VERTICAL_STEP_TRESHOLD = 50;
     private final static int HORIZONTAL_STEP_TRESHOLD = 25;
@@ -86,8 +84,6 @@ public final class ElevationProfileManager {
         screenToWorldProperty = new SimpleObjectProperty<>();
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
-        posStepProperty = new SimpleIntegerProperty();
-        eleStepProperty = new SimpleIntegerProperty();
 
         vBox = new VBox();
         vBoxText = new Text();
@@ -197,11 +193,9 @@ public final class ElevationProfileManager {
                 Bindings.createDoubleBinding(() -> rectangle2DProperty.get().getMaxY(),
                         rectangle2DProperty)
         );
-
-
     }
 
-    private void updatePolygon() {//todo ptetre probleme de la dernière arête pas parfaitement verticale
+    private void updatePolygon() {
 
         polygon.getPoints().removeAll(polygon.getPoints());
 
@@ -256,19 +250,25 @@ public final class ElevationProfileManager {
                 minElevation = p.minElevation();
                 maxElevation = p.maxElevation();
                 routeLength = p.length();
-                bindRectangle();
                 bindTransform();
                 bindLine();
                 updatePolygon();
-                bindSteps();
+                updateSteps();
+                updateGrid();
             }
 
         }));
-
-        posStepProperty.addListener((o,oV,Nv) -> {
-
+        rectangle2DProperty.addListener((a,b,c) -> {
+            updateSteps();
+            updateGrid();
         });
 
+    }
+
+    private void updateGrid() {
+        for (double i = rectangle2DProperty.get().getMinX(); i <= rectangle2DProperty.get().getMaxX(); i+=posStep) {
+            grid.getElements().addAll(new MoveTo(i,rectangle2DProperty.get().getMinY()),new LineTo(i,rectangle2DProperty.get().getMaxY()));
+        }
     }
 
     private void setStyles() {
@@ -279,33 +279,31 @@ public final class ElevationProfileManager {
         gridLabels.getStyleClass().setAll("grid_label","horizontal","vertical");
     }
 
-    private void bindSteps() {
+    private void updateSteps() {
 
 
-        posStepProperty.bind(Bindings.createIntegerBinding( () -> {
-            double widthS = rectangle2DProperty.get().getWidth();
-            int posIndex = POS_STEPS.length-1;
+            double screenLength = rectangle2DProperty.get().getWidth();
+            int posIndex = 0;
             double nOfVertical = routeLength/POS_STEPS[posIndex];
-
-            while (widthS / nOfVertical > VERTICAL_STEP_TRESHOLD && posIndex > 0) {
-                posIndex--;
+            while (screenLength / nOfVertical < VERTICAL_STEP_TRESHOLD && posIndex < POS_STEPS.length - 1) {
+                posIndex++;
                 nOfVertical = routeLength/POS_STEPS[posIndex];
             }
-            return POS_STEPS[posIndex];
-        },elevationProfileProperty,rectangle2DProperty));
+            posStep = POS_STEPS[posIndex];
 
-        eleStepProperty.bind(Bindings.createIntegerBinding(()->{
+
+
             double heightS = rectangle2DProperty.get().getHeight();
             double heightW = maxElevation - minElevation;
-            int eleIndex = ELE_STEPS.length-1;
+            int eleIndex = 0;
             double nOfhorizontals = heightW/ELE_STEPS[eleIndex];
 
-            while (heightS / nOfhorizontals > HORIZONTAL_STEP_TRESHOLD && eleIndex > 0) {
-                eleIndex--;
+            while (heightS / nOfhorizontals < HORIZONTAL_STEP_TRESHOLD && eleIndex < ELE_STEPS.length - 1) {
+                eleIndex++;
                 nOfhorizontals = heightW/ELE_STEPS[eleIndex];
             }
-            return ELE_STEPS[eleIndex];
-        },elevationProfileProperty,rectangle2DProperty));
+            eleStep = ELE_STEPS[eleIndex];
+        System.out.printf("espacement horizontal : %d, espacement vertical : %d\n",eleStep,posStep);
 
 
 
