@@ -12,8 +12,8 @@ import java.util.function.DoubleUnaryOperator;
  * @author Edgar Gonzales (328095)
  */
 public class ElevationProfile {
-    final double length;
-    final float[] elevationSamples;
+    private final double length;
+    private final float[] elevationSamples;
 
     public ElevationProfile(double length, float[] elevationSamples) {
         Preconditions.checkArgument(length > 0 && elevationSamples.length > 1);
