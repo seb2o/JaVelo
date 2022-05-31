@@ -285,6 +285,17 @@ public final class ElevationProfileManager {
             grid.getElements().addAll(new MoveTo(rectangle2DProperty.get().getMinX(),i),new LineTo(rectangle2DProperty.get().getMaxX(),i));
             eleLabel(index++);
         }
+
+        this.vBoxText.setText(String.format("Longueur : %.1f km" +
+                "     Montée : %.0f m" +
+                "     Descente : %.0f m" +
+                "     Altitude : de %.0f m à %.0f m",
+                (int)routeLength*METERS_TO_KILOMETERS,
+                elevationProfileProperty.get().totalAscent(),
+                elevationProfileProperty.get().totalDescent(),
+                minElevation,
+                maxElevation));
+
     }
 
     private void updateSteps() {
