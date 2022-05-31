@@ -50,12 +50,7 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
         double e = Math2.interpolate(fromPoint.e(),toPoint.e(),position/length);
         double n = Math2.interpolate(fromPoint.n(),toPoint.n(),position/length);
         return SwissBounds.containsEN(e,n) ? new PointCh(e,n)
-                : new PointCh(
-                        Math2.interpolate(
-                                fromPoint.e(),toPoint.e(),
-                                Math2.clamp(0,position,this.length)/length),
-                        Math2.interpolate(fromPoint.n(),toPoint.n(),
-                                Math2.clamp(0,position,this.length)/length)) ;
+                : this.toPoint;
     }
 
     /**
