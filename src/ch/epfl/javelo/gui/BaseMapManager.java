@@ -120,7 +120,6 @@ public final class BaseMapManager {
 
         //Listener qui gère le déplacement de la carte en glissant.
         pane.setOnMouseDragged(e -> {
-            if(e.isPrimaryButtonDown()){
                 int offsetX = (int) (lastDragPointerPosition.get().getX() - e.getX());
                 int offsetY = (int) (lastDragPointerPosition.get().getY() - e.getY());
                 int oldXOrigin = (int)mapViewParameters.get().originX();
@@ -133,7 +132,7 @@ public final class BaseMapManager {
                     waypoint.setLayoutY(waypoint.getLayoutY() - offsetY);
                 }
                 redrawOnNextPulse();
-            }
+
         });
 
         //Listener qui gère l'ajout de waypoint.
