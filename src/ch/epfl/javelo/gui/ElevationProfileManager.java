@@ -22,6 +22,10 @@ import javafx.scene.transform.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Edgar Gonzalez (328095)
+ * @author Sébastien Boo (345870)
+ */
 public final class ElevationProfileManager {
 
     //informations à afficher -exterieur-
@@ -63,10 +67,8 @@ public final class ElevationProfileManager {
             { 1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000 };
     int[] ELE_STEPS =
             { 5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000 };
-
     private int posStep;
     private int eleStep;
-
     private static final int VERTICAL_STEP_TRESHOLD = 50;
     private final static int HORIZONTAL_STEP_TRESHOLD = 25;
     private static final double METERS_TO_KILOMETERS = 1d/1000d;
@@ -117,14 +119,28 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * getter pour le pane contenant le dessin du profil et les informations associées
+     * @return le pane, jamais null
+     */
     public Pane pane(){
         return this.borderPane;
     }
 
+    /**
+     * getter pour la propriété contenant la position de la souris sur le profil
+     * en fonction de la route et pas de l'écran
+     * @return la propriété contenant cette valeure, valeure qui peut être nulle
+     */
     public ReadOnlyDoubleProperty mousePositionOnProfileProperty(){
         return this.mousePositionOnProfileProperty;
     }
 
+    /**
+     * méthode interne permettant de lier la conversion des coordonnées réelles
+     * en coordonnées sur le panneau javafx et son inverse à la taille du rectangle
+     * contenant le profil et au profil en lui même
+     */
     private void bindTransform() {
         this.screenToWorldProperty.bind(Bindings.createObjectBinding(
                 () -> {
@@ -151,6 +167,10 @@ public final class ElevationProfileManager {
                        screenToWorldProperty.get().createInverse(), screenToWorldProperty));
     }
 
+    /**
+     * méthode interne permettant de lier le rectangle dans lequel est dessiné le profil
+     * à la taille du panneau
+     */
     private void bindRectangle() {
         this.rectangle2DProperty.bind(Bindings.createObjectBinding(
                 () -> {
@@ -172,6 +192,10 @@ public final class ElevationProfileManager {
                 pane.heightProperty()));
     }
 
+    /**
+     * méthode interne permettant de lier la ligne d'affichage de la position de
+     * la souris sur le profil au rectangle et a la position de la souris
+     */
     private void bindLine() {
         line.layoutXProperty().bind(
                 Bindings.createDoubleBinding(
@@ -189,6 +213,10 @@ public final class ElevationProfileManager {
         );
     }
 
+    /**
+     * méthode intenre permmettant de mettre à jour le dessin du polygone; appellée
+     * lorsque le panneau est redimensionné ou losrque le profil change et n'est pas null
+     */
     private void updatePolygon() {
 
         polygon.getPoints().removeAll(polygon.getPoints());
@@ -228,6 +256,13 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * méthode interne ajoutant les listeners nécéssaires à
+     * mettre à jour la position de la souris sur le profil
+     * mettre à jour la grille et le dessin du polygone lorsque
+     * le profil change et n'est pas null ou que le panneau est redimmensionné
+     *
+     */
     private void createListeners() {
 
 
@@ -249,7 +284,6 @@ public final class ElevationProfileManager {
                 maxElevation = p.maxElevation();
                 routeLength = p.length();
                 updatePolygon();
-                updateSteps();
                 updateGrid();
             }
 
@@ -258,14 +292,18 @@ public final class ElevationProfileManager {
         rectangle2DProperty.addListener((o,oV,nV) -> {
             if(screenToWorldProperty.get() != null){
                 updateSteps();
-                updateGrid();
                 updatePolygon();
             }
         });
 
     }
 
+    /**
+     * méthode interne permettant le redessin de la grille et des informations associées
+     * appellée par les listeners susmentionnées
+     */
     private void updateGrid() {
+        updateSteps();
         grid.getElements().removeAll(grid.getElements());
         gridLabels.getChildren().removeAll(gridLabels.getChildren());
         double posStepS =  (posStep*rectangle2DProperty.get().getWidth()/routeLength);
@@ -298,6 +336,9 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * méthode interne permettant de calculer les valeurs d'écartement des lignes de la grille
+     */
     private void updateSteps() {
 
             double screenLength = rectangle2DProperty.get().getWidth();
@@ -321,13 +362,12 @@ public final class ElevationProfileManager {
                 nOfHorizontal = (int) (heightW/ELE_STEPS[eleIndex]);
             }
             eleStep = ELE_STEPS[eleIndex];
-
-
-
-
-
     }
 
+    /**
+     * méthode interne permettant l'ajout d'une étiquette de hauteur dans le dessin de la grille
+     * @param index index de la ligne dessinée, le 0 correspondant à la ligne d'altitude minimum
+     */
     private void eleLabel(int index) {
         Text t = new Text(String.valueOf(eleStep*index));
         t.textOriginProperty().set(VPos.CENTER);
@@ -341,6 +381,11 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * méthode interne permettant l'ajout d'une étiquette de position dans le dessin de la grille
+     * @param posS la position sur l'écran à laquelle rajouter l'étiquette
+     * @param index index de la ligne dessinée, le 0 correspondant à la position 0
+     */
     private void posLabel(double posS, int index) {
         Text t = new Text(String.valueOf((int)(posStep*index*METERS_TO_KILOMETERS)));
         t.textOriginProperty().set(VPos.TOP);
