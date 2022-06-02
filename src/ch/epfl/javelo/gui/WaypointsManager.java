@@ -167,7 +167,7 @@ public final class WaypointsManager {
      * @param y la coordonnée Y en PointWebMercator de ce Waypoint.
      * @return true si le point a bien pu être placé, false sinon.
      */
-    private boolean addWaypointAtIndex(double x, double y, int atIndex) {//todo erreur quand waypoint consécutifs même point
+    private boolean addWaypointAtIndex(double x, double y, int atIndex) {
         PointWebMercator pwb = PointWebMercator.of(mapViewParameters.get().zoomLevel(), x, y);
         PointCh pch = pwb.toPointCh();
         int closestNodeId = graph.nodeClosestTo(pch, 1000);

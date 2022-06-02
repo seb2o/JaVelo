@@ -12,9 +12,9 @@ import javafx.util.Duration;
  * Classe gérant l'affichage de messages d'erreur.
  */
 public final class ErrorManager {
-    private Pane pane;
-    private Text text;
-    private SequentialTransition transition;
+    private final Pane pane;
+    private final Text text;
+    private final SequentialTransition transition;
 
     /**
      * Constructeur de gestionnaire d'erreur.
@@ -52,6 +52,5 @@ public final class ErrorManager {
         java.awt.Toolkit.getDefaultToolkit().beep();
         text.setText(string);
         transition.play();
-        System.out.println("kjlnk,l;");
     }
 }

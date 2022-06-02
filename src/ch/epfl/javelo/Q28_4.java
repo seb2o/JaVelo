@@ -15,7 +15,6 @@ public final class Q28_4 {
      * @return représentation Q28_4 de l'entier passé en paramètres
      */
     public static int ofInt(int i) {
-        Preconditions.checkArgument(i>= 0 && i<=Math.pow(2,28)-1);
         return i << 4;
     }
 

@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -16,12 +17,12 @@ import java.util.List;
  */
 public final class RouteBean {
     private final double MAX_STEP_LENGTH = 5d;
-    private ObservableList<Waypoint> waypoints;
-    private SimpleObjectProperty<Route> route;
-    private DoubleProperty highlightedPosition;
-    private SimpleObjectProperty<ElevationProfile> elevationProfile;
-    private RouteComputer routeComputer;
-    private LinkedHashMap<WaypointPair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
+    private final ObservableList<Waypoint> waypoints;
+    private final SimpleObjectProperty<Route> route;
+    private final DoubleProperty highlightedPosition;
+    private final SimpleObjectProperty<ElevationProfile> elevationProfile;
+    private final RouteComputer routeComputer;
+    private final LinkedHashMap<WaypointPair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
     private boolean shouldHideRoute;
 
     /**
@@ -123,7 +124,9 @@ public final class RouteBean {
         if(route != null){
             return route;
         }
-        return routeComputer.bestRouteBetween(w1.nodeId(), w2.nodeId());
+        route = routeComputer.bestRouteBetween(w1.nodeId(), w2.nodeId());
+        cache.put(new WaypointPair(w1,w2), route);
+        return route;
     }
 
     /**
@@ -190,8 +193,8 @@ public final class RouteBean {
      * Classe privée qui sert à gérer le cache.
      */
     private class WaypointPair{
-        private Waypoint w1;
-        private Waypoint w2;
+        private final Waypoint w1;
+        private final Waypoint w2;
 
         /**
          * Constructeur
@@ -206,14 +209,14 @@ public final class RouteBean {
         /**
          * @return le premier waypoint.
          */
-        public Waypoint get1(){
+        private Waypoint get1(){
             return w1;
         }
 
         /**
          * @return le deuxième waypoint.
          */
-        public  Waypoint get2(){
+        private  Waypoint get2(){
             return w2;
         }
 
@@ -231,5 +234,13 @@ public final class RouteBean {
             return false;
         }
 
+        /**
+         * Redéfinition de hashCode afin de respecter "x.equals(y) => x.hashCode() == y.hashCode()";
+         * @return le hashCode;
+         */
+        @Override
+        public int hashCode(){
+            return Objects.hashCode(w1) + Objects.hashCode(w2);
+        }
     }
 }
