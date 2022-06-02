@@ -26,38 +26,37 @@ import java.util.List;
 public final class ElevationProfileManager {
 
     //informations à afficher -exterieur-
-    private ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty;
-    private ReadOnlyDoubleProperty highlightedPosition;
+    private final ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty;
+    private final ReadOnlyDoubleProperty highlightedPosition;
 
     //hierarchie javafx
     //conteneur principal
-    private BorderPane borderPane;
+    private final BorderPane borderPane;
 
     //legende
-    private VBox vBox;
-    private Text vBoxText;
+    private final Text vBoxText;
 
     //profil : graphe, grille et étiquettes
-    private Pane pane;
-    private Path grid;
-    private Polygon polygon;
-    private Line line;
-    private Group gridLabels;
+    private final Pane pane;
+    private final Path grid;
+    private final Polygon polygon;
+    private final Line line;
+    private final Group gridLabels;
     //fin hierarchie javafx
 
 
     //informations internes
 
     //highlight
-    private DoubleProperty mousePositionOnProfileProperty;
+    private final DoubleProperty mousePositionOnProfileProperty;
 
     //bordures
     private final Insets insets = new Insets(10, 10, 20, 40);
-    private ObjectProperty<Rectangle2D> rectangle2DProperty;
+    private final ObjectProperty<Rectangle2D> rectangle2DProperty;
 
     //conversion coordonées graph - itinéraire
-    private SimpleObjectProperty<Transform> screenToWorldProperty;
-    private SimpleObjectProperty<Transform> worldToScreenProperty;
+    private final SimpleObjectProperty<Transform> screenToWorldProperty;
+    private final SimpleObjectProperty<Transform> worldToScreenProperty;
 
     //grille
     int[] POS_STEPS =
@@ -89,7 +88,8 @@ public final class ElevationProfileManager {
         worldToScreenProperty = new SimpleObjectProperty<>();
         rectangle2DProperty = new SimpleObjectProperty<>();
 
-        vBox = new VBox();
+        //legende
+        VBox vBox = new VBox();
         vBoxText = new Text();
 
         pane = new Pane();

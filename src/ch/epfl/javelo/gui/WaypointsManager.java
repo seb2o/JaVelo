@@ -23,13 +23,13 @@ import java.util.List;
  * Classe gèrant l'affichage et l'interaction avec les points de passage.
  */
 public final class WaypointsManager {
-    private Pane pane;
-    private ObservableList<Waypoint> waypoints;
-    private Graph graph;
-    private ErrorManager errorManager;
-    private ObjectProperty<MapViewParameters> mapViewParameters;
+    private final Pane pane;
+    private final ObservableList<Waypoint> waypoints;
+    private final Graph graph;
+    private final ErrorManager errorManager;
+    private final ObjectProperty<MapViewParameters> mapViewParameters;
 
-    private SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>(new Point2D(0,0));
+    private final SimpleObjectProperty<Point2D> lastDragPointerPosition = new SimpleObjectProperty<>(new Point2D(0,0));
 
     public WaypointsManager(Graph graph, ObjectProperty<MapViewParameters> mapViewParameters, ObservableList<Waypoint> waypoints, ErrorManager errorManager){
         this.errorManager = errorManager;

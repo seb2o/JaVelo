@@ -14,8 +14,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,11 +27,10 @@ public final class JaVelo extends Application {
 
     public static void main(String[] args) { launch(args); }
 
-    private BorderPane pane;
     private ElevationProfileManager elevationProfileManager;
     private ObservableList<Waypoint> waypoints;
     private final double maxStepLength = 5;
-    private SimpleObjectProperty<ElevationProfile> elevationProfileProperty = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<ElevationProfile> elevationProfileProperty = new SimpleObjectProperty<>();
     private ReadOnlyDoubleProperty highlightedPositionProperty;
 
     @Override
@@ -55,7 +54,7 @@ public final class JaVelo extends Application {
         SplitPane.setResizableWithParent(annotatedMapManager.pane(),false);
 
         this.waypoints = routeBean.waypoints();
-        this.pane = new BorderPane(splitpane);
+        BorderPane pane = new BorderPane(splitpane);
         pane.getStylesheets().add("map.css");
 
         MenuItem exportGPX = new MenuItem("Exporter GPX");
@@ -104,14 +103,14 @@ public final class JaVelo extends Application {
                 splitpane.getItems().remove(1);
             }
             else{
+                Pane profilePane = elevationProfileManager.pane();
                 if(splitpane.getItems().size() == 1){
-                    splitpane.getItems().add(elevationProfileManager.pane());
-                    SplitPane.setResizableWithParent(elevationProfileManager.pane(),false);
+                    splitpane.getItems().add(profilePane);
                 }
                 else{
-                    splitpane.getItems().set(1,elevationProfileManager.pane());
-                    SplitPane.setResizableWithParent(elevationProfileManager.pane(),false);
+                    splitpane.getItems().set(1,profilePane);
                 }
+                SplitPane.setResizableWithParent(profilePane,false);
             }
         }));
 

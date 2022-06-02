@@ -16,10 +16,10 @@ import java.util.List;
  */
 public final class RouteManager {
 
-    private Pane pane;
-    private ReadOnlyObjectProperty<MapViewParameters> mapViewParameters;
-    private RouteBean routeBean;
-    private Circle highlight;
+    private final Pane pane;
+    private final ReadOnlyObjectProperty<MapViewParameters> mapViewParameters;
+    private final RouteBean routeBean;
+    private final Circle highlight;
 
     /**
      * Constructeur du gestionnaire de route.
