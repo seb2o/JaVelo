@@ -22,7 +22,7 @@ public final class RouteBean {
     private final DoubleProperty highlightedPosition;
     private final SimpleObjectProperty<ElevationProfile> elevationProfile;
     private final RouteComputer routeComputer;
-    private final LinkedHashMap<WaypointPair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
+    private final LinkedHashMap<NodePair, Route> cache = new LinkedHashMap<>(100, 0.75f, true);
     private boolean shouldHideRoute;
 
     /**
@@ -119,13 +119,15 @@ public final class RouteBean {
      * @return la route entre ces deux waypoints.
      */
     private Route computeRouteBetween(Waypoint w1, Waypoint w2){
-        WaypointPair wp = new WaypointPair(w1,w2);
-        Route route = cache.get(wp);
+        int node1 = w1.nodeId();
+        int node2 = w2.nodeId();
+        NodePair np = new NodePair(node1,node2);
+        Route route = cache.get(np);
         if(route != null){
             return route;
         }
-        route = routeComputer.bestRouteBetween(w1.nodeId(), w2.nodeId());
-        cache.put(new WaypointPair(w1,w2), route);
+        route = routeComputer.bestRouteBetween(node1,node2);
+        cache.put(np, route);
         return route;
     }
 
@@ -190,57 +192,42 @@ public final class RouteBean {
     }
 
     /**
-     * Classe privée qui sert à gérer le cache.
+     * Record privé qui sert à gérer le cache.
      */
-    private class WaypointPair{
-        private final Waypoint w1;
-        private final Waypoint w2;
-
+    private record NodePair(int node1, int node2) {
         /**
          * Constructeur
-         * @param w1 le premier waypoint.
-         * @param w2 le deuxième waypoint.
+         *
+         * @param node1 le premier node.
+         * @param node2 le deuxième node.
          */
-        private WaypointPair(Waypoint w1, Waypoint w2){
-            this.w1 = w1;
-            this.w2 = w2;
+        private NodePair {
         }
 
-        /**
-         * @return le premier waypoint.
-         */
-        private Waypoint get1(){
-            return w1;
-        }
-
-        /**
-         * @return le deuxième waypoint.
-         */
-        private  Waypoint get2(){
-            return w2;
-        }
 
         /**
          * Redéfinition de la méthode equals, afin qu'elle soit utile dans le cache.
-         * @return true si les waypoints des deux WaypointPairs sont égaux.
+         *
+         * @return true si les nodes des deux NodePairs sont égaux deux à deux.
          */
         @Override
-        public boolean equals(Object object){
-            if(object instanceof  WaypointPair){
-                Waypoint ow1 = ((WaypointPair) object).get1();
-                Waypoint ow2 = ((WaypointPair) object).get2();
-                return (ow1.equals(w1) && ow2.equals(w2)) || (ow1.equals(w2) && ow2.equals(w1));
+        public boolean equals(Object object) {
+            if (object instanceof NodePair) {
+                int oNode1 = ((NodePair) object).node1;
+                int oNode2 = ((NodePair) object).node2;
+                return (oNode1 == node1 && oNode2 == node2);
             }
             return false;
         }
 
         /**
          * Redéfinition de hashCode afin de respecter "x.equals(y) => x.hashCode() == y.hashCode()";
+         *
          * @return le hashCode;
          */
         @Override
-        public int hashCode(){
-            return Objects.hashCode(w1) + Objects.hashCode(w2);
+        public int hashCode() {
+            return Objects.hash(node1, node2);
         }
     }
 }
