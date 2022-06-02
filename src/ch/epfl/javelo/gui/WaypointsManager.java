@@ -14,13 +14,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
 import java.util.List;
+
+
+
 /**
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
- */
-
-
-/**
  * Classe gèrant l'affichage et l'interaction avec les points de passage.
  */
 public final class WaypointsManager {

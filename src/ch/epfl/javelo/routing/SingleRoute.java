@@ -59,7 +59,8 @@ public final class SingleRoute implements Route{
     }
 
     @Override
-    public PointCh pointAt(double position) {//todo ici erreur possible d'index si position est nan ( lenghlist lenght = edges szie + 1
+    public PointCh pointAt(double position) {
+        if(Double.isNaN(position)) return edges.get(0).pointAt(0) ;
         position = Math2.clamp(0,position,length());
         double relativePosition;
         int index = Arrays.binarySearch(lengthList, position);

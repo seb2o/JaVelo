@@ -1,6 +1,5 @@
 package ch.epfl.javelo.data;
 
-import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.Ch1903;
 import ch.epfl.javelo.projection.PointCh;
@@ -12,7 +11,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GraphTestD {
     @Test

@@ -2,22 +2,15 @@ package ch.epfl.test;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.gui.*;
-import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.CityBikeCF;
 import ch.epfl.javelo.routing.RouteComputer;
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 
 public final class Stage8Test extends Application {
     public static void main(String[] args) { launch(args); }

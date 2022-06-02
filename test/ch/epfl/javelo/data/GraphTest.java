@@ -11,7 +11,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 
 import static ch.epfl.test.TestRandomizer.newRandom;
-import static javax.swing.UIManager.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

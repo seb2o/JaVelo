@@ -5,10 +5,7 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
 
-import javax.sql.PooledConnection;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

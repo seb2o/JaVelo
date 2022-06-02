@@ -35,7 +35,7 @@ public final class JaVelo extends Application {
     private ReadOnlyDoubleProperty highlightedPositionProperty;
 
     @Override
-    public void start(Stage primaryStage) throws IOException, NonInvertibleTransformException {
+    public void start(Stage primaryStage) throws IOException {
         Graph graph = Graph.loadFrom(Path.of("javelo-data"));
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "https://tile.openstreetmap.org";

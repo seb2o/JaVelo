@@ -4,13 +4,8 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import static ch.epfl.javelo.routing.ElevationProfileComputer.elevationProfile;
 
 /**
  * @author Edgar Gonzalez (328095)

@@ -3,8 +3,6 @@ package ch.epfl.javelo.gui;
 import ch.epfl.javelo.projection.PointWebMercator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MapViewParametersTest {
 
     @Test

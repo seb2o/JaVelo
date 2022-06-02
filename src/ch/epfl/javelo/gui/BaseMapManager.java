@@ -15,12 +15,11 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+
+
 /**
  * @author Edgar Gonzalez (328095)
  * @author Sébastien Boo (345870)
- */
-
-/**
  * Classe qui gère l'affichage et l'interaction avec le fond de carte.
  */
 public final class BaseMapManager {
