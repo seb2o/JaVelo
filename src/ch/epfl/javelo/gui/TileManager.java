@@ -9,12 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * @author Edgar Gonzalez (328095)
- * @author Sébastien Boo (345870)
- */
 
-/*
+
+/**
+ @author Edgar Gonzalez (328095)
+ @author Sébastien Boo (345870)
 * Classe gérant le téléchargement et le cache des tuiles composant la carte.
  */
 public final class TileManager {
@@ -28,7 +27,14 @@ public final class TileManager {
         this.cachePath = tilePath;
     }
 
-    //todo commenter
+    /**
+     * retourne l'image correspondant à une tile donnée, en allant la chercher d'abord
+     * dans le cache mémoire, puis dans le cache disque, puis avec une requête via internet
+     * sur les serveurs de openstreetmap
+     * @param tile la tile dont on veux l'image
+     * @return l'image de la tile spécifiéee si valide
+     * @throws IOException si la tile spécifiée est invalide ou que le disk ou que le serveur est injoignable
+     */
     public Image getImageOf(TileId tile) throws IOException {
 
         //on vérifie que la tuile est valide
