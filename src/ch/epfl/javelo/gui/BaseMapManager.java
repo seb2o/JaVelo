@@ -26,10 +26,10 @@ import java.io.IOException;
 public final class BaseMapManager {
 
     private boolean redrawNeeded = true;
-    private Pane pane;
-    private Canvas canvas;
-    private TileManager tileManager;
-    private ObjectProperty<MapViewParameters> mapViewParameters;
+    private final Pane pane;
+    private final Canvas canvas;
+    private final TileManager tileManager;
+    private final ObjectProperty<MapViewParameters> mapViewParameters;
 
     /**
      * Constructeur de la classe.
@@ -73,7 +73,7 @@ public final class BaseMapManager {
             if (scrollEvent.getDeltaY() == 0d) return;
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
-            minScrollTime.set(currentTime + 200); //todo laisser cette valeur à 200 !
+            minScrollTime.set(currentTime + 200);
             int zoomDelta = (int)Math.signum(scrollEvent.getDeltaY());
             int tempZoom = mapViewParameters.get().zoomLevel() + zoomDelta;
             int newZoom = Math2.clamp(8,mapViewParameters.get().zoomLevel() + zoomDelta,19);

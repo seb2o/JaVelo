@@ -18,14 +18,11 @@ import javafx.scene.layout.StackPane;
  * c.-à-d. le fond de carte au-dessus duquel sont superposés l'itinéraire et les points de passage.
  */
 public final class AnnotatedMapManager {
-    private BaseMapManager baseMapManager;
-    private WaypointsManager waypointsManager;
-    private SimpleObjectProperty<MapViewParameters> mapViewParametersProperty;
-    private RouteManager routeManager;
-    private Pane pane;
-    private DoubleProperty mousePositionOnRouteProperty;
-    private SimpleObjectProperty<Point2D> mousePos;
-    private static final int ROUTE_HIGHLIGHT_SEARCH_DISTANCE_SQUARED = 15*15;
+    private final SimpleObjectProperty<MapViewParameters> mapViewParametersProperty;
+    private final Pane pane;
+    private final DoubleProperty mousePositionOnRouteProperty;
+    private final SimpleObjectProperty<Point2D> mousePos;
+    private final int ROUTE_HIGHLIGHT_SEARCH_DISTANCE_SQUARED = 15*15;
 
     /**
      * Constructeur de carte annotée.
@@ -35,13 +32,15 @@ public final class AnnotatedMapManager {
      * @param errorManager le gestionnaire d'erreur associé à la carte.
      */
     public AnnotatedMapManager(Graph graph, TileManager tileManager, RouteBean routeBean, ErrorManager errorManager){
-
-        mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));//todo pourquoi ces valeurs ?
-        waypointsManager = new WaypointsManager(graph,mapViewParametersProperty, routeBean.waypoints(), errorManager);
-        baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
-        routeManager = new RouteManager(routeBean,mapViewParametersProperty);
+        int INIT_ZOOM = 12;
+        int INIT_ORIGIN_X = 543200;
+        int INIT_ORIGIN_Y = 370650;
+        mapViewParametersProperty = new SimpleObjectProperty<>(new MapViewParameters(INIT_ZOOM, INIT_ORIGIN_X, INIT_ORIGIN_Y));
+        WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParametersProperty, routeBean.waypoints(), errorManager);
+        BaseMapManager baseMapManager = new BaseMapManager(tileManager, waypointsManager, mapViewParametersProperty);
+        RouteManager routeManager = new RouteManager(routeBean, mapViewParametersProperty);
         mousePos = new SimpleObjectProperty<>(new Point2D(0,0));
-        pane = new StackPane(baseMapManager.pane(),waypointsManager.pane(),routeManager.pane());
+        pane = new StackPane(baseMapManager.pane(), waypointsManager.pane(), routeManager.pane());
         pane.getStylesheets().add("map.css");
         mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
 
